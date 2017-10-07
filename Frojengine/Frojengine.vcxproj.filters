@@ -30,12 +30,21 @@
     <ClCompile Include="FJSystemEngine.cpp">
       <Filter>Frojengine\Source File</Filter>
     </ClCompile>
+    <ClCompile Include="FJRenderingEngine.cpp">
+      <Filter>Frojengine\Source File</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FJDefine.h">
       <Filter>Frojengine\Header File</Filter>
     </ClInclude>
     <ClInclude Include="FJSystemEngine.h">
+      <Filter>Frojengine\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="FJRenderingEngine.h">
+      <Filter>Frojengine\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="Frojengine.h">
       <Filter>Frojengine\Header File</Filter>
     </ClInclude>
   </ItemGroup>

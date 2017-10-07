@@ -1,4 +1,4 @@
-#include "FJSystemEngine.h"
+#include "Frojengine.h"
 
 ///////////////////////////
 //
@@ -12,12 +12,25 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 {
 	FJSystemEngine* pSystem = FJSystemEngine::GetInstance();
 
+
+	//---------------
+	// 데이터 로딩
+	//---------------
+	pSystem->LoadData();
+
+
+	//---------------
+	// Game Loop
+	//---------------
 	while (!pSystem->m_bEnd)
 	{
 		pSystem->MessagePump();
+
+		pSystem->Update();
+		pSystem->Rendering();
 	}
 
-	delete pSystem;
+	SAFE_DELETE(pSystem);
 
 	return 0;
 }

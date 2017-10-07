@@ -1,11 +1,5 @@
 #include "FJSystemEngine.h"
 
-struct SystemSetting
-{
-	int windowWidth;
-	int windowHeight;
-};
-
 SystemSetting g_setting;
 
 FJSystemEngine* FJSystemEngine::_pInstance = nullptr;
@@ -26,8 +20,8 @@ FJSystemEngine::FJSystemEngine()
 
 	if (!result)
 	{
-#ifdef _FJ_DEBUG_
-		MessageBox(nullptr, L"Failed to load data.", L"Error", MB_OK | MB_ICONERROR);
+#ifdef _FJ_DEBUG
+		ErrMsgBox(L"Failed to load data.");
 #endif
 		m_bEnd = true;
 		return;
@@ -41,15 +35,22 @@ FJSystemEngine::FJSystemEngine()
 
 	if (!result)
 	{
-		MessageBox(nullptr, L"Failed to create window.", L"Error", MB_OK | MB_ICONERROR);
+		ErrMsgBox(L"Failed to create window.");
 		m_bEnd = true;
 		return;
 	}
+
+
+	//----------------------------
+	// 렌더링 엔진 생성 및 초기화
+	//----------------------------
+	_pRenderer = new FJRenderingEngine(_hWnd);
 }
 
 FJSystemEngine::~FJSystemEngine()
 {
-
+	SAFE_DELETE(_pRenderer)
+	ShutdownWindow();
 }
 
 ////////////////////////////////////////
@@ -74,7 +75,7 @@ bool FJSystemEngine::InitWindow()
 							WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
 							//WS_OVERLAPPEDWINDOW, 
 							0, 0, 
-							g_setting.windowWidth, g_setting.windowHeight,
+							g_setting.displayMode.Width, g_setting.displayMode.Height,
 							GetDesktopWindow(), NULL, 
 							wc.hInstance, NULL
 	);
@@ -86,11 +87,37 @@ bool FJSystemEngine::InitWindow()
 	::ShowWindow(_hWnd, SW_SHOWDEFAULT);
 	::UpdateWindow(_hWnd);
 
+	// 클라이언트 영역 크기 재조정 : 필수. 삭제금지
 	ResizeWindow();
+
+	// 마우스 커서 : 기본화살표로 설정.
+	SetCursor(LoadCursor(NULL, IDC_ARROW));
 
 	return true;
 }
 
+
+
+void FJSystemEngine::ShutdownWindow()
+{
+	// 마우스 커서를 표시합니다.
+	ShowCursor(true);
+
+	/*// 풀스크린 모드를 빠져나올 때 디스플레이 설정을 바꿉니다.
+	if (FULL_SCREEN)
+	{
+		ChangeDisplaySettings(NULL, 0);
+	}*/
+
+	// 창을 제거합니다.
+	DestroyWindow(_hWnd);
+	_hWnd = NULL;
+
+	// 어플리케이션 인스턴스를 제거합니다.
+	UnregisterClass(_className, ::GetModuleHandle(NULL));
+
+	return;
+}
 
 
 
@@ -130,8 +157,8 @@ bool FJSystemEngine::ResizeWindow()
 	RECT newrc;
 	newrc.left = 0;
 	newrc.top = 0;
-	newrc.right = g_setting.windowWidth;
-	newrc.bottom = g_setting.windowHeight;
+	newrc.right = g_setting.displayMode.Width;
+	newrc.bottom = g_setting.displayMode.Height;
 
 	//newrc 만큼의 클라이언트 영역을 포함하는 윈도우 '전체' 크기를 구합니다.
 	//현재 '메뉴' 는 없다는 가정하에 처리되고 있음.
@@ -201,6 +228,48 @@ void FJSystemEngine::MessagePump()
 	}
 }
 
+
+
+
+void FJSystemEngine::LoadData()
+{
+	_pRenderer->SetClearColor(COLOR(0.0f, 0.125f, 0.3f, 1.0f));
+}
+
+
+
+
+void FJSystemEngine::Update()
+{
+	//-------------------------------
+	// 엔진/시스템 갱신.
+	//------------------------------- 
+	//float dTime = EngineUpdate();
+}
+
+
+
+
+void FJSystemEngine::Rendering()
+{
+	//-------------------------------
+	// 장면 그리기 시작.. 
+	//-------------------------------
+
+	//렌더타겟(백버퍼) 지우기.. 
+	_pRenderer->ClearBackBuffer();
+
+
+
+	//-------------------------------
+	// 장면 그리기 종료.
+	//------------------------------- 
+	_pRenderer->Flip();
+}
+
+
+
+
 LRESULT CALLBACK FJSystemEngine::MessageProcedure(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
@@ -230,8 +299,15 @@ bool FJSystemEngine::SaveSetting()
 
 bool FJSystemEngine::LoadSetting()
 {
-	g_setting.windowWidth = 1600;
-	g_setting.windowHeight = 900;
+	ZeroMemory(&g_setting, sizeof(g_setting));
+
+	g_setting.displayMode.Width = 1600;								// 해상도 결정.(백버퍼 크기)
+	g_setting.displayMode.Height = 900;
+	g_setting.displayMode.RefreshRate.Numerator = 0;				// 버퍼 갱신율.(수직동기화 VSync 활성화시 표준갱신율 적용 : 60hz)
+	//g_setting.displayMode.RefreshRate.Numerator = 0;				// 버퍼 갱신율.(수직동기화 VSync Off)
+	g_setting.displayMode.RefreshRate.Denominator = 1;
+	g_setting.displayMode.Format = DXGI_FORMAT_R8G8B8A8_UNORM;		// 백버퍼 색상규격 (A8R8G8B8) 창모드에서는 생략 가능 
+	g_setting.bWindowMode = true;
 
 	return true;
 }

@@ -139,12 +139,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FJRenderingEngine.cpp" />
     <ClCompile Include="FJSystemEngine.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FJDefine.h" />
+    <ClInclude Include="FJRenderingEngine.h" />
     <ClInclude Include="FJSystemEngine.h" />
+    <ClInclude Include="Frojengine.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
