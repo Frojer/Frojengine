@@ -16,11 +16,26 @@
     <Filter Include="Frojengine">
       <UniqueIdentifier>{c7ac5f48-e74c-48f3-99bc-62168699d0bb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Frojengine\Source File">
+    <Filter Include="Frojengine\fx">
+      <UniqueIdentifier>{87ad40b2-7d43-4b20-8634-70e5872f6cf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\System">
+      <UniqueIdentifier>{86d4b6bb-6c55-4a96-9ea8-9a26675e4703}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\System\Header File">
+      <UniqueIdentifier>{df1f6c55-e501-4f47-92d6-7d6a9157ce04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\System\Source File">
       <UniqueIdentifier>{fcbb183d-0c15-4d36-afba-a727ed0b5dbf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Frojengine\Header File">
-      <UniqueIdentifier>{df1f6c55-e501-4f47-92d6-7d6a9157ce04}</UniqueIdentifier>
+    <Filter Include="Frojengine\Object">
+      <UniqueIdentifier>{705f89e8-6708-4085-b5c1-11636c21cf44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\Object\Source File">
+      <UniqueIdentifier>{3791c184-e6c8-4fd8-b101-8414b22e572a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\Object\Header File">
+      <UniqueIdentifier>{d9c234d0-3dde-4007-9853-8e2059d2a684}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -28,24 +43,39 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="FJSystemEngine.cpp">
-      <Filter>Frojengine\Source File</Filter>
+      <Filter>Frojengine\System\Source File</Filter>
     </ClCompile>
     <ClCompile Include="FJRenderingEngine.cpp">
-      <Filter>Frojengine\Source File</Filter>
+      <Filter>Frojengine\System\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="FJFontEngine.cpp">
+      <Filter>Frojengine\System\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Frojengine\Object\Source File</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FJDefine.h">
-      <Filter>Frojengine\Header File</Filter>
+      <Filter>Frojengine\System\Header File</Filter>
     </ClInclude>
     <ClInclude Include="FJSystemEngine.h">
-      <Filter>Frojengine\Header File</Filter>
+      <Filter>Frojengine\System\Header File</Filter>
     </ClInclude>
     <ClInclude Include="FJRenderingEngine.h">
-      <Filter>Frojengine\Header File</Filter>
+      <Filter>Frojengine\System\Header File</Filter>
     </ClInclude>
     <ClInclude Include="Frojengine.h">
-      <Filter>Frojengine\Header File</Filter>
+      <Filter>Frojengine\System\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="FJFontEngine.h">
+      <Filter>Frojengine\System\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DXTK\Inc\DirectXTK.h">
+      <Filter>Frojengine\System\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Frojengine\Object\Header File</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

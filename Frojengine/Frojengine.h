@@ -34,3 +34,4 @@ using namespace DirectX;
 #include "FJDefine.h"
 #include "FJSystemEngine.h"
 #include "FJRenderingEngine.h"
+#include "FJFontEngine.h"

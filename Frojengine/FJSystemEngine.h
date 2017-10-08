@@ -6,6 +6,10 @@ struct SystemSetting
 {
 	DISPLAYMODE	displayMode;
 
+	// DirectX 버전
+	D3D_FEATURE_LEVEL featureLevels;
+	LPCWSTR strFeatureLevels;
+
 	// 전체화면 사용 여부
 	bool bWindowMode;
 	// 수직동기화 사용여부
@@ -40,16 +44,30 @@ private:
 	// 게임 세팅 저장, 로드
 	bool SaveSetting();
 	bool LoadSetting();
+
+	void Update();
+	void Render();
 	
 public:
 	~FJSystemEngine();
 	void MessagePump();
 
 	void LoadData();
-	void Update();
-	void Rendering();
+
+	void Run();
 
 	static FJSystemEngine* GetInstance();
+
+
+
+	/////////////////////////////////////////////////////////////////////////////////////////////
+	//                                      임시 생성 라인                                       //
+
+	void PutFPS(int x, int y);
+	void ShowInfo();
+
+	//                                      임시 생성 라인                                       //
+	/////////////////////////////////////////////////////////////////////////////////////////////
 };
 
 extern SystemSetting g_setting;

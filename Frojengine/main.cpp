@@ -18,17 +18,10 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	//---------------
 	pSystem->LoadData();
 
-
-	//---------------
-	// Game Loop
-	//---------------
-	while (!pSystem->m_bEnd)
-	{
-		pSystem->MessagePump();
-
-		pSystem->Update();
-		pSystem->Rendering();
-	}
+	//-------------
+	// 엔진 루프
+	//-------------
+	pSystem->Run();
 
 	SAFE_DELETE(pSystem);
 

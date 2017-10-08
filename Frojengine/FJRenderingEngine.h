@@ -2,6 +2,8 @@
 
 #include "Frojengine.h"
 
+class FJFontEngine;
+
 class FJRenderingEngine
 {
 private:
@@ -21,6 +23,7 @@ private:
 	
 
 public:
+	FJFontEngine* m_pFontEngine;
 
 private:
 	bool DXSetup(HWND i_hWnd);
@@ -30,12 +33,14 @@ private:
 	bool CreateRenderTarget();
 
 	void SetViewPort();
-
-	void FJErrorW(TCHAR* file, UINT line, TCHAR* func, BOOL bMBox, HRESULT hr, TCHAR* msg, ...);
+	void GetDeviceInfo();
+	void GetFeatureLevel();
 
 public:
 	FJRenderingEngine(HWND i_hWnd);
 	~FJRenderingEngine();
+
+	static void FJErrorW(TCHAR* file, UINT line, TCHAR* func, BOOL bMBox, HRESULT hr, TCHAR* msg, ...);
 
 	LPDEVICE	GetDevice();
 	LPDXDC		GetDXDC();
@@ -48,4 +53,4 @@ public:
 };
 
 #define FJError(hr, msg, ...)  \
-FJErrorW( __FILEW__, __LINE__, __FUNCTIONW__, TRUE, hr, msg, __VA_ARGS__ )
+FJRenderingEngine::FJErrorW( __FILEW__, __LINE__, __FUNCTIONW__, TRUE, hr, msg, __VA_ARGS__ )

@@ -5,12 +5,21 @@
 FJRenderingEngine::FJRenderingEngine(HWND i_hWnd)
 {
 	DXSetup(i_hWnd);
+
+	m_pFontEngine = new FJFontEngine(_pDevice, _pDXDC);
+
+	if (m_pFontEngine == nullptr)
+	{
+		ErrMsgBox(L"Failed to create FontEngine");
+		return;
+	}
 }
 
 
 
 FJRenderingEngine::~FJRenderingEngine()
 {
+	SAFE_DELETE(m_pFontEngine)
 	DXRelease();
 }
 
@@ -48,6 +57,11 @@ bool FJRenderingEngine::DXSetup(HWND i_hWnd)
 	
 	// 뷰포트 설정.
 	SetViewPort();
+
+
+
+	//장치 정보 획득
+	GetDeviceInfo();
 
 
 	//----------------------------------------
@@ -95,7 +109,7 @@ bool FJRenderingEngine::CreateDeviceSwapChain(HWND i_hWnd)
 	HRESULT hr = S_OK;
 
 	// D3D 기능 레벨 (Direct3D feature level) : DX11 미지원 HW 에서의 호환성 향상
-	D3D_FEATURE_LEVEL featureLevels = D3D_FEATURE_LEVEL_11_0;		// DX11 대응.
+	g_setting.featureLevels = D3D_FEATURE_LEVEL_11_0;		// DX11 대응.
 	//D3D_FEATURE_LEVEL featureLevels = D3D_FEATURE_LEVEL_9_3;		// DX9.0c 대응.
 
 	//--------------------------------------------------
@@ -124,7 +138,7 @@ bool FJRenderingEngine::CreateDeviceSwapChain(HWND i_hWnd)
 			NULL,						// SW Rasterizer DLL 핸들.  HW 가속시에는 NULL.
 			0,							// 디바이스 생성 플래그.(기본값)
 			//D3D11_CREATE_DEVICE_DEBUG,// 디바이스 생성 플래그.(디버그)
-			&featureLevels,				// (생성할) 디바이스 기능 레벨(Feature Level) 배열
+			&g_setting.featureLevels,	// (생성할) 디바이스 기능 레벨(Feature Level) 배열
 			1,							// (생성할) 디바이스 기능 레벨(Feature Level) 배열 크기.
 			D3D11_SDK_VERSION,			// DX SDK 버전.
 			&sd,						// 디바이스 생성 상세 옵션.
@@ -205,6 +219,67 @@ void FJRenderingEngine::SetViewPort()
 	vp.MaxDepth = 1.0f;
 	_pDXDC->RSSetViewports(1, &vp);
 }
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+//
+// 장치/GPU 정보 획득 함수들
+//
+/////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// 장치/GPU 정보 획득
+//
+void FJRenderingEngine::GetDeviceInfo()
+{
+	//장치 기능레벨 확인.
+	GetFeatureLevel();
+
+	//GPU 정보 얻기.
+	//...
+
+	//모니터 정보 얻기.
+	//...
+
+}
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//  DX 기능 레벨 구하기.
+//
+static TCHAR* strFeature[4][4] =
+{
+	{ L"DX9",   L"DX9.1",  L"DX9.2", L"DX9.3" },
+	{ L"DX10",  L"DX10.1", L"N/A",   L"N/A" },
+	{ L"DX11",  L"DX11.1", L"N/A",   L"N/A" },
+	{ L"DX12",  L"DX12.1"  L"N/A",   L"N/A" }
+};
+
+void FJRenderingEngine::GetFeatureLevel()
+{
+	UINT feat = g_setting.featureLevels;
+	UINT ver = 0;
+	UINT sub = 0;
+
+#define OFFSET 0x9;
+
+	ver = ((feat & 0xf000) >> 12) - OFFSET;	//메인 버전 산출.   	
+	sub = ((feat & 0x0f00) >> 8);			//하위 버전 산출.
+
+	g_setting.strFeatureLevels = strFeature[ver][sub];
+}
+
+
 
 
 
