@@ -2,22 +2,42 @@
 
 #include "Frojengine.h"
 
-class Scene
+class CObject;
+
+enum RenderingLayer
+{
+	RL_1,
+	RL_2,
+
+	RL_NUM
+};
+
+class CScene
 {
 private:
 	LPDEVICE	_pDevice;
 	LPDXDC		_pDXDC;
 
+	list<CObject*>	_listObj;
+	list<CObject*>	_listManageDrawObj[RL_NUM];
+	list<CObject*>	_listWasteBin;
+
 public:
 
 private:
 
 public:
-	Scene(LPDEVICE i_pDevice, LPDXDC i_pDXDC);
-	~Scene();
+	CScene(LPDEVICE i_pDevice, LPDXDC i_pDXDC);
+	~CScene();
 
-	virtual void DataLoading() = 0;
+	virtual bool DataLoading() = 0;
 
-	virtual void Update() = 0;
-	virtual void Render() = 0;
+	void Update();
+	void Render();
+
+	virtual void Release() = 0;
+
+	void SortRenderingObject(RenderingLayer i_Layer);
+
+	void ChangeRenderingLayer(CObject& io_obj, RenderingLayer i_Layer);
 };

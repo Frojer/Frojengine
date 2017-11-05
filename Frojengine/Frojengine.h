@@ -1,6 +1,12 @@
 #pragma once
 
 #include <tchar.h>
+#include <list>
+#include <vector>
+#include <unordered_map>
+
+using namespace std;
+
 #include <Windows.h>
 
 /////////////////////////////////////////////////////////////////////////
@@ -31,7 +37,42 @@ using namespace DirectX;
 //#include <dxgi.h>					// DXGI 헤더. (d3d11.h 에 포함됨)
 #pragma comment(lib, "dxgi")		// DXGI 라이브러리. DXGI.dll 필요.
 
+
+
+///////////////////////////////////////////
+//
+//  Frojer Engine System Header
+//
+///////////////////////////////////////////
+
 #include "FJDefine.h"
 #include "FJSystemEngine.h"
 #include "FJRenderingEngine.h"
 #include "FJFontEngine.h"
+
+
+
+///////////////////////////////////////////
+//
+//  Frojer Engine Object Header
+//
+///////////////////////////////////////////
+
+#include "Scene.h"
+#include "Object.h"
+#include "Model.h"
+#include "Mesh.h"
+#include "Material.h"
+#include "Shader.h"
+
+
+
+///////////////////////////////////////////
+//
+//  Frojer Engine Object Manager Header
+//
+///////////////////////////////////////////
+
+#include "SceneManager.h"
+#include "ShaderManager.h"
+#include "MeshManager.h"

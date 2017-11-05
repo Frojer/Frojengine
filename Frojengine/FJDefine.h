@@ -12,6 +12,20 @@ typedef ID3D11DeviceContext*	LPDXDC;
 typedef IDXGISwapChain*			LPSWAPCHAIN;
 typedef ID3D11RenderTargetView*	LPRTVIEW;
 
+typedef ID3D11Buffer*		LPBUFFER;
+typedef LPBUFFER			LPVERTEXBUFFER;
+typedef LPBUFFER			LPINDEXBUFFER;
+typedef ID3D11InputLayout*	LPINPUTLAYOUT;
+
+typedef ID3D11Texture2D*	LPTEXTURE2D;
+
+typedef ID3D11VertexShader*	LPVERTEXSHADER;
+typedef ID3D11PixelShader*	LPPIXELSHADER;
+typedef ID3DBlob*			LPXDATA;			// 임의 데이터 저장용 버퍼.(Vertex, Adjacency, material, binary code, etc..)
+typedef LPXDATA				LPVSCODE;			// 컴파일된 셰이더 바이너리코드 저장 버퍼.
+
+
+
 
 // 장치 설정 정보 구조체. (DX9/11 구형 호환성 유지용)
 typedef DXGI_MODE_DESC		DISPLAYMODE;		// DX11 대응
@@ -47,6 +61,19 @@ typedef XMFLOAT2		VECTOR2;
 // 색상 타입 : 2가지.
 //typedef XMCOLOR		COLOR;		// r, g, b, a.  [정수형 0~255]
 typedef XMFLOAT4		COLOR;		// r, g, b, a.  [실수형 0~1.0]
+
+
+//////////////////////////////////////////////////
+//
+//  정점 데이터 구조 정의
+//
+//////////////////////////////////////////////////
+struct FVF_PNT
+{
+	VECTOR3 pos;
+	VECTOR3 nor;
+	VECTOR2 uv;
+};
 
 
 

@@ -54,6 +54,30 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Frojengine\Object\Source File</Filter>
     </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Frojengine\Object\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Frojengine\Object\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Frojengine\Object\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Frojengine\Object\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Frojengine\Object\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Frojengine\Object\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderManager.cpp">
+      <Filter>Frojengine\Object\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshManager.cpp">
+      <Filter>Frojengine\Object\Source File</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FJDefine.h">
@@ -75,6 +99,30 @@
       <Filter>Frojengine\System\Header File</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
+      <Filter>Frojengine\Object\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Frojengine\Object\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Frojengine\Object\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Frojengine\Object\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Frojengine\Object\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Frojengine\Object\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Frojengine\Object\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderManager.h">
+      <Filter>Frojengine\Object\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshManager.h">
       <Filter>Frojengine\Object\Header File</Filter>
     </ClInclude>
   </ItemGroup>
