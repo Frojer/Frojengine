@@ -12,6 +12,12 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 {
 	FJSystemEngine* pSystem = FJSystemEngine::GetInstance();
 
+	if (!pSystem->CreateEngine())
+	{
+		SAFE_DELETE(pSystem);
+
+		return 0;
+	}
 
 	//---------------
 	// 데이터 로딩

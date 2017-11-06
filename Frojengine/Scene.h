@@ -23,6 +23,7 @@ private:
 	list<CObject*>	_listWasteBin;
 
 public:
+	LPCWSTR m_Name;
 
 private:
 
@@ -30,7 +31,7 @@ public:
 	CScene(LPDEVICE i_pDevice, LPDXDC i_pDXDC);
 	~CScene();
 
-	virtual bool DataLoading() = 0;
+	virtual bool Load() = 0;
 
 	void Update();
 	void Render();

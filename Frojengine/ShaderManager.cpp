@@ -15,24 +15,15 @@ ShaderManager::~ShaderManager()
 
 bool ShaderManager::InsertShader(LPCWSTR i_fileName)
 {
-	bool result;
-	CShader* pShader = new CShader;
+	CShader* pShader;
+	
+	if (_shaderMap.find(i_fileName) != _shaderMap.end())
+		return false;
+
+	pShader = CShader::CreateShader(i_fileName, _pDevice);
 
 	if (pShader == nullptr)
-	{
-		ErrMsgBox(L"Failed to Memory Allocate");
 		return false;
-	}
-
-	result = pShader->CreateShader(i_fileName, _pDevice);
-
-	if (!result)
-	{
-		delete pShader;
-		pShader = nullptr;
-
-		return false;
-	}
 
 	_shaderMap.insert(pair<LPCWSTR, CShader*>(i_fileName, pShader));
 
@@ -55,10 +46,13 @@ bool ShaderManager::GetShader(LPCWSTR i_fileName)
 
 void ShaderManager::DeleteShader(LPCWSTR i_fileName)
 {
-	delete _shaderMap[i_fileName];
-	_shaderMap[i_fileName] = nullptr;
+	if (_shaderMap.find(i_fileName) != _shaderMap.end())
+	{
+		delete _shaderMap[i_fileName];
+		_shaderMap[i_fileName] = nullptr;
 
-	_shaderMap.erase(i_fileName);
+		_shaderMap.erase(i_fileName);
+	}
 }
 
 

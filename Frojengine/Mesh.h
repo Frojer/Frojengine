@@ -9,7 +9,7 @@ protected:
 	LPINDEXBUFFER _pIB;
 
 public:
-	vector<FVF_PNT>			m_verts;
+	vector<VF_PNT>			m_verts;
 	vector<unsigned int>	m_indics;
 
 private:
@@ -18,8 +18,10 @@ private:
 
 public:
 	CMesh();
-	CMesh(LPVERTEXBUFFER i_pVB, LPINDEXBUFFER i_pIB, vector<FVF_PNT> i_verts, vector<unsigned int> i_indics);
+	CMesh(LPVERTEXBUFFER i_pVB, LPINDEXBUFFER i_pIB, vector<VF_PNT> i_verts, vector<unsigned int> i_indics);
 	~CMesh();
+
+	static CMesh* CreateMesh(LPCWSTR i_fileName);
 
 	friend class MeshManager;
 };

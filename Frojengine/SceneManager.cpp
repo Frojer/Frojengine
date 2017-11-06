@@ -1,28 +1,82 @@
 #include "SceneManager.h"
 
+SceneManager* SceneManager::_pInstance = nullptr;
 CScene* SceneManager::pCurrentScene = nullptr;
 
-
-bool SceneManager::ChangeScene(LPCWSTR i_sceneName)
+SceneManager::SceneManager()
 {
-	bool result;
 
-	if (pCurrentScene != nullptr)
+}
+
+
+SceneManager::~SceneManager()
+{
+	for (UINT i = 0; i < _vecScene.size(); i++)
 	{
-		pCurrentScene->Release();
+		_vecScene[i]->Release();
+		delete _vecScene[i];
+		_vecScene[i] = nullptr;
 	}
 
-	pCurrentScene = _mapScene[i_sceneName];
+	_vecScene.clear();
+}
 
-	result = pCurrentScene->DataLoading();
 
-	if (!result)
+SceneManager* SceneManager::GetInstance()
+{
+	if (_pInstance == nullptr)
+	{
+		_pInstance = new SceneManager();
+	}
+
+	return _pInstance;
+}
+
+
+bool SceneManager::LoadScene(LPCWSTR i_sceneName)
+{
+	if (_pChangeScene != nullptr)
+		return false;
+
+	for (UINT i = 0; i < _vecScene.size(); i++)
+	{
+		if (wcscmp(_vecScene[i]->m_Name, i_sceneName) == 0)
+		{
+			_pChangeScene = _vecScene[i];
+			break;
+		}
+	}
+
+	if (_pChangeScene == nullptr)
 		return false;
 
 	return true;
 }
 
-bool SceneManager::ChangeScene(int i_sceneNumber)
+
+bool SceneManager::LoadScene(UINT i_sceneNumber)
 {
+	if (_pChangeScene != nullptr)
+		return false;
+
+	if (_vecScene.size() <= i_sceneNumber)
+		return false;
+
+	_pChangeScene = _vecScene[i_sceneNumber];
+
 	return true;
+}
+
+
+void SceneManager::ChangeScene()
+{
+	if (_pChangeScene == nullptr)
+		return;
+
+	SAFE_RELEASE(SceneManager::pCurrentScene);
+
+	SceneManager::pCurrentScene = _pChangeScene;
+	_pChangeScene = nullptr;
+
+	SceneManager::pCurrentScene->Load();
 }

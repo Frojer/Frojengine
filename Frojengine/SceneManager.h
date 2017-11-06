@@ -7,17 +7,27 @@ class CScene;
 class SceneManager
 {
 private:
-	unordered_map<LPCWSTR, CScene*> _mapScene;
+	static SceneManager* _pInstance;
+
+	vector<CScene*> _vecScene;
+	CScene* _pChangeScene;
 	bool _bReadyToAsyncChange;
 
 public:
 	static CScene* pCurrentScene;
 
 private:
+	SceneManager();
 
 public:
-	bool ChangeScene(LPCWSTR i_sceneName);
-	bool ChangeScene(int i_sceneNumber);
+	~SceneManager();
+
+	static SceneManager* GetInstance();
+
+	bool LoadScene(LPCWSTR i_sceneName);
+	bool LoadScene(UINT i_sceneNumber);
+
+	void ChangeScene();
 	bool ChangeAsyncScene(LPCWSTR i_sceneName);
 	bool ChangeAsyncScene(int i_sceneNumber);
 };

@@ -12,8 +12,8 @@ public:
 	~MeshManager();
 
 	bool InsertMesh(LPCWSTR i_fileName);
-	bool GetMesh(LPCWSTR i_fileName);
+	CMesh* GetMesh(LPCWSTR i_fileName);
 
-	void DeleteShader(LPCWSTR i_fileName);
+	void DeleteMesh(LPCWSTR i_fileName);
 	void Clear();
 };

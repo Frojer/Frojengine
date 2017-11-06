@@ -1,18 +1,18 @@
 #include "FJRenderingEngine.h"
 
+// 장치 상태 및 렌더링 명령 관리 인터페이스.
+LPDEVICE	_pDevice;
+LPDXDC		_pDXDC;
+LPSWAPCHAIN	_pSwapChain;
+LPRTVIEW	_pRTView;
 
+// 무슨색으로 백버퍼를 지울지
+COLOR _clearCol;
 
-FJRenderingEngine::FJRenderingEngine(HWND i_hWnd)
+FJRenderingEngine::FJRenderingEngine()
+	: _pDevice(nullptr), _pDXDC(nullptr), _pSwapChain(nullptr), _pRTView(nullptr), _clearCol(COLOR(0.0f, 0.0f, 8.0f, 1.0f))
 {
-	DXSetup(i_hWnd);
-
-	m_pFontEngine = new FJFontEngine(_pDevice, _pDXDC);
-
-	if (m_pFontEngine == nullptr)
-	{
-		ErrMsgBox(L"Failed to create FontEngine");
-		return;
-	}
+	
 }
 
 
@@ -21,6 +21,27 @@ FJRenderingEngine::~FJRenderingEngine()
 {
 	SAFE_DELETE(m_pFontEngine)
 	DXRelease();
+}
+
+
+bool FJRenderingEngine::CreateRenderingEngine(HWND i_hWnd)
+{
+	bool result;
+
+	result = DXSetup(i_hWnd);
+
+	if (!result)
+		return false;
+
+	m_pFontEngine = new FJFontEngine(_pDevice, _pDXDC);
+
+	if (m_pFontEngine == nullptr)
+	{
+		ErrMsgBox(L"Failed to create FontEngine");
+		return false;
+	}
+
+	return true;
 }
 
 
@@ -36,17 +57,13 @@ bool FJRenderingEngine::DXSetup(HWND i_hWnd)
 	result = CreateDeviceSwapChain(i_hWnd);
 
 	if (!result)
-	{
 		return false;
-	}
 
 	// 장치-스왑체인의 렌더타겟(백버퍼) 획득
 	result = CreateRenderTarget();
 
 	if (!result)
-	{
 		return false;
-	}
 
 	// 장치 출력병합기(Output Merger) 에 렌터링 타겟 및 깊이-스텐실 버퍼 등록.
 	_pDXDC->OMSetRenderTargets(

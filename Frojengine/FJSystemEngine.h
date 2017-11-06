@@ -50,6 +50,8 @@ private:
 	
 public:
 	~FJSystemEngine();
+	bool CreateEngine();
+
 	void MessagePump();
 
 	void LoadData();

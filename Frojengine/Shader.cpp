@@ -12,41 +12,52 @@ CShader::CShader()
 
 CShader::~CShader()
 {
-	SAFE_RELEASE(_pVS);
-	SAFE_RELEASE(_pPS);
 	SAFE_RELEASE(_pInputLayout);
+	SAFE_RELEASE(_pPS);
+	SAFE_RELEASE(_pVS);
+	SAFE_RELEASE(_pVSCode);
 }
 
 
-bool CShader::CreateShader(LPCWSTR i_fileName, LPDEVICE i_pDevice)
+CShader* CShader::CreateShader(LPCWSTR i_fileName, LPDEVICE i_pDevice)
 {
 	CShader* pShader = new CShader();
+
+	if (pShader == nullptr)
+	{
+		ErrMsgBox(L"Failed to Memory Allocate");
+		return nullptr;
+	}
 
 	//--------------------------
 	// 정점 셰이더 생성.
 	//--------------------------
 	// 정점 셰이더 컴파일 Compile the vertex shader
-
-	HRESULT hr = ShaderCompile(i_fileName, "VS_Main", "vs_5_0", &_pVSCode);
+	HRESULT hr = ShaderCompile(i_fileName, "VS_Main", "vs_5_0", &pShader->_pVSCode);
 	
 	if (FAILED(hr))
 	{
 		FJError(hr, L"Failed to Vertex Shader Compile");
 		//MessageBox(NULL, L"[실패] ShaderLoad :: Vertex Shader 컴파일 실패", L"Error", MB_OK);
-		return false;
+		delete pShader;
+		pShader = nullptr;
+
+		return nullptr;
 	}
 
 	// 정점 셰이더 객체 생성 Create the vertex shader
-	hr = i_pDevice->CreateVertexShader(	_pVSCode->GetBufferPointer(), 
-									    _pVSCode->GetBufferSize(), 
+	hr = i_pDevice->CreateVertexShader(	pShader->_pVSCode->GetBufferPointer(), 
+									    pShader->_pVSCode->GetBufferSize(), 
 									    nullptr, 
-	  								    &_pVS
+	  								    &pShader->_pVS
 			                            );
 	if (FAILED(hr))
 	{
 		FJError(hr, L"Failed to CreateVertexShader()");
-		SAFE_RELEASE(_pVSCode);			//임시 개체 제거.
-		return false;
+		delete pShader;
+		pShader = nullptr;
+
+		return nullptr;
 	}
 
 	//--------------------------
@@ -60,13 +71,17 @@ bool CShader::CreateShader(LPCWSTR i_fileName, LPDEVICE i_pDevice)
 	{
 		FJError(hr, L"Failed to Pixel Shader Compile");
 		//MessageBox(NULL, L"[실패] ShaderLoad :: Pixel Shader 컴파일 실패", L"Error", MB_OK);
-		return false;
+
+		delete pShader;
+		pShader = nullptr;
+
+		return nullptr;
 	}
 	// 픽셀 셰이더 객체 생성 Create the pixel shader
 	hr = i_pDevice->CreatePixelShader(	pPSCode->GetBufferPointer(), 
 										pPSCode->GetBufferSize(), 
 										nullptr,
-										&_pPS
+										&pShader->_pPS
 									 );
 
 	SAFE_RELEASE(pPSCode);				//임시 개체 제거.	
@@ -74,10 +89,14 @@ bool CShader::CreateShader(LPCWSTR i_fileName, LPDEVICE i_pDevice)
 	if (FAILED(hr))
 	{
 		FJError(hr, L"Failed to CreatePixelShader()");
-		return false;
+
+		delete pShader;
+		pShader = nullptr;
+
+		return nullptr;
 	}
 
-	return true;
+	return pShader;
 }
 
 

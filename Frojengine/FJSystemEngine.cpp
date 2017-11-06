@@ -6,6 +6,18 @@ FJSystemEngine* FJSystemEngine::_pInstance = nullptr;
 
 FJSystemEngine::FJSystemEngine()
 {
+	
+}
+
+FJSystemEngine::~FJSystemEngine()
+{
+	SAFE_DELETE(_pRenderer)
+	ShutdownWindow();
+}
+
+
+bool FJSystemEngine::CreateEngine()
+{
 	bool result;
 
 	m_bEnd = false;
@@ -23,8 +35,7 @@ FJSystemEngine::FJSystemEngine()
 #ifdef _FJ_DEBUG
 		ErrMsgBox(L"Failed to load data.");
 #endif
-		m_bEnd = true;
-		return;
+		return false;
 	}
 
 
@@ -36,22 +47,24 @@ FJSystemEngine::FJSystemEngine()
 	if (!result)
 	{
 		ErrMsgBox(L"Failed to create window.");
-		m_bEnd = true;
-		return;
+		
+		return false;
 	}
 
 
 	//----------------------------
 	// 렌더링 엔진 생성 및 초기화
 	//----------------------------
-	_pRenderer = new FJRenderingEngine(_hWnd);
+	_pRenderer = new FJRenderingEngine();
+
+	result = _pRenderer->CreateRenderingEngine(_hWnd);
+
+	if (!result)
+		return false;
+
+	return true;
 }
 
-FJSystemEngine::~FJSystemEngine()
-{
-	SAFE_DELETE(_pRenderer)
-	ShutdownWindow();
-}
 
 ////////////////////////////////////////
 //

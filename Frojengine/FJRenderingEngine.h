@@ -36,8 +36,10 @@ private:
 	void GetDeviceInfo();
 	void GetFeatureLevel();
 
+	bool CreateRenderingEngine(HWND i_hWnd);
+
 public:
-	FJRenderingEngine(HWND i_hWnd);
+	FJRenderingEngine();
 	~FJRenderingEngine();
 
 	static void FJErrorW(TCHAR* file, UINT line, TCHAR* func, BOOL bMBox, HRESULT hr, TCHAR* msg, ...);
@@ -50,6 +52,8 @@ public:
 
 	void ClearBackBuffer();
 	void Flip();
+
+	friend class FJSystemEngine;
 };
 
 #define FJError(hr, msg, ...)  \

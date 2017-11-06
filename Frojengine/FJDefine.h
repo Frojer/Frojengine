@@ -68,7 +68,7 @@ typedef XMFLOAT4		COLOR;		// r, g, b, a.  [실수형 0~1.0]
 //  정점 데이터 구조 정의
 //
 //////////////////////////////////////////////////
-struct FVF_PNT
+struct VF_PNT
 {
 	VECTOR3 pos;
 	VECTOR3 nor;

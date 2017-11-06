@@ -2,6 +2,8 @@
 
 #include "Frojengine.h"
 
+class CShader;
+
 class ShaderManager
 {
 private:
