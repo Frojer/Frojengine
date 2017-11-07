@@ -5,15 +5,15 @@
 class MeshManager
 {
 private:
-	unordered_map<LPCWSTR, CMesh*> _meshMap;
+	static unordered_map<LPCWSTR, CMesh*> _meshMap;
+	MeshManager();
 
 public:
-	MeshManager();
 	~MeshManager();
 
-	bool InsertMesh(LPCWSTR i_fileName);
-	CMesh* GetMesh(LPCWSTR i_fileName);
+	static bool InsertMesh(LPCWSTR i_fileName);
+	static CMesh* GetMesh(LPCWSTR i_fileName);
 
-	void DeleteMesh(LPCWSTR i_fileName);
-	void Clear();
+	static void DeleteMesh(LPCWSTR i_fileName);
+	static void Clear();
 };

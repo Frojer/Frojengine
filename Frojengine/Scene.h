@@ -14,19 +14,18 @@ enum RenderingLayer
 
 class CScene
 {
-private:
+protected:
 	LPDEVICE	_pDevice;
 	LPDXDC		_pDXDC;
 
 	list<CObject*>	_listObj;
-	list<CObject*>	_listManageDrawObj[RL_NUM];
-	list<CObject*>	_listWasteBin;
-
+	//list<CObject*>	_listManageDrawObj[RL_NUM];
+	
 public:
 	LPCWSTR m_Name;
 
 private:
-
+	
 public:
 	CScene(LPDEVICE i_pDevice, LPDXDC i_pDXDC);
 	~CScene();
@@ -36,9 +35,5 @@ public:
 	void Update();
 	void Render();
 
-	virtual void Release() = 0;
-
-	void SortRenderingObject(RenderingLayer i_Layer);
-
-	void ChangeRenderingLayer(CObject& io_obj, RenderingLayer i_Layer);
+	void Release();
 };

@@ -5,6 +5,9 @@
 class CShader
 {
 private:
+	static LPDEVICE _pDevice;
+	static LPDXDC _pDXDC;
+
 	LPVERTEXSHADER _pVS;
 	LPPIXELSHADER _pPS;
 	LPXDATA	_pVSCode;
@@ -19,11 +22,15 @@ private:
 		ID3DBlob** o_ppCode		//[출력] 컴파일된 셰이더 코드.
 	);
 
+	void Render();
+
 public:
 	CShader();
 	~CShader();
 
-	static CShader* CreateShader(LPCWSTR i_fileName, LPDEVICE i_pDevice);
+	static CShader* CreateShader(LPCWSTR i_fileName);
 
 	friend class ShaderManager;
+	friend class FJSystemEngine;
+	friend class CMaterial;
 };

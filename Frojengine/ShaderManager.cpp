@@ -1,26 +1,15 @@
 #include "ShaderManager.h"
 
-ShaderManager::ShaderManager(LPDEVICE i_pDevice)
-	: _pDevice(i_pDevice)
-{
-
-}
-
-
-ShaderManager::~ShaderManager()
-{
-	Clear();
-}
-
+unordered_map<LPCWSTR, CShader*> ShaderManager::_shaderMap;
 
 bool ShaderManager::InsertShader(LPCWSTR i_fileName)
 {
-	CShader* pShader;
+	CShader* pShader = nullptr;
 	
 	if (_shaderMap.find(i_fileName) != _shaderMap.end())
 		return false;
 
-	pShader = CShader::CreateShader(i_fileName, _pDevice);
+	pShader = CShader::CreateShader(i_fileName);
 
 	if (pShader == nullptr)
 		return false;
@@ -31,7 +20,7 @@ bool ShaderManager::InsertShader(LPCWSTR i_fileName)
 }
 
 
-bool ShaderManager::GetShader(LPCWSTR i_fileName)
+CShader* ShaderManager::GetShader(LPCWSTR i_fileName)
 {
 	bool result = true;
 
@@ -40,7 +29,7 @@ bool ShaderManager::GetShader(LPCWSTR i_fileName)
 		result = InsertShader(i_fileName);
 	}
 
-	return result;
+	return _shaderMap[i_fileName];
 }
 
 

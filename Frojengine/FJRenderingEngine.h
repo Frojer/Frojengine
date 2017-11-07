@@ -4,6 +4,12 @@
 
 class FJFontEngine;
 
+enum
+{
+	RM_WIRE = 0x00,
+	RM_SOLID = 0x01
+};
+
 class FJRenderingEngine
 {
 private:
@@ -18,14 +24,24 @@ private:
 	LPRTVIEW	_pRTView;
 
 	// 무슨색으로 백버퍼를 지울지
-	COLOR _clearCol;
+	static COLOR _clearCol;
 
-	
+	enum {
+		RS_SOLID,				// 기본 렌더링 : 솔리드 Soild
+		RS_WIREFRM,				// 와이어프레임 렌더링.
 
-public:
-	FJFontEngine* m_pFontEngine;
+		RS_MAX_
+	};
+
+	//상태 객체 배열 : "기능별" 그룹으로 관리합니다.
+	ID3D11RasterizerState*	_pRState[RS_MAX_];
+	//               Wire
+	// Bit : 0000000 0
+	static byte _rsData;
 
 private:
+	bool CreateRenderingEngine(HWND i_hWnd);
+
 	bool DXSetup(HWND i_hWnd);
 	void DXRelease();
 
@@ -36,7 +52,11 @@ private:
 	void GetDeviceInfo();
 	void GetFeatureLevel();
 
-	bool CreateRenderingEngine(HWND i_hWnd);
+	void RasterStateLoad();
+	void RasterStateRelease();
+
+	void ClearBackBuffer();
+	void Flip();
 
 public:
 	FJRenderingEngine();
@@ -44,14 +64,13 @@ public:
 
 	static void FJErrorW(TCHAR* file, UINT line, TCHAR* func, BOOL bMBox, HRESULT hr, TCHAR* msg, ...);
 
-	LPDEVICE	GetDevice();
-	LPDXDC		GetDXDC();
-
-	void		SetClearColor(COLOR i_col);
-	COLOR		GetClearColor();
-
-	void ClearBackBuffer();
-	void Flip();
+	static void		SetWireFrame(bool i_bSet);
+	static bool		GetWireFrame();
+	static void		SetSolidFrame(bool i_bSet);
+	static bool		GetSolidFrame();
+	static void		SetRasterMode(byte i_rm);
+	static void		SetClearColor(COLOR i_col);
+	static COLOR	GetClearColor();
 
 	friend class FJSystemEngine;
 };

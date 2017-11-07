@@ -9,10 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Frojengine">
       <UniqueIdentifier>{c7ac5f48-e74c-48f3-99bc-62168699d0bb}</UniqueIdentifier>
     </Filter>
@@ -37,6 +33,10 @@
     <Filter Include="Frojengine\Object\Header File">
       <UniqueIdentifier>{d9c234d0-3dde-4007-9853-8e2059d2a684}</UniqueIdentifier>
     </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -46,9 +46,6 @@
       <Filter>Frojengine\System\Source File</Filter>
     </ClCompile>
     <ClCompile Include="FJRenderingEngine.cpp">
-      <Filter>Frojengine\System\Source File</Filter>
-    </ClCompile>
-    <ClCompile Include="FJFontEngine.cpp">
       <Filter>Frojengine\System\Source File</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
@@ -78,6 +75,12 @@
     <ClCompile Include="MeshManager.cpp">
       <Filter>Frojengine\Object\Source File</Filter>
     </ClCompile>
+    <ClCompile Include="MainScene.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Hero.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FJDefine.h">
@@ -90,9 +93,6 @@
       <Filter>Frojengine\System\Header File</Filter>
     </ClInclude>
     <ClInclude Include="Frojengine.h">
-      <Filter>Frojengine\System\Header File</Filter>
-    </ClInclude>
-    <ClInclude Include="FJFontEngine.h">
       <Filter>Frojengine\System\Header File</Filter>
     </ClInclude>
     <ClInclude Include="..\DXTK\Inc\DirectXTK.h">
@@ -124,6 +124,12 @@
     </ClInclude>
     <ClInclude Include="MeshManager.h">
       <Filter>Frojengine\Object\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="MainScene.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Hero.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

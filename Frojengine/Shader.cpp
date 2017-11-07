@@ -4,7 +4,12 @@
 #include "Shader.h"
 
 
+LPDEVICE CShader::_pDevice = nullptr;
+LPDXDC CShader::_pDXDC = nullptr;
+
+
 CShader::CShader()
+	: _pVS(nullptr), _pPS(nullptr), _pVSCode(nullptr), _pInputLayout(nullptr)
 {
 
 }
@@ -19,7 +24,7 @@ CShader::~CShader()
 }
 
 
-CShader* CShader::CreateShader(LPCWSTR i_fileName, LPDEVICE i_pDevice)
+CShader* CShader::CreateShader(LPCWSTR i_fileName)
 {
 	CShader* pShader = new CShader();
 
@@ -46,7 +51,7 @@ CShader* CShader::CreateShader(LPCWSTR i_fileName, LPDEVICE i_pDevice)
 	}
 
 	// 정점 셰이더 객체 생성 Create the vertex shader
-	hr = i_pDevice->CreateVertexShader(	pShader->_pVSCode->GetBufferPointer(), 
+	hr = _pDevice->CreateVertexShader(	pShader->_pVSCode->GetBufferPointer(), 
 									    pShader->_pVSCode->GetBufferSize(), 
 									    nullptr, 
 	  								    &pShader->_pVS
@@ -78,7 +83,7 @@ CShader* CShader::CreateShader(LPCWSTR i_fileName, LPDEVICE i_pDevice)
 		return nullptr;
 	}
 	// 픽셀 셰이더 객체 생성 Create the pixel shader
-	hr = i_pDevice->CreatePixelShader(	pPSCode->GetBufferPointer(), 
+	hr = _pDevice->CreatePixelShader(	pPSCode->GetBufferPointer(), 
 										pPSCode->GetBufferSize(), 
 										nullptr,
 										&pShader->_pPS
@@ -95,6 +100,33 @@ CShader* CShader::CreateShader(LPCWSTR i_fileName, LPDEVICE i_pDevice)
 
 		return nullptr;
 	}
+
+	// 정점 입력구조 Input layout ★
+	// GPU 에 공급될 기하데이터 - 개별 정점의 데이터 구조와 용도등의 정보를 구성합니다.
+	// 구형 Vertex Format(DX7/8/9) 또는 Vertex Declaration(DX9) 과 동일 목적으로 사용되지만 
+	// 신형 렌더링 기술의 요구에 맞추어 구조적 및 기능적으로 확장되었습니다.
+	//
+	// 바른 렌더링 결과를 위해서는 아래의 조건이 동일 또는 호환되어야 합니다.
+	// 1.정점 버퍼의 데이터.  Vertex Buffer Data
+	// 2.정점 구조 Vertex Format (Input Layout)
+	// 3.셰이더 함수의 입력구조.  Vertex Shader (Input Layout)
+	//
+	D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		//  Sementic          format                       offset         classification             
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+	UINT numElements = ARRAYSIZE(layout);
+
+	// 정접 입력구조 객체 생성 Create the input layout
+	hr = _pDevice->CreateInputLayout(  layout,
+										numElements,
+										pShader->_pVSCode->GetBufferPointer(),
+										pShader->_pVSCode->GetBufferSize(),
+										&pShader->_pInputLayout
+									);
+	if (FAILED(hr))
+		return nullptr;
 
 	return pShader;
 }
@@ -145,4 +177,15 @@ HRESULT CShader::ShaderCompile(
 	
 	SAFE_RELEASE(pError);
 	return hr;
+}
+
+
+void CShader::Render()
+{
+	//입력 레이아웃 설정. Set the input layout
+	_pDXDC->IASetInputLayout(_pInputLayout);
+
+	//셰이더 설정.
+	_pDXDC->VSSetShader(_pVS, nullptr, 0);
+	_pDXDC->PSSetShader(_pPS, nullptr, 0);
 }

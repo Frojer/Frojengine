@@ -7,19 +7,13 @@ class CShader;
 class ShaderManager
 {
 private:
-	LPDEVICE _pDevice;
-
-	unordered_map<LPCWSTR, CShader*> _shaderMap;
-
-private:
+	static unordered_map<LPCWSTR, CShader*> _shaderMap;
+	static void Clear();
+	static void DeleteShader(LPCWSTR i_fileName);
 
 public:
-	ShaderManager(LPDEVICE i_pDevice);
-	~ShaderManager();
+	static bool InsertShader(LPCWSTR i_fileName);
+	static CShader* GetShader(LPCWSTR i_fileName);
 
-	bool InsertShader(LPCWSTR i_fileName);
-	bool GetShader(LPCWSTR i_fileName);
-
-	void DeleteShader(LPCWSTR i_fileName);
-	void Clear();
+	friend class FJSystemEngine;
 };

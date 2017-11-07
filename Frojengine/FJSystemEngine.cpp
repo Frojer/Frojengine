@@ -1,5 +1,7 @@
 #include "FJSystemEngine.h"
 
+#include "MainScene.h"
+
 SystemSetting g_setting;
 
 FJSystemEngine* FJSystemEngine::_pInstance = nullptr;
@@ -11,6 +13,7 @@ FJSystemEngine::FJSystemEngine()
 
 FJSystemEngine::~FJSystemEngine()
 {
+	ShaderManager::Clear();
 	SAFE_DELETE(_pRenderer)
 	ShutdownWindow();
 }
@@ -61,6 +64,12 @@ bool FJSystemEngine::CreateEngine()
 
 	if (!result)
 		return false;
+
+	CShader::_pDevice = _pRenderer->_pDevice;
+	CShader::_pDXDC = _pRenderer->_pDXDC;
+	CMesh::_pDevice = _pRenderer->_pDevice;
+	CMesh::_pDXDC = _pRenderer->_pDXDC;
+	CObject::_pDXDC = _pRenderer->_pDXDC;
 
 	return true;
 }
@@ -246,11 +255,20 @@ void FJSystemEngine::MessagePump()
 
 void FJSystemEngine::LoadData()
 {
-	// 원래는 이곳에서 Scene을 로드해야하는데
-	// 일단은 씬이 하나라 생각하고 데이터들을 로드합니다
+	SceneManager* pSM = SceneManager::GetInstance();
+	CScene* pScene = nullptr;
 
-	// Clear할 색 설정
-	_pRenderer->SetClearColor(COLOR(0.0f, 0.125f, 0.3f, 1.0f));
+	//==========================================
+	// Scene 생성 후 SceneManager 에게 넣어준다
+	//==========================================
+	pScene = new MainScene(_pRenderer->_pDevice, _pRenderer->_pDXDC);
+
+	pSM->AddScene(pScene);
+
+	//===========================================
+	// 첫번째 씬을 로드한다
+	//===========================================
+	pSM->LoadScene((UINT)0);
 }
 
 
@@ -264,49 +282,23 @@ void FJSystemEngine::Run()
 	{
 		MessagePump();
 
-		Update();
-		Render();
+		SceneManager::GetInstance()->ChangeScene();
+
+		//-------------------------------
+		// 장면 그리기 시작.. 
+		//-------------------------------
+
+		//렌더타겟(백버퍼) 지우기.. 
+		_pRenderer->ClearBackBuffer();
+
+		SceneManager::pCurrentScene->Update();
+		SceneManager::pCurrentScene->Render();
+
+		//-------------------------------
+		// 장면 그리기 종료.
+		//------------------------------- 
+		_pRenderer->Flip();
 	}
-}
-
-
-
-
-void FJSystemEngine::Update()
-{
-	//-------------------------------
-	// 엔진/시스템 갱신.
-	//------------------------------- 
-	//float dTime = EngineUpdate();
-}
-
-
-
-
-void FJSystemEngine::Render()
-{
-	//-------------------------------
-	// 장면 그리기 시작.. 
-	//-------------------------------
-
-	//렌더타겟(백버퍼) 지우기.. 
-	_pRenderer->ClearBackBuffer();
-
-	/////////////////////////////////////////////////////////////////////////////////////////////
-	//                                      임시 생성 라인                                       //
-
-	//도움말 및 기타 렌더링 정보 출력.
-	ShowInfo();
-
-
-	//                                      임시 생성 라인                                       // 
-	/////////////////////////////////////////////////////////////////////////////////////////////
-
-
-	//-------------------------------
-	// 장면 그리기 종료.
-	//------------------------------- 
-	_pRenderer->Flip();
 }
 
 
@@ -363,106 +355,3 @@ FJSystemEngine* FJSystemEngine::GetInstance()
 
 	return _pInstance;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////
-//                                      임시 생성 라인                                       //
-
-
-/////////////////////////////////////////////////////////////////////////////// 
-//
-//  도움말. 
-//
-void FJSystemEngine::ShowInfo()
-{ 
-	PutFPS(0, 0);
-
-	static bool bShow = true;
-	if (IsKeyUp(VK_F1)) bShow ^= true;
-
-	if (!bShow)
-	{
-		//ynTextDraw(1,20, COLOR(1, 1, 0, 1), "[Help] F1"); 
-		return;
-	}
-
-
-	// Today's Topic.
-	{
-		int x = 300, y = 50;
-		COLOR col(1, 1, 1, 1);
-		COLOR col2(1, 1, 0, 1);
-		_pRenderer->m_pFontEngine->TextDraw(x, y, col, L"■ %s", _windowName);
-
-		y += 24;
-		WCHAR* msg =
-			L"1.기본프레임워크 구축.\n"
-			L"2.HW 렌더링 디바이스(DX11 Device) 를 생성.\n"
-			L"3.Idle 시간 렌더링.\n"
-			L"4.스왑체인 Swap(Flipping) chain 의 이해 \n";
-			//L"5.전체화면 또는 창모드 전환 (Alt-Enter) \n"
-			//L"6.수직동기화(VSync): 티어링(Tearing), 셔터링(Shuttering) 방지";
-		_pRenderer->m_pFontEngine->TextDraw(x, y, col, msg);
-	}
-
- 
-	int x = 300, y = 300;
-	static int cnt = 0;
-	COLOR col(1, 1, 0, 1);
-	_pRenderer->m_pFontEngine->TextDraw(x, y, col, L"Hello, Device!!    cnt=%08d", ++cnt);
-
-	y += 14;
-	y += 14;
-	_pRenderer->m_pFontEngine->TextDraw(x, y, col, L"* HW Rendering Device (%s) 버전 *", g_setting.strFeatureLevels);
-
-}
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// 초당 프레임수 출력.
-//
-// 인자 : int x, y : 출력할 화면 좌표.
-//
-void FJSystemEngine::PutFPS(int x, int y)
-{
-	static int oldtime = GetTickCount();
-	int nowtime = GetTickCount();
-
-	static int frmcnt = 0;
-	static float fps = 0.0f;
-
-	++frmcnt;
-
-	int time = nowtime - oldtime;
-	if (time >= 999)
-	{
-		oldtime = nowtime;
-
-		fps = (float)frmcnt * 1000 / (float)time;
-		frmcnt = 0;
-	}
-
-	//char msg[40];
-	//sprintf(msg,"FPS:%.1f/%d", fps, frmcnt );
-	//g_pFont->TextDraw(NULL, msg, -1, NULL, DT_NOCLIP, COLOR(0, 1, 0, 1));
-	_pRenderer->m_pFontEngine->TextDraw(x, y, COLOR(0, 1, 0, 1), L"FPS:%.1f/%d", fps, frmcnt);
-}
-
-
-
-//                                      임시 생성 라인                                       //
-/////////////////////////////////////////////////////////////////////////////////////////////

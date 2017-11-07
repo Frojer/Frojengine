@@ -147,10 +147,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FJFontEngine.cpp" />
     <ClCompile Include="FJRenderingEngine.cpp" />
     <ClCompile Include="FJSystemEngine.cpp" />
+    <ClCompile Include="Hero.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainScene.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshManager.cpp" />
@@ -164,10 +165,11 @@
   <ItemGroup>
     <ClInclude Include="..\DXTK\Inc\DirectXTK.h" />
     <ClInclude Include="FJDefine.h" />
-    <ClInclude Include="FJFontEngine.h" />
     <ClInclude Include="FJRenderingEngine.h" />
     <ClInclude Include="FJSystemEngine.h" />
     <ClInclude Include="Frojengine.h" />
+    <ClInclude Include="Hero.h" />
+    <ClInclude Include="MainScene.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshManager.h" />

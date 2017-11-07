@@ -1,5 +1,7 @@
 #include "MeshManager.h"
 
+unordered_map<LPCWSTR, CMesh*> MeshManager::_meshMap;
+
 MeshManager::MeshManager()
 {
 

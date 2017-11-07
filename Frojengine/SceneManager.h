@@ -24,6 +24,8 @@ public:
 
 	static SceneManager* GetInstance();
 
+	void AddScene(CScene* i_pScene);
+
 	bool LoadScene(LPCWSTR i_sceneName);
 	bool LoadScene(UINT i_sceneNumber);
 

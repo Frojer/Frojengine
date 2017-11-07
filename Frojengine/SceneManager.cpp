@@ -4,6 +4,7 @@ SceneManager* SceneManager::_pInstance = nullptr;
 CScene* SceneManager::pCurrentScene = nullptr;
 
 SceneManager::SceneManager()
+	: _pChangeScene(nullptr), _bReadyToAsyncChange(false)
 {
 
 }
@@ -19,6 +20,12 @@ SceneManager::~SceneManager()
 	}
 
 	_vecScene.clear();
+}
+
+
+void SceneManager::AddScene(CScene* i_pScene)
+{
+	_vecScene.push_back(i_pScene);
 }
 
 

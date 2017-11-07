@@ -1,16 +1,10 @@
 #include "FJRenderingEngine.h"
 
-// 장치 상태 및 렌더링 명령 관리 인터페이스.
-LPDEVICE	_pDevice;
-LPDXDC		_pDXDC;
-LPSWAPCHAIN	_pSwapChain;
-LPRTVIEW	_pRTView;
-
-// 무슨색으로 백버퍼를 지울지
-COLOR _clearCol;
+COLOR FJRenderingEngine::_clearCol = COLOR(0.0f, 0.0f, 0.8f, 1.0f);
+byte FJRenderingEngine::_rsData = 0;
 
 FJRenderingEngine::FJRenderingEngine()
-	: _pDevice(nullptr), _pDXDC(nullptr), _pSwapChain(nullptr), _pRTView(nullptr), _clearCol(COLOR(0.0f, 0.0f, 8.0f, 1.0f))
+	: _pDevice(nullptr), _pDXDC(nullptr), _pSwapChain(nullptr), _pRTView(nullptr)
 {
 	
 }
@@ -19,7 +13,6 @@ FJRenderingEngine::FJRenderingEngine()
 
 FJRenderingEngine::~FJRenderingEngine()
 {
-	SAFE_DELETE(m_pFontEngine)
 	DXRelease();
 }
 
@@ -33,13 +26,7 @@ bool FJRenderingEngine::CreateRenderingEngine(HWND i_hWnd)
 	if (!result)
 		return false;
 
-	m_pFontEngine = new FJFontEngine(_pDevice, _pDXDC);
-
-	if (m_pFontEngine == nullptr)
-	{
-		ErrMsgBox(L"Failed to create FontEngine");
-		return false;
-	}
+	RasterStateLoad();
 
 	return true;
 }
@@ -100,6 +87,8 @@ bool FJRenderingEngine::DXSetup(HWND i_hWnd)
 //
 void FJRenderingEngine::DXRelease()
 {
+	RasterStateRelease();
+
 	// 장치 상태 리셋 : 제거 전에 초기화를 해야 합니다. (메모리 누수 방지)
 	if (_pDXDC)
 		_pDXDC->ClearState();
@@ -298,6 +287,58 @@ void FJRenderingEngine::GetFeatureLevel()
 
 
 
+//----------------------------------------------------------------------------
+// 상태 객체 State Objects (DX10/11)
+//
+// DX10 부터 구형 TnL 의 RenderState 가 제거되었습니다.
+// 이를 대신하는 것이 상태객체 State Objects 인터페이스로, 렌더링 상태별 그룹으로 묶고
+// 렌더링시 디바이스에 설정합니다.  이를 통해 장치의 여러 상태 변화를 한번에 설정하여 
+// 불필요한 연산부하(Overhead) 를 줄이고 보다 효과적인 렌더링을 가능케 합니다.
+// 상태객체는 엔진 초기시 제작후 사용하기를 권장하며 종료시 제거(Release) 해야 합니다.
+// 상태객체는 수정불가능(Immutable, 읽기전용) 개체 입니다.
+// DX9 에서는 State-Block 이 이와 유사한 기능을 담당합니다. 
+//
+// 상태 객체 인터페이스 중 '레스터라이즈 스테이지 Rasterize Stage' 상태 조절은 
+// ID3D11RasterizerState 인터페이스를 통해 처리합니다.  
+// 렌더링 설정/기능 모듬 정도로 생각합시다.
+//----------------------------------------------------------------------------
+
+void FJRenderingEngine::RasterStateLoad()
+{
+	// 렌더링 상태 객체
+	D3D11_RASTERIZER_DESC rd;
+	rd.FillMode = D3D11_FILL_SOLID;		// 삼각형 색상 채우기.(기본값)
+	rd.CullMode = D3D11_CULL_BACK;		// 백페이스 컬링 (기본값)		
+	rd.FrontCounterClockwise = false;   // 이하 기본값...
+	rd.DepthBias = 0;
+	rd.DepthBiasClamp = 0;
+	rd.SlopeScaledDepthBias = 0;
+	rd.DepthClipEnable = true;
+	rd.ScissorEnable = false;
+	rd.MultisampleEnable = false;
+	rd.AntialiasedLineEnable = false;
+
+	// 레스터라이져 객체 생성.
+	_pDevice->CreateRasterizerState(&rd, &_pRState[RS_SOLID]);
+
+	// 와이어 프레임 그리기. 
+	rd.FillMode = D3D11_FILL_WIREFRAME;
+	// 레스터라이져 객체 생성.
+	_pDevice->CreateRasterizerState(&rd, &_pRState[RS_WIREFRM]);
+}
+
+
+
+void FJRenderingEngine::RasterStateRelease()
+{
+	for (int i = 0; i < RS_MAX_; i++)
+	{
+		SAFE_RELEASE(_pRState[i]);
+	}
+}
+
+
+
 
 
 ////////////////////// 
@@ -382,17 +423,30 @@ void FJRenderingEngine::Flip()
 //  Get / Set 함수들
 //
 //////////////////////////////////////////////////////////////
-LPDEVICE FJRenderingEngine::GetDevice()
+void FJRenderingEngine::SetWireFrame(bool i_bSet)
 {
-	return _pDevice;
+	i_bSet ? (0xfd & _rsData) | RM_WIRE : (0xfd & _rsData) | RM_SOLID;
 }
 
-
-LPDXDC FJRenderingEngine::GetDXDC()
+bool FJRenderingEngine::GetWireFrame()
 {
-	return _pDXDC;
+	return (_rsData & 0x01) == RM_WIRE ? true : false;
 }
 
+void FJRenderingEngine::SetSolidFrame(bool i_bSet)
+{
+	SetWireFrame(!i_bSet);
+}
+
+bool FJRenderingEngine::GetSolidFrame()
+{
+	return !GetWireFrame();
+}
+
+void FJRenderingEngine::SetRasterMode(byte i_rm)
+{
+	_rsData = i_rm;
+}
 
 void FJRenderingEngine::SetClearColor(COLOR i_col)
 {
