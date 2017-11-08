@@ -6,8 +6,8 @@ class FJFontEngine;
 
 enum
 {
-	RM_WIRE = 0x00,
-	RM_SOLID = 0x01
+	RM_SOLID = 0x00,
+	RM_WIRE = 0x01,
 };
 
 class FJRenderingEngine
@@ -28,7 +28,7 @@ private:
 
 	enum {
 		RS_SOLID,				// 기본 렌더링 : 솔리드 Soild
-		RS_WIREFRM,				// 와이어프레임 렌더링.
+		RS_WIRE,				// 와이어프레임 렌더링.
 
 		RS_MAX_
 	};
@@ -53,16 +53,17 @@ private:
 	void GetFeatureLevel();
 
 	void RasterStateLoad();
+	void RasterStateUpdate();
 	void RasterStateRelease();
 
 	void ClearBackBuffer();
 	void Flip();
 
+	static void FJErrorW(TCHAR* file, UINT line, TCHAR* func, BOOL bMBox, HRESULT hr, TCHAR* msg, ...);
+
 public:
 	FJRenderingEngine();
 	~FJRenderingEngine();
-
-	static void FJErrorW(TCHAR* file, UINT line, TCHAR* func, BOOL bMBox, HRESULT hr, TCHAR* msg, ...);
 
 	static void		SetWireFrame(bool i_bSet);
 	static bool		GetWireFrame();
@@ -73,6 +74,7 @@ public:
 	static COLOR	GetClearColor();
 
 	friend class FJSystemEngine;
+	friend class CShader;
 };
 
 #define FJError(hr, msg, ...)  \

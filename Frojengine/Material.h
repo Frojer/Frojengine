@@ -19,7 +19,7 @@ private:
 	void Render();
 
 public:
-	CMaterial();
+	CMaterial(LPCWSTR i_name);
 	CMaterial(CShader* _pShader);
 	~CMaterial();
 

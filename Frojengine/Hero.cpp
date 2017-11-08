@@ -21,5 +21,6 @@ void Hero::Initialize()
 
 void Hero::Update()
 {
-
+	if (IsKeyUp(VK_SPACE))
+		FJRenderingEngine::SetWireFrame(!FJRenderingEngine::GetWireFrame());
 }

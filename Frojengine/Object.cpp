@@ -52,7 +52,7 @@ void CObject::Render()
 	m_pModel->m_pMaterial->Render();
 	
 	//±×¸®±â! Render a triangle ¡Ú
-	_pDXDC->Draw(3, 0);
+	_pDXDC->Draw(m_pModel->m_pMesh->m_verts.size(), 0);
 }
 
 

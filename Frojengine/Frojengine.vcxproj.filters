@@ -37,6 +37,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Frojengine\Resource Manager">
+      <UniqueIdentifier>{0ed98923-3657-4efa-8406-9fdd48a15212}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\Resource Manager\Header File">
+      <UniqueIdentifier>{22a392d1-16d7-4477-b7a4-37b249dcb030}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\Resource Manager\Source File">
+      <UniqueIdentifier>{8da77925-4492-4c67-936d-b28d037a9084}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -54,9 +63,6 @@
     <ClCompile Include="Object.cpp">
       <Filter>Frojengine\Object\Source File</Filter>
     </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>Frojengine\Object\Source File</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Frojengine\Object\Source File</Filter>
     </ClCompile>
@@ -69,17 +75,23 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Frojengine\Object\Source File</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderManager.cpp">
-      <Filter>Frojengine\Object\Source File</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshManager.cpp">
-      <Filter>Frojengine\Object\Source File</Filter>
-    </ClCompile>
     <ClCompile Include="MainScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Hero.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Frojengine\Resource Manager\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderManager.cpp">
+      <Filter>Frojengine\Resource Manager\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshManager.cpp">
+      <Filter>Frojengine\Resource Manager\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialManager.cpp">
+      <Filter>Frojengine\Resource Manager\Source File</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -101,9 +113,6 @@
     <ClInclude Include="Scene.h">
       <Filter>Frojengine\Object\Header File</Filter>
     </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>Frojengine\Object\Header File</Filter>
-    </ClInclude>
     <ClInclude Include="Object.h">
       <Filter>Frojengine\Object\Header File</Filter>
     </ClInclude>
@@ -119,17 +128,23 @@
     <ClInclude Include="Shader.h">
       <Filter>Frojengine\Object\Header File</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderManager.h">
-      <Filter>Frojengine\Object\Header File</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshManager.h">
-      <Filter>Frojengine\Object\Header File</Filter>
-    </ClInclude>
     <ClInclude Include="MainScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Hero.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshManager.h">
+      <Filter>Frojengine\Resource Manager\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Frojengine\Resource Manager\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderManager.h">
+      <Filter>Frojengine\Resource Manager\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterIalManager.h">
+      <Filter>Frojengine\Resource Manager\Header File</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 #include "Material.h"
 
-CMaterial::CMaterial()
+CMaterial::CMaterial(LPCWSTR i_name)
 	: m_diffuse(VECTOR4(1.0f, 1.0f, 1.0f, 1.0f)), m_ambient(VECTOR3(1.0f, 1.0f, 1.0f)), m_specular(VECTOR3(1.0f, 1.0f, 1.0f)), m_pShader(nullptr)
 {
 

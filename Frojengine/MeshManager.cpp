@@ -2,18 +2,6 @@
 
 unordered_map<LPCWSTR, CMesh*> MeshManager::_meshMap;
 
-MeshManager::MeshManager()
-{
-
-}
-
-
-MeshManager::~MeshManager()
-{
-	Clear();
-}
-
-
 bool MeshManager::InsertMesh(LPCWSTR i_fileName)
 {
 	CMesh* pMesh;

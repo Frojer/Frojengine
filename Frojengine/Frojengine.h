@@ -73,4 +73,5 @@ using namespace DirectX;
 
 #include "SceneManager.h"
 #include "ShaderManager.h"
+#include "MaterIalManager.h"
 #include "MeshManager.h"

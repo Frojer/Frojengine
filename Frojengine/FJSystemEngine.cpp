@@ -13,7 +13,11 @@ FJSystemEngine::FJSystemEngine()
 
 FJSystemEngine::~FJSystemEngine()
 {
+	MaterialManager::Clear();
 	ShaderManager::Clear();
+	MeshManager::Clear();
+	delete SceneManager::GetInstance();
+
 	SAFE_DELETE(_pRenderer)
 	ShutdownWindow();
 }
@@ -290,6 +294,7 @@ void FJSystemEngine::Run()
 
 		//·»´õÅ¸°Ù(¹é¹öÆÛ) Áö¿ì±â.. 
 		_pRenderer->ClearBackBuffer();
+		_pRenderer->RasterStateUpdate();
 
 		SceneManager::pCurrentScene->Update();
 		SceneManager::pCurrentScene->Render();

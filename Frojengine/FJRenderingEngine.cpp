@@ -324,7 +324,23 @@ void FJRenderingEngine::RasterStateLoad()
 	// 와이어 프레임 그리기. 
 	rd.FillMode = D3D11_FILL_WIREFRAME;
 	// 레스터라이져 객체 생성.
-	_pDevice->CreateRasterizerState(&rd, &_pRState[RS_WIREFRM]);
+	_pDevice->CreateRasterizerState(&rd, &_pRState[RS_WIRE]);
+}
+
+
+
+void FJRenderingEngine::RasterStateUpdate()
+{
+	switch (_rsData)
+	{
+	case RM_SOLID:
+		_pDXDC->RSSetState(_pRState[RS_SOLID]);
+		break;
+
+	case RM_WIRE:
+		_pDXDC->RSSetState(_pRState[RS_WIRE]);
+		break;
+	}
 }
 
 
@@ -425,7 +441,7 @@ void FJRenderingEngine::Flip()
 //////////////////////////////////////////////////////////////
 void FJRenderingEngine::SetWireFrame(bool i_bSet)
 {
-	i_bSet ? (0xfd & _rsData) | RM_WIRE : (0xfd & _rsData) | RM_SOLID;
+	_rsData = i_bSet ? (0xfe & _rsData) | RM_WIRE : (0xfe & _rsData) | RM_SOLID;
 }
 
 bool FJRenderingEngine::GetWireFrame()
