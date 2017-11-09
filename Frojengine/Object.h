@@ -6,12 +6,15 @@ class CModel;
 class CMesh;
 class CMaterial;
 
-class CObject
+class CObject : public IObject
 {
 private:
+	static list<CObject*> _objList;
 	static LPDXDC _pDXDC;
 
 protected:
+	CObject* _parent;
+	list<CObject*> _childList;
 
 public:
 	VECTOR3 m_vPos;
@@ -36,6 +39,8 @@ public:
 
 	void ChangeMesh(CMesh* i_pMesh);
 	void ChangeMaterial(CMaterial* i_pMaterial);
+
+	static CObject* Find(unsigned int id);
 
 	friend class FJSystemEngine;
 	friend class CScene;

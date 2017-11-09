@@ -4,6 +4,7 @@
 #include "Shader.h"
 
 
+unordered_map<UINT, CShader*> CShader::_shaderMap;
 LPDEVICE CShader::_pDevice = nullptr;
 LPDXDC CShader::_pDXDC = nullptr;
 

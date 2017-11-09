@@ -93,6 +93,9 @@
     <ClCompile Include="MaterialManager.cpp">
       <Filter>Frojengine\Resource Manager\Source File</Filter>
     </ClCompile>
+    <ClCompile Include="IObject.cpp">
+      <Filter>Frojengine\Object\Source File</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FJDefine.h">
@@ -145,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="MaterIalManager.h">
       <Filter>Frojengine\Resource Manager\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="IObject.h">
+      <Filter>Frojengine\Object\Header File</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

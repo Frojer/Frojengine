@@ -4,9 +4,10 @@
 
 class CShader;
 
-class CMaterial
+class CMaterial : public IObject
 {
 private:
+	static unordered_map<UINT, CMaterial*> _mtrlMap;
 
 public:
 	CShader* m_pShader;
@@ -19,9 +20,10 @@ private:
 	void Render();
 
 public:
-	CMaterial(LPCWSTR i_name);
 	CMaterial(CShader* _pShader);
 	~CMaterial();
+
+	static CMaterial* Find(UINT id);
 
 	friend class CObject;
 };

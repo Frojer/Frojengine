@@ -1,6 +1,7 @@
 #include "Object.h"
 
 LPDXDC CObject::_pDXDC = nullptr;
+list<CObject*> CObject::_objList;
 
 CObject::CObject()
 {
@@ -11,23 +12,25 @@ CObject::CObject()
 	m_vScale.z = 1.0f;
 	
 	m_pModel = nullptr;
+
+	_objList.push_back(this);
 }
 
 CObject::CObject(CModel* pModel = nullptr, VECTOR3& pos, VECTOR3& rot, VECTOR3& scale)
 	: m_vPos(pos), m_vRot(rot), m_vScale(scale), m_pModel(pModel)
 {
-	
+	_objList.push_back(this);
 }
 
 CObject::CObject(VECTOR3& pos, VECTOR3& rot, VECTOR3& scale)
 	: m_vPos(pos), m_vRot(rot), m_vScale(scale), m_pModel(nullptr)
 {
-
+	_objList.push_back(this);
 }
 
 CObject::~CObject()
 {
-
+	FOR_LIST(_objList) { if ((*iter) == this) _objList.erase(iter); break; }
 }
 
 
@@ -37,12 +40,6 @@ void CObject::BufferUpdate()
 		return;
 
 	m_pModel->m_pMesh->UpdateBuffer(m_vPos, m_vRot, m_vScale);
-}
-
-
-void CObject::Update()
-{
-
 }
 
 
@@ -65,4 +62,16 @@ void CObject::ChangeMesh(CMesh* i_pMesh)
 void CObject::ChangeMaterial(CMaterial* i_pMaterial)
 {
 	m_pModel->m_pMaterial = i_pMaterial;
+}
+
+
+CObject* CObject::Find(unsigned int id)
+{
+	FOR_LIST(_objList)
+	{
+		if ((*iter)->GetID() == id)
+			return (*iter);
+	}
+
+	return nullptr;
 }

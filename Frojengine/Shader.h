@@ -2,9 +2,11 @@
 
 #include "Frojengine.h"
 
-class CShader
+class CShader : public IObject
 {
 private:
+	static unordered_map<UINT, CShader*> _shaderMap;
+	
 	static LPDEVICE _pDevice;
 	static LPDXDC _pDXDC;
 
