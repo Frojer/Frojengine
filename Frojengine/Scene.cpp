@@ -1,5 +1,7 @@
 #include "Scene.h"
 
+MATRIXA CScene::mView;
+MATRIXA CScene::mProj;
 
 CScene::CScene(LPDEVICE i_pDevice, LPDXDC i_pDXDC)
 {
@@ -15,12 +17,39 @@ CScene::~CScene()
 }
 
 
+
+void CScene::ClearWasteBin(list<CObject*>::iterator i_iter)
+{
+	if ((*i_iter)->_bDead)
+	{
+		delete (*i_iter);
+		(*i_iter) = nullptr;
+		_listObj.erase(i_iter);
+	}
+
+	else
+	{
+		FOR_STL((*i_iter)->_childList)
+		{
+			ClearWasteBin(iter);
+		}
+	}
+}
+
+
+
 void CScene::Update()
 {
 	auto iter = _listObj.begin();
 	while (iter != _listObj.end())
 	{
 		(*(iter++))->Update();
+	}
+
+	iter = _listObj.begin();
+	while (iter != _listObj.end())
+	{
+		ClearWasteBin(iter++);
 	}
 }
 
@@ -39,10 +68,19 @@ void CScene::Render()
 	//	}
 	//}
 
-	auto iter = _listObj.begin();
-	while (iter != _listObj.end())
+	for (UINT i = 0; i < _vecCam.size(); i++)
 	{
-		(*(iter++))->Render();
+		if (_vecCam[i]->m_Enable)
+		{
+			_vecCam[i]->UseCamera();
+			CShader::_cbDefault.mView = mView;
+			CShader::_cbDefault.mProj = mProj;
+
+			FOR_STL(_listObj)
+			{
+				(*(iter))->Render();
+			}
+		}
 	}
 }
 
@@ -56,4 +94,19 @@ void CScene::Release()
 		(*iter) = nullptr;
 		_listObj.erase(iter++);
 	}
+}
+
+
+void CScene::AddCamera(CCamera* pCam)
+{
+	_vecCam.push_back(pCam);
+}
+
+
+CCamera* CScene::GetCamera(UINT index)
+{
+	if (_vecCam.size() <= index)
+		return nullptr;
+
+	return _vecCam[index];
 }

@@ -13,9 +13,9 @@ FJSystemEngine::FJSystemEngine()
 
 FJSystemEngine::~FJSystemEngine()
 {
-	MaterialManager::Clear();
-	ShaderManager::Clear();
-	MeshManager::Clear();
+	CMaterial::ClearMap();
+	CShader::ClearMap();
+	CMesh::ClearMap();
 	delete SceneManager::GetInstance();
 
 	SAFE_DELETE(_pRenderer)
@@ -68,12 +68,6 @@ bool FJSystemEngine::CreateEngine()
 
 	if (!result)
 		return false;
-
-	CShader::_pDevice = _pRenderer->_pDevice;
-	CShader::_pDXDC = _pRenderer->_pDXDC;
-	CMesh::_pDevice = _pRenderer->_pDevice;
-	CMesh::_pDXDC = _pRenderer->_pDXDC;
-	CObject::_pDXDC = _pRenderer->_pDXDC;
 
 	return true;
 }
@@ -259,6 +253,15 @@ void FJSystemEngine::MessagePump()
 
 void FJSystemEngine::LoadData()
 {
+	//==============
+	// ¼ÎÀÌ´õ ·Îµù
+	//==============
+	CShader* pShader = CShader::CreateShader(L"./fx/Demo.fx");
+	pShader->m_name = L"Default";
+
+	ZeroMemory(&CShader::_cbDefault, sizeof(CB_Default));
+	pShader->CreateDynamicConstantBuffer(sizeof(CB_Default), &CShader::_cbDefault, &CShader::_pCBDefault);
+
 	SceneManager* pSM = SceneManager::GetInstance();
 	CScene* pScene = nullptr;
 
@@ -285,6 +288,8 @@ void FJSystemEngine::Run()
 	while (!m_bEnd)
 	{
 		MessagePump();
+
+		EngineTimer();
 
 		SceneManager::GetInstance()->ChangeScene();
 
@@ -350,6 +355,16 @@ bool FJSystemEngine::LoadSetting()
 
 	return true;
 }
+
+
+void FJSystemEngine::EngineTimer()
+{
+	static int oldtime = GetTickCount();
+	int nowtime = GetTickCount();
+	m_fDeltaTime = (nowtime - oldtime) * 0.001f;
+	oldtime = nowtime;
+}
+
 
 FJSystemEngine* FJSystemEngine::GetInstance()
 {

@@ -84,16 +84,19 @@
     <ClCompile Include="SceneManager.cpp">
       <Filter>Frojengine\Resource Manager\Source File</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderManager.cpp">
-      <Filter>Frojengine\Resource Manager\Source File</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshManager.cpp">
-      <Filter>Frojengine\Resource Manager\Source File</Filter>
-    </ClCompile>
-    <ClCompile Include="MaterialManager.cpp">
-      <Filter>Frojengine\Resource Manager\Source File</Filter>
-    </ClCompile>
     <ClCompile Include="IObject.cpp">
+      <Filter>Frojengine\Object\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Frojengine\Object\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="FJUtility.cpp">
+      <Filter>Frojengine\System\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="FileLoader.cpp">
+      <Filter>Frojengine\System\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
       <Filter>Frojengine\Object\Source File</Filter>
     </ClCompile>
   </ItemGroup>
@@ -137,20 +140,28 @@
     <ClInclude Include="Hero.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="MeshManager.h">
-      <Filter>Frojengine\Resource Manager\Header File</Filter>
+    <ClInclude Include="IObject.h">
+      <Filter>Frojengine\Object\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Frojengine\Object\Header File</Filter>
     </ClInclude>
     <ClInclude Include="SceneManager.h">
       <Filter>Frojengine\Resource Manager\Header File</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderManager.h">
-      <Filter>Frojengine\Resource Manager\Header File</Filter>
+    <ClInclude Include="FJUtility.h">
+      <Filter>Frojengine\System\Header File</Filter>
     </ClInclude>
-    <ClInclude Include="MaterIalManager.h">
-      <Filter>Frojengine\Resource Manager\Header File</Filter>
+    <ClInclude Include="FileLoader.h">
+      <Filter>Frojengine\System\Header File</Filter>
     </ClInclude>
-    <ClInclude Include="IObject.h">
+    <ClInclude Include="Camera.h">
       <Filter>Frojengine\Object\Header File</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="fx\Demo.fx">
+      <Filter>리소스 파일</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

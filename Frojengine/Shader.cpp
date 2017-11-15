@@ -5,6 +5,8 @@
 
 
 unordered_map<UINT, CShader*> CShader::_shaderMap;
+CB_Default CShader::_cbDefault;
+LPBUFFER CShader::_pCBDefault;
 LPDEVICE CShader::_pDevice = nullptr;
 LPDXDC CShader::_pDXDC = nullptr;
 
@@ -12,12 +14,14 @@ LPDXDC CShader::_pDXDC = nullptr;
 CShader::CShader()
 	: _pVS(nullptr), _pPS(nullptr), _pVSCode(nullptr), _pInputLayout(nullptr)
 {
-
+	_shaderMap.insert(pair<UINT, CShader*>(GetID(), this));
 }
 
 
 CShader::~CShader()
 {
+	_shaderMap.erase(GetID());
+	
 	SAFE_RELEASE(_pInputLayout);
 	SAFE_RELEASE(_pPS);
 	SAFE_RELEASE(_pVS);
@@ -116,6 +120,8 @@ CShader* CShader::CreateShader(LPCWSTR i_fileName)
 	{
 		//  Sementic          format                       offset         classification             
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,		 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	UINT numElements = ARRAYSIZE(layout);
 
@@ -181,6 +187,16 @@ HRESULT CShader::ShaderCompile(
 }
 
 
+
+void CShader::ClearMap()
+{
+	auto i = _shaderMap.begin();
+
+	while (i != _shaderMap.end())
+		delete (i++)->second;
+}
+
+
 void CShader::Render()
 {
 	//입력 레이아웃 설정. Set the input layout
@@ -189,4 +205,142 @@ void CShader::Render()
 	//셰이더 설정.
 	_pDXDC->VSSetShader(_pVS, nullptr, 0);
 	_pDXDC->PSSetShader(_pPS, nullptr, 0);
+
+	_pDXDC->VSSetConstantBuffers(0, 1, &_pCBDefault);
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////// 
+//
+// (정적) 상수 버퍼 생성
+//
+HRESULT CShader::CreateConstantBuffer(UINT size, ID3D11Buffer** ppCB)
+{
+	HRESULT hr = S_OK;
+	ID3D11Buffer* pCB = nullptr;
+
+	//상수 버퍼 정보 설정.
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth = size;
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+
+	//상수 버퍼 생성.
+	hr = _pDevice->CreateBuffer(&bd, nullptr, &pCB);
+	if (FAILED(hr))
+	{
+		FJError(hr, L"CreateConstantBuffer : 상수버퍼 생성 실패");
+		return hr;
+	}
+
+	//외부로 전달.
+	*ppCB = pCB;
+
+	return hr;
+}
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// 
+//
+// (동적) 상수 버퍼 생성
+//
+HRESULT CShader::CreateDynamicConstantBuffer(UINT size, LPVOID pData, ID3D11Buffer** ppCB)
+{
+	HRESULT hr = S_OK;
+	ID3D11Buffer* pCB = nullptr;
+
+	//상수 버퍼 정보 설정.
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_DYNAMIC;				//동적 정점버퍼 설정.
+	bd.ByteWidth = size;
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	//CPU 접근 설정.
+
+												//서브리소스 설정.
+	D3D11_SUBRESOURCE_DATA sd;
+	sd.pSysMem = pData;							//(외부) 상수 데이터 설정.
+	sd.SysMemPitch = 0;
+	sd.SysMemSlicePitch = 0;
+
+	//상수 버퍼 생성.
+	hr = _pDevice->CreateBuffer(&bd, &sd, &pCB);
+	if (FAILED(hr))
+	{
+		FJError(hr, L"CreateDynamicConstantBuffer : 동적 상수버퍼 생성 실패");
+		return hr;
+	}
+
+	//외부로 전달.
+	*ppCB = pCB;
+
+	return hr;
+}
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// 
+//
+// 동적 버퍼 갱신.
+//
+HRESULT CShader::UpdateDynamicConstantBuffer(LPDXDC pDXDC, ID3D11Resource* pBuff, LPVOID pData, UINT size)
+{
+	HRESULT hr = S_OK;
+	D3D11_MAPPED_SUBRESOURCE mr;
+	ZeroMemory(&mr, sizeof(mr));
+
+	//상수버퍼 접근
+	hr = pDXDC->Map(pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mr);
+	if (FAILED(hr))
+	{
+		FJError(hr, L"UpdateDynamicConstantBuffer : Map 실패");
+		return hr;
+	}
+
+	//상수 버퍼 갱신.
+	memcpy(mr.pData, pData, size);
+
+	//상수버퍼 닫기.
+	pDXDC->Unmap(pBuff, 0);
+
+
+	return hr;
+}
+
+
+HRESULT CShader::UpdateDefaultBuffer(MATRIXA& mWorld)
+{
+	_cbDefault.mWorld = mWorld;
+	_cbDefault.mWV = mWorld * _cbDefault.mView;
+
+	return UpdateDynamicConstantBuffer(_pDXDC, _pCBDefault, &_cbDefault, sizeof(CB_Default));
+}
+
+
+
+CShader* CShader::Find(UINT id)
+{
+	if (_shaderMap.find(id) == _shaderMap.end())
+		return nullptr;
+
+	return _shaderMap[id];
+}
+
+
+CShader* CShader::Find(LPCWSTR name)
+{
+	FOR_STL(_shaderMap)
+	{
+		if (iter->second->m_name == name)
+			return iter->second;
+	}
+
+	return nullptr;
 }

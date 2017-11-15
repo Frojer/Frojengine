@@ -9,11 +9,11 @@ class CMaterial;
 class CObject : public IObject
 {
 private:
-	static list<CObject*> _objList;
 	static LPDXDC _pDXDC;
+	bool _bDead;
 
 protected:
-	CObject* _parent;
+	CObject* _pParent;
 	list<CObject*> _childList;
 
 public:
@@ -21,7 +21,8 @@ public:
 	VECTOR3 m_vRot;
 	VECTOR3 m_vScale;
 
-	CModel* m_pModel;
+	CMesh*		m_pMesh;
+	CMaterial*	m_pMaterial;
 
 private:
 	void BufferUpdate();
@@ -29,19 +30,25 @@ private:
 
 public:
 	CObject();
-	CObject(CModel* pModel, VECTOR3& pos = VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3& rot = VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3& scale = VECTOR3(0.0f, 0.0f, 0.0f));
 	CObject(VECTOR3& pos, VECTOR3& rot, VECTOR3& scale);
 	~CObject();
 
-	virtual void Initialize() = 0;
+	virtual void Initialize();
 
-	virtual void Update() = 0;
+	virtual void Update();
+
+	void Destroy();
+	void Destroy(float time);
+
+	void SetParent(CObject* i_pParent);
+	CObject* GetParent();
+	list<CObject*> GetChildren();
 
 	void ChangeMesh(CMesh* i_pMesh);
 	void ChangeMaterial(CMaterial* i_pMaterial);
 
 	static CObject* Find(unsigned int id);
 
-	friend class FJSystemEngine;
+	friend class FJRenderingEngine;
 	friend class CScene;
 };

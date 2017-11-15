@@ -1,7 +1,6 @@
 #include "Object.h"
 
 LPDXDC CObject::_pDXDC = nullptr;
-list<CObject*> CObject::_objList;
 
 CObject::CObject()
 {
@@ -11,63 +10,140 @@ CObject::CObject()
 	m_vScale.y = 1.0f;
 	m_vScale.z = 1.0f;
 	
-	m_pModel = nullptr;
+	_bDead = false;
 
-	_objList.push_back(this);
-}
+	_pParent = nullptr;
 
-CObject::CObject(CModel* pModel = nullptr, VECTOR3& pos, VECTOR3& rot, VECTOR3& scale)
-	: m_vPos(pos), m_vRot(rot), m_vScale(scale), m_pModel(pModel)
-{
-	_objList.push_back(this);
+	m_pMesh = nullptr;
+	m_pMaterial = nullptr;
+
+	SceneManager::pCurrentScene->_listObj.push_back(this);
 }
 
 CObject::CObject(VECTOR3& pos, VECTOR3& rot, VECTOR3& scale)
-	: m_vPos(pos), m_vRot(rot), m_vScale(scale), m_pModel(nullptr)
+	: _bDead(false), _pParent(nullptr), m_vPos(pos), m_vRot(rot), m_vScale(scale), m_pMesh(nullptr), m_pMaterial(nullptr)
 {
-	_objList.push_back(this);
+	SceneManager::pCurrentScene->_listObj.push_back(this);
 }
 
 CObject::~CObject()
 {
-	FOR_LIST(_objList) { if ((*iter) == this) _objList.erase(iter); break; }
+	auto iter = _childList.begin();
+	while (iter != _childList.end())
+	{
+		delete (*iter);
+		(*iter) = nullptr;
+		_childList.erase(iter++);
+	}
 }
 
 
 void CObject::BufferUpdate()
 {
-	if (m_pModel == nullptr)
+	if (m_pMesh == nullptr || m_pMaterial == nullptr)
 		return;
 
-	m_pModel->m_pMesh->UpdateBuffer(m_vPos, m_vRot, m_vScale);
+	m_pMaterial->UpdateConstantBuffer(m_pMesh->GetWorldMatrix(m_vPos, m_vRot, m_vScale));
+}
+
+
+void CObject::Initialize()
+{
+
+}
+
+
+
+void CObject::Update()
+{
+	FOR_STL(_childList)
+	{
+		(*iter)->Update();
+	}
 }
 
 
 void CObject::Render()
 {
-	m_pModel->m_pMesh->Render();
-	m_pModel->m_pMaterial->Render();
-	
-	//그리기! Render a triangle ★
-	_pDXDC->Draw(m_pModel->m_pMesh->m_verts.size(), 0);
+	if (m_pMesh != nullptr && m_pMaterial != nullptr)
+	{
+		BufferUpdate();
+
+		m_pMesh->Render();
+		m_pMaterial->Render();
+
+		//그리기! Render a triangle ★
+		_pDXDC->DrawIndexed(m_pMesh->m_indics.size() * 3, 0, 0);
+	}
+
+	FOR_STL(_childList)
+	{
+		(*iter)->Render();
+	}
+}
+
+
+void CObject::Destroy()
+{
+	_bDead = true;
+}
+
+
+void CObject::Destroy(float time)
+{
+
 }
 
 
 void CObject::ChangeMesh(CMesh* i_pMesh)
 {
-	m_pModel->m_pMesh = i_pMesh;
+	m_pMesh = i_pMesh;
 }
 
 
 void CObject::ChangeMaterial(CMaterial* i_pMaterial)
 {
-	m_pModel->m_pMaterial = i_pMaterial;
+	m_pMaterial = i_pMaterial;
+}
+
+
+void CObject::SetParent(CObject* i_pParent)
+{
+	if (_pParent != nullptr)
+	{
+		_pParent->_childList.remove(this);
+		_pParent = nullptr;
+
+		if (i_pParent == nullptr)
+		{
+			SceneManager::pCurrentScene->_listObj.push_back(this);
+		}
+	}
+
+	_pParent = i_pParent;
+
+	if (_pParent != nullptr)
+	{
+		_pParent->_childList.push_back(this);
+		SceneManager::pCurrentScene->_listObj.remove(this);
+	}
+}
+
+
+CObject* CObject::GetParent()
+{
+	return _pParent;
+}
+
+list<CObject*> CObject::GetChildren()
+{
+	return _childList;
 }
 
 
 CObject* CObject::Find(unsigned int id)
 {
-	FOR_LIST(_objList)
+	FOR_STL(SceneManager::pCurrentScene->_listObj)
 	{
 		if ((*iter)->GetID() == id)
 			return (*iter);

@@ -31,6 +31,15 @@ using namespace DirectX;
 //#include <dxgi.h>					// DXGI 헤더. (d3d11.h 에 포함됨)
 #pragma comment(lib, "dxgi")		// DXGI 라이브러리. DXGI.dll 필요.
 
+#ifdef _DEBUG 
+#pragma comment(lib, "DirectXTKd")		//32bit + 디버그 버전.
+//#pragma comment(lib, "DirectXTK64d")	//64bit + 디버그 버전.
+#else
+#pragma comment(lib, "DirectXTK")		//32bit 버전.
+//#pragma comment(lib, "DiectXTK64")	//64bit 버전 
+#endif
+
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 //  타입 과 상수 재정의 : 버전별 호환성 향상 증대가 목적.
@@ -46,7 +55,8 @@ typedef LPBUFFER			LPVERTEXBUFFER;
 typedef LPBUFFER			LPINDEXBUFFER;
 typedef ID3D11InputLayout*	LPINPUTLAYOUT;
 
-typedef ID3D11Texture2D*	LPTEXTURE2D;
+typedef ID3D11Texture2D*			LPTEXTURE2D;
+typedef ID3D11ShaderResourceView*	LPRESOURCEVIEW;
 
 typedef ID3D11VertexShader*	LPVERTEXSHADER;
 typedef ID3D11PixelShader*	LPPIXELSHADER;
@@ -105,11 +115,10 @@ struct VF_PNT
 };
 
 
-struct VF_Pos
+struct IndexFormat
 {
-	VECTOR3 pos;
+	UINT x, y, z;
 };
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -132,4 +141,4 @@ struct VF_Pos
 
 #define ErrMsgBox(msg)	MessageBox(nullptr, msg, L"Error", MB_OK | MB_ICONERROR)
 
-#define FOR_LIST(list) for (auto iter = list.begin(); iter != list.end(); iter++)
+#define FOR_STL(stl) for (auto iter = stl.begin(); iter != stl.end(); iter++)

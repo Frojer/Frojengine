@@ -32,7 +32,7 @@ private:
 
 public:
 	bool	m_bEnd;
-
+	float	m_fDeltaTime;
 private:
 	FJSystemEngine();
 
@@ -44,6 +44,8 @@ private:
 	// 게임 세팅 저장, 로드
 	bool SaveSetting();
 	bool LoadSetting();
+
+	void EngineTimer();
 
 	void Update();
 	void Render();

@@ -17,6 +17,8 @@ public:
 	VECTOR3 m_specular;
 
 private:
+	static void ClearMap();
+	void UpdateConstantBuffer(MATRIXA& mWorld);
 	void Render();
 
 public:
@@ -24,6 +26,8 @@ public:
 	~CMaterial();
 
 	static CMaterial* Find(UINT id);
+	static CMaterial* Find(LPCWSTR name);
 
 	friend class CObject;
+	friend class FJSystemEngine;
 };

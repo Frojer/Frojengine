@@ -26,6 +26,16 @@ bool FJRenderingEngine::CreateRenderingEngine(HWND i_hWnd)
 	if (!result)
 		return false;
 
+	CShader::_pDevice = _pDevice;
+	CShader::_pDXDC = _pDXDC;
+	CMesh::_pDevice = _pDevice;
+	CMesh::_pDXDC = _pDXDC;
+	CObject::_pDXDC = _pDXDC;
+	CTexture2D::_pDevice = _pDevice;
+	CTexture2D::_pDXDC = _pDXDC;
+	CCamera::_pDevice = _pDevice;
+	CCamera::_pDXDC = _pDXDC;
+
 	RasterStateLoad();
 
 	return true;
@@ -308,7 +318,7 @@ void FJRenderingEngine::RasterStateLoad()
 	// 렌더링 상태 객체
 	D3D11_RASTERIZER_DESC rd;
 	rd.FillMode = D3D11_FILL_SOLID;		// 삼각형 색상 채우기.(기본값)
-	rd.CullMode = D3D11_CULL_BACK;		// 백페이스 컬링 (기본값)		
+	rd.CullMode = D3D11_CULL_NONE;		// 백페이스 컬링 (기본값)		
 	rd.FrontCounterClockwise = false;   // 이하 기본값...
 	rd.DepthBias = 0;
 	rd.DepthBiasClamp = 0;
