@@ -28,7 +28,7 @@ bool MainScene::Load()
 	cam->Create(VECTOR3(0.0f, 5.0f, -50.0f), VECTOR3(0.0f, 1.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), 45.0f, 1.0f, 100.0f, g_setting.displayMode.Width, g_setting.displayMode.Height, vp);
 
 
-	CObject* pBox = FileLoader::ObjectFileLoad(L"./Data/Box.x");
+	CObject* pBox = FileLoader::ObjectFileLoad(L"./Data/JN-4/airplane02.x");
 
 	CMaterial* pMaterial = new CMaterial(CShader::Find(L"Default"));
 

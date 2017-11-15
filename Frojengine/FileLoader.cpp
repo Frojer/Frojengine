@@ -249,6 +249,9 @@ CObject* FileLoader::XFileLoadFrame(CObject* i_pObj, wifstream& file)
 						pMtrl = new CMaterial(CShader::Find(L"Default"));
 						pMtrl->m_name = pMesh->m_name + L" 1";
 
+						// Material Setting
+						pObj->m_pMaterial = pMtrl;
+
 						// Diffuse 얻어오기
 						file >> pMtrl->m_diffuse.x >> c >> pMtrl->m_diffuse.y >> c >> pMtrl->m_diffuse.z >> c >> pMtrl->m_diffuse.w >> str;
 
@@ -272,7 +275,7 @@ CObject* FileLoader::XFileLoadFrame(CObject* i_pObj, wifstream& file)
 							{
 								file >> str;
 
-								if (str[0] != L'}')
+								if (str[0] == L'}')
 									break;
 
 								// Load Texture;

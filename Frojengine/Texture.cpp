@@ -30,7 +30,7 @@ bool CTexture2D::CreateTexture2D(LPCWSTR i_fileName)
 	
 	FileNameExtension(i_fileName, extention, ARRAYSIZE(extention));
 
-	if (_wcsnicmp(extention, L".dds", ARRAYSIZE(extention)))
+	if (_wcsnicmp(extention, L".dds", ARRAYSIZE(extention)) == 0)
 	{
 		hr = DirectX::CreateDDSTextureFromFileEx(_pDevice, _pDXDC, i_fileName, 0,
 			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
@@ -44,10 +44,10 @@ bool CTexture2D::CreateTexture2D(LPCWSTR i_fileName)
 		}
 	}
 
-	else if (_wcsnicmp(extention, L".png", ARRAYSIZE(extention)) ||
-		_wcsnicmp(extention, L".jpg", ARRAYSIZE(extention)) ||
-		_wcsnicmp(extention, L".jpeg", ARRAYSIZE(extention)) ||
-		_wcsnicmp(extention, L".bmp", ARRAYSIZE(extention)))
+	else if (_wcsnicmp(extention, L".png", ARRAYSIZE(extention)) == 0 ||
+		_wcsnicmp(extention, L".jpg", ARRAYSIZE(extention)) == 0 ||
+		_wcsnicmp(extention, L".jpeg", ARRAYSIZE(extention)) == 0 ||
+		_wcsnicmp(extention, L".bmp", ARRAYSIZE(extention)) == 0)
 	{
 		// Mip-map 텍스처 생성
 		hr = DirectX::CreateWICTextureFromFileEx(_pDevice, _pDXDC, i_fileName, 0,
