@@ -5,6 +5,8 @@ unordered_map<UINT, CMaterial*> CMaterial::_mtrlMap;
 CMaterial::CMaterial(CShader* _pShader)
 	: m_diffuse(VECTOR4(1.0f, 1.0f, 1.0f, 1.0f)), m_ambient(VECTOR3(1.0f, 1.0f, 1.0f)), m_specular(VECTOR3(1.0f, 1.0f, 1.0f)), m_pShader(_pShader)
 {
+	ZeroMemory(m_pTexture, sizeof(m_pTexture));
+
 	if (m_pShader == nullptr)
 	{
 		// Default Shader를 삽입
@@ -33,7 +35,11 @@ void CMaterial::ClearMap()
 
 void CMaterial::UpdateConstantBuffer(MATRIXA& mWorld)
 {
-	m_pShader->UpdateDefaultBuffer(mWorld);
+	m_pShader->_cbDefault.mtrlDiffuse = XMLoadFloat4(&m_diffuse);
+	m_pShader->_cbDefault.mWorld = mWorld;
+	m_pShader->_cbDefault.mWV = mWorld * m_pShader->_cbDefault.mView;
+
+	m_pShader->UpdateDefaultBuffer();
 }
 
 
@@ -41,6 +47,17 @@ void CMaterial::Render()
 {
 	if (m_pShader == nullptr)
 		return;
+
+	if (m_pTexture[0] != nullptr)
+	{
+		auto sampler = CTexture2D::GetSampler(m_pTexture[0]->m_AddressFilter);
+
+		//셈플러 설정
+		m_pShader->_pDXDC->PSSetSamplers(0, 1, &sampler);
+
+		//셰이더 리소스 설정.
+		m_pShader->_pDXDC->PSSetShaderResources(0, 1, &m_pTexture[0]->_ResourceView);	//PS 에 텍스처 설정
+	}
 
 	m_pShader->Render();
 }

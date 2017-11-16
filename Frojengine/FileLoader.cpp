@@ -77,6 +77,8 @@ CObject* FileLoader::LoadXFile(LPCWSTR i_fileName)
 			{
 				file >> str;
 
+				UINT i = 0;
+
 				while (true)
 				{
 					file >> str;
@@ -88,6 +90,7 @@ CObject* FileLoader::LoadXFile(LPCWSTR i_fileName)
 					wstring ws = str;
 					CTexture2D* pTex = new CTexture2D(ws.substr(1, ws.length() - 3).c_str());
 					pTex->CreateTexture2D((_fileName.substr(0, _fileName.rfind(L"/", _fileName.length() - 1) + 1) + ws.substr(1, ws.length() - 3)).c_str());
+					pMtrl->m_pTexture[i++] = pTex;
 				}
 
 				file >> str;
@@ -271,6 +274,7 @@ CObject* FileLoader::XFileLoadFrame(CObject* i_pObj, wifstream& file)
 						{
 							file >> str;
 
+							UINT i = 0;
 							while (true)
 							{
 								file >> str;
@@ -282,6 +286,7 @@ CObject* FileLoader::XFileLoadFrame(CObject* i_pObj, wifstream& file)
 								wstring ws = str;
 								CTexture2D* pTex = new CTexture2D(ws.substr(1, ws.length() - 3).c_str());
 								pTex->CreateTexture2D((_fileName.substr(0, _fileName.rfind(L"/", _fileName.length() - 1) + 1) + ws.substr(1, ws.length() - 3)).c_str());
+								pMtrl->m_pTexture[i++] = pTex;
 							}
 
 							file >> str;

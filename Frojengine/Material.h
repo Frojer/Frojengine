@@ -3,6 +3,7 @@
 #include "Frojengine.h"
 
 class CShader;
+class CTexture2D;
 
 class CMaterial : public IObject
 {
@@ -15,6 +16,8 @@ public:
 	VECTOR4 m_diffuse;
 	VECTOR3 m_ambient;
 	VECTOR3 m_specular;
+
+	CTexture2D* m_pTexture[128];
 
 private:
 	static void ClearMap();

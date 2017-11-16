@@ -43,7 +43,30 @@ void CObject::BufferUpdate()
 	if (m_pMesh == nullptr || m_pMaterial == nullptr)
 		return;
 
-	m_pMaterial->UpdateConstantBuffer(m_pMesh->GetWorldMatrix(m_vPos, m_vRot, m_vScale));
+	m_pMaterial->UpdateConstantBuffer(GetWorldMatrix());
+
+	FOR_STL(_childList)
+	{
+		(*iter)->BufferUpdate();
+	}
+}
+
+
+MATRIXA CObject::GetWorldMatrix()
+{
+	MATRIXA mPos, mRot, mScale;
+	MATRIXA mWorld;
+
+	mPos = DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&m_vPos));
+	mRot = DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_vRot));
+	mScale = DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&m_vScale));
+
+	mWorld = mScale * mRot * mPos;
+
+	if (_pParent != nullptr)
+		mWorld *= _pParent->GetWorldMatrix();
+
+	return mWorld;
 }
 
 

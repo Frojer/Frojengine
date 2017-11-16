@@ -23,7 +23,6 @@ public:
 private:
 	bool CreateBuffer(vector<VF_PNT>& i_vertics, vector<IndexFormat>& i_indics);
 
-	MATRIXA GetWorldMatrix(const VECTOR3& pos, const VECTOR3& rot, const VECTOR3& scale);
 	void Render();
 
 	static void ClearMap();

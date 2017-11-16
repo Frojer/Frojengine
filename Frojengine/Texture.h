@@ -9,9 +9,24 @@ private:
 
 	static LPDEVICE _pDevice;
 	static LPDXDC _pDXDC;
+
+	enum
+	{
+		ADDRESS_CLAMP,
+		ADDRESS_WRAP,
+		ADDRESS_BORDER,
+
+		ADDRESS_MAX,
+	};
+	// 텍스처 셈플러
+	static ID3D11SamplerState*	_pSampler[ADDRESS_MAX];
 public:
+	VECTOR4 m_vBorderColor;
 	LPRESOURCEVIEW _ResourceView;
+	UINT m_AddressFilter;
 private:
+	void SamplerCreate();
+	void SamplerRelease();
 
 public:
 	CTexture2D(LPCWSTR i_fileName);
@@ -21,6 +36,8 @@ public:
 
 	CTexture2D* Find(UINT id);
 	CTexture2D* Find(LPCWSTR name);
+
+	static ID3D11SamplerState* GetSampler(UINT addressFilter);
 
 	friend class FJRenderingEngine;
 };

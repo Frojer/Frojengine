@@ -315,11 +315,8 @@ HRESULT CShader::UpdateDynamicConstantBuffer(LPDXDC pDXDC, ID3D11Resource* pBuff
 }
 
 
-HRESULT CShader::UpdateDefaultBuffer(MATRIXA& mWorld)
+HRESULT CShader::UpdateDefaultBuffer()
 {
-	_cbDefault.mWorld = mWorld;
-	_cbDefault.mWV = mWorld * _cbDefault.mView;
-
 	return UpdateDynamicConstantBuffer(_pDXDC, _pCBDefault, &_cbDefault, sizeof(CB_Default));
 }
 

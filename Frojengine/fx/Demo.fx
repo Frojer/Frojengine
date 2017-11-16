@@ -5,6 +5,9 @@ cbuffer cbDEFAULT : register(b0)
 	matrix mView;   //뷰 변환 행렬. 
 	matrix mWV;     //월드-뷰 변환 행렬. 
 	matrix mProj;   //투영 변환 행렬. 
+
+	float4 MtrlDiffuse;  //주 광량(확산광) 의 반사율(%) 
+	float4 MtrlAmbient;  //보조 광량(주변광) 의 반사율(%) 
 };
 
 
@@ -17,13 +20,6 @@ cbuffer cbLIGHT : register(b1)
 	float4 LitAmbient;   //보조 광량 : 주변광 Ambient Light.
 	float  LitRange;     //빛 도달 거리.
 	bool   LitOn;        //조명 적용여부.
-};
-
-//재질 정보용 상수버퍼★
-cbuffer cbMATERIAL : register(b2)
-{
-	float4 MtrlDiffuse;  //주 광량(확산광) 의 반사율(%) 
-	float4 MtrlAmbient;  //보조 광량(주변광) 의 반사율(%) 
 };
 
 
@@ -182,11 +178,11 @@ float4 PS_Main(
 	float2 uv : TEXCOORD0		//[입력] 텍스처 좌표
 ) : SV_TARGET               //[출력] 색상.(필수), "렌더타겟" 으로 출력합니다.
 {
-	/*float4 tex = texDiffuse.Sample(smpLinear, uv);
+	float4 tex = texDiffuse.Sample(smpLinear, uv);
 
 	float4 diff = tex * col;
 
 	clip(diff.a < 0.5f ? -1 : 1);
-*/
-	return 1;
+
+	return tex;
 }

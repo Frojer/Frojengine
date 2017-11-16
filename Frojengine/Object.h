@@ -26,6 +26,7 @@ public:
 
 private:
 	void BufferUpdate();
+	MATRIXA GetWorldMatrix();
 	void Render();
 
 public:

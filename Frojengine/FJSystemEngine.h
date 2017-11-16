@@ -5,6 +5,10 @@
 struct SystemSetting
 {
 	DISPLAYMODE	displayMode;
+	DXGI_SAMPLE_DESC sampleDesc;
+
+	//Anisotropic Filter 배수.(최대 16)
+	DWORD anisotropy;
 
 	// DirectX 버전
 	D3D_FEATURE_LEVEL featureLevels;

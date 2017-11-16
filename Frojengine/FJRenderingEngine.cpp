@@ -2,9 +2,10 @@
 
 COLOR FJRenderingEngine::_clearCol = COLOR(0.0f, 0.0f, 0.8f, 1.0f);
 byte FJRenderingEngine::_rsData = 0;
+byte FJRenderingEngine::_dsData = 0;
 
 FJRenderingEngine::FJRenderingEngine()
-	: _pDevice(nullptr), _pDXDC(nullptr), _pSwapChain(nullptr), _pRTView(nullptr)
+	: _pDevice(nullptr), _pDXDC(nullptr), _pSwapChain(nullptr), _pRTView(nullptr), _pDS(nullptr), _pDSView(nullptr)
 {
 	
 }
@@ -36,8 +37,6 @@ bool FJRenderingEngine::CreateRenderingEngine(HWND i_hWnd)
 	CCamera::_pDevice = _pDevice;
 	CCamera::_pDXDC = _pDXDC;
 
-	RasterStateLoad();
-
 	return true;
 }
 
@@ -62,20 +61,31 @@ bool FJRenderingEngine::DXSetup(HWND i_hWnd)
 	if (!result)
 		return false;
 
+	// 깊이/스텐실 버퍼 생성.
+	result = CreateDepthStencil();
+
+	if (!result)
+		return false;
+
+
 	// 장치 출력병합기(Output Merger) 에 렌터링 타겟 및 깊이-스텐실 버퍼 등록.
 	_pDXDC->OMSetRenderTargets(
 		1,							// 렌더타겟 개수.(max: D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT)
 		&_pRTView,					// 렌더타겟("백버퍼") 등록.	
-		nullptr
+		_pDSView					// 깊이/스텐실 버퍼 등록
 	);
 	
 	// 뷰포트 설정.
 	SetViewPort();
 
-
-
 	//장치 정보 획득
 	GetDeviceInfo();
+
+	//깊이-스텐실 렌더링 상태 객체 생성.
+	StateObjectCreate();
+
+	//블렌드 상태 객체 생성
+	BlendStateCreate();
 
 
 	//----------------------------------------
@@ -97,7 +107,8 @@ bool FJRenderingEngine::DXSetup(HWND i_hWnd)
 //
 void FJRenderingEngine::DXRelease()
 {
-	RasterStateRelease();
+	StateObjectRelease();
+	BlendStateRelease();
 
 	// 장치 상태 리셋 : 제거 전에 초기화를 해야 합니다. (메모리 누수 방지)
 	if (_pDXDC)
@@ -106,10 +117,12 @@ void FJRenderingEngine::DXRelease()
 	//	_pSwapChain->SetFullscreenState(false, NULL);
 
 
-	SAFE_RELEASE(_pRTView);			//렌더타겟 제거.
-	SAFE_RELEASE(_pSwapChain);			//스왑체인 제거.
+	SAFE_RELEASE(_pDS);				// 깊이/스텐실 버퍼 제거.
+	SAFE_RELEASE(_pDSView);
+	SAFE_RELEASE(_pRTView);			// 렌더타겟 제거.
+	SAFE_RELEASE(_pSwapChain);		// 스왑체인 제거.
 	SAFE_RELEASE(_pDXDC);
-	SAFE_RELEASE(_pDevice);			//디바이스 제거. 맨 나중에 제거합니다.
+	SAFE_RELEASE(_pDevice);			// 디바이스 제거. 맨 나중에 제거합니다.
 }
 
 
@@ -142,8 +155,7 @@ bool FJRenderingEngine::CreateDeviceSwapChain(HWND i_hWnd)
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;	//용도 설정: '렌더타겟' 
 	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	//sd.Flags = 0;
-	sd.SampleDesc.Count = 1;							//AA 설정
-	sd.SampleDesc.Quality = 0;
+	sd.SampleDesc = g_setting.sampleDesc;				//AA 설정
 	
 	
 	
@@ -215,6 +227,58 @@ bool FJRenderingEngine::CreateRenderTarget()
 	return true;
 }
 
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// 깊이-스텐실버퍼 생성. : DX11 에서는 렌더링버퍼-렌더타겟뷰- 와 마찬가지로, 
+//                       깊이-스텐실버퍼역시 직접 만들어야 합니다.
+//                       디바이스에 등록도 역시 수동입니다.
+//
+bool FJRenderingEngine::CreateDepthStencil()
+{
+	HRESULT hr = S_OK;
+
+	//깊이/스텐실 버퍼용 정보 구성.
+	D3D11_TEXTURE2D_DESC td;
+	ZeroMemory(&td, sizeof(td));
+	td.Width = g_setting.displayMode.Width;
+	td.Height = g_setting.displayMode.Height;
+	td.MipLevels = 1;
+	td.ArraySize = 1;
+	td.Format = DXGI_FORMAT_D32_FLOAT;			// 32BIT. 깊이 버퍼.
+	td.SampleDesc = g_setting.sampleDesc;		// AA 설정 - RT 과 동일 규격 준수.
+	td.Usage = D3D11_USAGE_DEFAULT;
+	td.BindFlags = D3D11_BIND_DEPTH_STENCIL;	// 깊이-스텐실 버퍼용으로 설정.
+	td.CPUAccessFlags = 0;
+	td.MiscFlags = 0;
+
+
+	// 깊이 버퍼 생성.
+	hr = _pDevice->CreateTexture2D(&td, NULL, &_pDS);
+	if (FAILED(hr)) return false;
+
+
+	// 깊이-스텐실버퍼용 리소스 뷰 정보 설정. 
+	D3D11_DEPTH_STENCIL_VIEW_DESC  dd;
+	ZeroMemory(&dd, sizeof(dd));
+	dd.Format = td.Format;
+	//dd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D; //AA 없음.
+	dd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS; //AA 적용.
+	dd.Texture2D.MipSlice = 0;
+
+	//깊이-스텐실 버퍼 뷰 생성.
+	hr = _pDevice->CreateDepthStencilView(_pDS, &dd, &_pDSView);
+	if (FAILED(hr))
+	{
+		FJError(hr, L"깊이/스텐실 버퍼 뷰 생성 실패.");
+		return false;
+	}
+
+	return true;
+}
 
 
 
@@ -366,6 +430,247 @@ void FJRenderingEngine::RasterStateRelease()
 
 
 
+///////////////////////////////////////////////////////////////////////////////
+//
+//  깊이/스텐실 버퍼 상태객체 생성. 
+//
+void FJRenderingEngine::DSStateLoad()
+{
+	//----------------------------
+	// 깊이/스텐실 상태 개체 생성.: "출력병합기 Output Merger" 상태 조절. 
+	//----------------------------
+	//...	 
+	D3D11_DEPTH_STENCIL_DESC  ds;
+	ds.DepthEnable = TRUE;
+	ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	ds.DepthFunc = D3D11_COMPARISON_LESS;
+	ds.StencilEnable = FALSE;
+	//ds.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+	//ds.StnecilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+	//...이하 기본값, 생략... 
+	//...
+	//첫번째 상태 객체 : Z-Test ON! (기본값)
+	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEFAULT]);
+
+	//두번째 상태 객체 : Z-Test OFF 상태.
+	ds.DepthEnable = FALSE;
+	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_TEST_OFF]);
+
+	//세번째 상태 객체 : Z-Test On + Z-Write OFF.
+	// Z-Test (ZEnable, DepthEnable) 이 꺼지면, Z-Write 역시 비활성화 됩니다.
+	ds.DepthEnable = TRUE;
+	ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;		//깊이값 쓰기 끔.
+	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_WRITE_OFF]);
+
+	//네번째 상태 객체 : Z-Test Off + Z-Write OFF.
+	// Z-Test (ZEnable, DepthEnable) 이 꺼지면, Z-Write 역시 비활성화 됩니다.
+	ds.DepthEnable = FALSE;
+	ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;		//깊이값 쓰기 끔.
+	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DT_OFF_DW_OFF]);
+}
+
+
+
+void FJRenderingEngine::DSStateUpdate()
+{
+	switch (_dsData)
+	{
+	case DM_TEST_ON | DM_WRITE_ON:
+		_pDXDC->OMSetDepthStencilState(_pDSState[DS_DEFAULT], 0);
+		break;
+
+	case DM_TEST_OFF | DM_WRITE_ON:
+		_pDXDC->OMSetDepthStencilState(_pDSState[DS_DEPTH_TEST_OFF], 0);
+		break;
+
+	case DM_TEST_ON | DM_WRITE_OFF:
+		_pDXDC->OMSetDepthStencilState(_pDSState[DS_DEPTH_WRITE_OFF], 0);
+		break;
+
+	case DM_TEST_OFF | DM_WRITE_OFF:
+		_pDXDC->OMSetDepthStencilState(_pDSState[DS_DT_OFF_DW_OFF], 0);
+		break;
+	}
+}
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//  깊이/스텐실 버퍼 상태객체 제거하기 : 엔진 종료시 1회 호출.
+//
+void FJRenderingEngine::DSStateRelease()
+{
+	for (int i = 0; i < DS_MAX_; i++)
+		SAFE_RELEASE(_pDSState[i]);
+}
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// 
+//
+// 장치 렌더링 상태 객체 생성.
+//
+//----------------------------------------------------------------------------
+// 상태 객체 State Objects (DX10/11)
+// DX10 부터 구형 TnL 의 RenderState 가 제거되었습니다.
+// 이를 대신하는 것이 상태객체 State Objects 인터페이스로, 렌더링 상태를 하나의 그룹으로 
+// 묶고 렌더링시 디바이스에 설정합니다.  이를 통해 장치의 어려 상태 변화를 한번에 설정하여 
+// 불필요한 연산부하(Overhead) 를 줄이고 보다 효과적인 렌더링을 가능케 합니다.
+//
+// 상태객체는 엔진 초기시 제작후 사용하기를 권장하며 종료시 제거(Release) 해야 합니다.
+// 상태객체는 수정불가능(Immutable, 읽기전용) 개체 입니다.
+// DX9 에서는 State-Block 이 이와 유사한 기능을 담당했었습니다.
+//
+// 상태 객체 인터페이스 중 '레스터라이즈 스테이지 Rasterize Stage' 상태 조절은 
+// ID3D11RasterizerState 인터페이스를 통해 처리합니다.  
+// 간단하게 렌더링 설정/기능 모듬 정도로 생각합시다.  자세한 것은 다음을 참조하십시요. 
+// 링크1 : 상태 객체 https://msdn.microsoft.com/en-us/library/windows/desktop/bb205071(v=vs.85).aspx
+// 링크2 : 깊이버퍼 상태 구성하기 https://msdn.microsoft.com/ko-kr/library/windows/desktop/bb205074(v=vs.85).aspx#Create_Depth_Stencil_State 
+//----------------------------------------------------------------------------
+//
+void FJRenderingEngine::StateObjectCreate()
+{
+
+	//----------------------------
+	// 레스터 상태 개체 생성 : "레스터라이즈 스테이지 Rasterize Stage" 상태 조절.
+	//----------------------------
+	RasterStateLoad();
+
+	//----------------------------
+	// 깊이/스텐실 상태 개체 생성.: "출력병합기 Output Merger" 상태 조절. 
+	//----------------------------
+	DSStateLoad();
+
+
+
+	//----------------------------
+	// 알파블렌딩 상태 개체 생성 : "출력병합기 Output Merger" 상태 조절. 
+	//----------------------------
+	//...
+
+
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//  상태객체 제거하기 : 엔진 종료시 1회 호출.
+//
+void FJRenderingEngine::StateObjectRelease()
+{
+	RasterStateRelease();	//레스터 상태 개체 제거.
+	DSStateRelease();		//깊이/스텐실 상태 개체 제거.
+}
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////////////////////// 
+//
+// 블렌딩 상태 객체 관련 함수들.
+//
+////////////////////////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////////////////////// 
+// 
+// 블렌딩 상태 객체 생성.
+//
+void FJRenderingEngine::BlendStateCreate()
+{
+	//블렌딩 상태 객체 구성 옵션 : 이하 기본값들.
+	D3D11_BLEND_DESC bd;
+	ZeroMemory(&bd, sizeof(D3D11_BLEND_DESC));
+	
+	// [알림] 다중 렌터타겟(RenderTarget) 사용시 각 RT 별 지정이 가능하나
+	// 당분간 RT #0 (기본)-백버퍼-만을 사용하겠습니다.★
+	//
+	bd.RenderTarget[0].BlendEnable = FALSE;							//블렌딩 동작 결정. 기본값은 FALSE(OFF)★	
+	
+	//색상 성분 혼합 : Color Blending.(기본값)★
+	bd.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;				//색상 혼합 연산(Color - Operation), 기본값은 덧셈 : 최종색 = Src.Color + Dest.Color ★	
+	bd.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;					//소스(원본) 혼합 비율, 원본 100% : Src.Color = Src * 1;★
+	bd.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;				//타겟(대상) 혼합 비율, 대상 0%   : Dest.Color = Dest * 0;  통상 0번 RT 는 "백버퍼"를 의미합니다.★	
+
+	//알파 성분 혼합 : Alpha Blending.(기본값)
+	bd.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;			//알파 혼합 함수(Alpha - Opertion), 기본값은 덧셈.
+	bd.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;				//소스(원본) 알파 혼합 비율.
+	bd.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;			//타겟(대상) 알파 혼합 비율.
+	bd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;	//렌더타겟에 쓰기 옵션.
+	//이하 추가 옵션.(기본값)	
+	//bd.AlphaToCoverageEnable = FALSE;
+	//bd.IndependentBlendEnable = FALSE;
+
+	//[상태객체 1] 기본 블렌딩 상태 개체.생성.
+	_pDevice->CreateBlendState(&bd, &_pBState[BS_DEFAULT]);
+
+
+
+
+	//------------------------------
+	//[상태객체2] 색상 혼합 개체 생성.
+	//------------------------------
+	bd.RenderTarget[0].BlendEnable = TRUE;							//색상 혼합 ON! ★	
+	//bd.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;				//색상 혼합 연산 (덧셈, 기본값) : 최종색 = Src.Color + Dest.Color ★	
+
+	//[혼합 테스트1] 100% 혼합★
+	//bd.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;					//소스(원본) 혼합 비율, 원본 100% : Src.Color = Src * 1;
+	//bd.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;					//타겟(대상) 혼합 비율, 대상 100% : Dest.Color = Dest * 1;
+		
+	//[혼합 테스트2] 색상비 혼합★
+	//bd.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_COLOR;			//소스(원본) 혼합 비율, 원본 색상비 적용 : Src.Color = Src * Src;
+	//bd.RenderTarget[0].DestBlend = D3D11_BLEND_DEST_COLOR;		//타겟(대상) 혼합 비율, 대상 색상비 적용 : Dest.Color = Dest * Dest;
+	
+	//[혼합 테스트3] 색상비 혼합2★
+	//bd.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_COLOR;			//소스(원본) 혼합 비율, 원본 색상비 적용 : Src.Color = Src * Src;
+	//bd.RenderTarget[0].DestBlend = D3D11_BLEND_INV_DEST_COLOR;	//타겟(대상) 혼합 비율, 대상 색상비 적용 : Dest.Color = Dest * (1-Dest);
+
+	//[혼합 테스트4] 색상비 혼합3★
+	//bd.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_COLOR;			//소스(원본) 혼합 비율, 원본 색상비 적용 : Src.Color = Src * Src;
+	//bd.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;				//타겟(대상) 혼합 비율, 대상 100% 적용  : Dest.Color = Dest * 1;
+		
+	
+	//#1 흰색 빼기 : 배경과 곱셈 : OP 이 지원되는 것은 아니나, 파이프라인의 기능을 적극적으로 활용해 보자.★
+	//bd.RenderTarget[0].SrcBlend = D3D11_BLEND_DEST_COLOR;				//소스(원본) 혼합 비율, 원본 100% : Src.Color = Src * Dest;
+	//bd.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;					//타겟(대상) 혼합 비율, 대상 0% : Dest.Color = Dest * 0;			 	
+	
+
+	//------------------------------
+	// 알파기준 색상 혼합 : Alpha Blending ON! ★
+	//------------------------------
+	bd.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;			//소스(원본) 혼합 비율, 원본 알파비율  : Src.Color = Src * Src.a;
+	bd.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;		//타겟(대상) 혼합 비율, 원본 알파비율 반전 : Dest.Color = Dest * (1-Src.a);			 	
+
+	_pDevice->CreateBlendState(&bd, &_pBState[BS_ADD]);
+}
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// 
+//
+// 블렌딩 상태 객체 제거 : 어플리케이션 종료시 호출.
+//
+void FJRenderingEngine::BlendStateRelease()
+{
+	for (int i = 0; i < BS_MAX_; i++)
+	{
+		SAFE_RELEASE(_pBState[i]);
+	}
+
+}
+
+
+
+
 
 ////////////////////// 
 //
@@ -422,6 +727,7 @@ void FJRenderingEngine::ClearBackBuffer()
 {
 	// 렌더타겟 지우기
 	_pDXDC->ClearRenderTargetView(_pRTView, (float*)&_clearCol);
+	_pDXDC->ClearDepthStencilView(_pDSView, D3D11_CLEAR_DEPTH, 1.0f, 0);	//깊이/스텐실 지우기.
 }
 
 
@@ -472,6 +778,26 @@ bool FJRenderingEngine::GetSolidFrame()
 void FJRenderingEngine::SetRasterMode(byte i_rm)
 {
 	_rsData = i_rm;
+}
+
+void FJRenderingEngine::SetDepthTest(bool i_bSet)
+{
+	_dsData = i_bSet ? (0xfe & _rsData) | DM_TEST_ON : (0xfe & _rsData) | DM_TEST_OFF;
+}
+
+bool FJRenderingEngine::GetDepthTest()
+{
+	return (_rsData & 0x01) == DM_TEST_ON ? true : false;
+}
+
+void FJRenderingEngine::SetDepthWrite(bool i_bSet)
+{
+	_dsData = i_bSet ? (0xfd & _rsData) | DM_WRITE_ON : (0xfd & _rsData) | DM_WRITE_OFF;
+}
+
+bool FJRenderingEngine::GetDepthWrite()
+{
+	return (_rsData & 0x02) == DM_WRITE_ON ? true : false;
 }
 
 void FJRenderingEngine::SetClearColor(COLOR i_col)

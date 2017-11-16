@@ -8,6 +8,9 @@ struct CB_Default
 	MATRIXA mView;
 	MATRIXA mWV;
 	MATRIXA mProj;
+
+	VECTOR mtrlDiffuse;  //¡÷ ±§∑Æ(»ÆªÍ±§) ¿« π›ªÁ¿≤(%) 
+	VECTOR mtrlAmbient;  //∫∏¡∂ ±§∑Æ(¡÷∫Ø±§) ¿« π›ªÁ¿≤(%) 
 };
 
 class CShader : public IObject
@@ -45,7 +48,7 @@ protected:
 	HRESULT CreateDynamicConstantBuffer(UINT size, LPVOID pData, ID3D11Buffer** ppCB);
 	HRESULT UpdateDynamicConstantBuffer(LPDXDC pDXDC, ID3D11Resource* pBuff, LPVOID pData, UINT size);
 
-	HRESULT UpdateDefaultBuffer(MATRIXA& mWorld);
+	HRESULT UpdateDefaultBuffer();
 
 public:
 	CShader();

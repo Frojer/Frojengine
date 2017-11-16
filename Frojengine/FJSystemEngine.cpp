@@ -300,6 +300,7 @@ void FJSystemEngine::Run()
 		//렌더타겟(백버퍼) 지우기.. 
 		_pRenderer->ClearBackBuffer();
 		_pRenderer->RasterStateUpdate();
+		_pRenderer->DSStateUpdate();
 
 		SceneManager::pCurrentScene->Update();
 		SceneManager::pCurrentScene->Render();
@@ -352,6 +353,9 @@ bool FJSystemEngine::LoadSetting()
 	g_setting.displayMode.RefreshRate.Denominator = 1;
 	g_setting.displayMode.Format = DXGI_FORMAT_R8G8B8A8_UNORM;		// 백버퍼 색상규격 (A8R8G8B8) 창모드에서는 생략 가능 
 	g_setting.bWindowMode = true;
+	g_setting.sampleDesc.Count = 8;					//AA 설정
+	g_setting.sampleDesc.Quality = 0;
+	g_setting.anisotropy = 16;
 
 	return true;
 }

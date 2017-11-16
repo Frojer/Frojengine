@@ -60,19 +60,6 @@ CMesh* CMesh::Find(wstring name)
 }
 
 
-MATRIXA CMesh::GetWorldMatrix(const VECTOR3& pos, const VECTOR3& rot, const VECTOR3& scale)
-{
-	MATRIXA mPos, mRot, mScale;
-	MATRIXA mWorld;
-
-	mPos = DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&pos));
-	mRot = DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&rot));
-	mScale = DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&scale));
-
-	return mScale * mRot * mPos;
-}
-
-
 void CMesh::Render()
 {
 	//----------------------------------------------------------------------
