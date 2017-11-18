@@ -27,16 +27,6 @@ bool FJRenderingEngine::CreateRenderingEngine(HWND i_hWnd)
 	if (!result)
 		return false;
 
-	CShader::_pDevice = _pDevice;
-	CShader::_pDXDC = _pDXDC;
-	CMesh::_pDevice = _pDevice;
-	CMesh::_pDXDC = _pDXDC;
-	CObject::_pDXDC = _pDXDC;
-	CTexture2D::_pDevice = _pDevice;
-	CTexture2D::_pDXDC = _pDXDC;
-	CCamera::_pDevice = _pDevice;
-	CCamera::_pDXDC = _pDXDC;
-
 	return true;
 }
 
@@ -51,6 +41,16 @@ bool FJRenderingEngine::DXSetup(HWND i_hWnd)
 
 	// D3D 렌더링 장치 Device 및 스왑체인 Swap Chain 생성. 
 	result = CreateDeviceSwapChain(i_hWnd);
+
+	CShader::_pDevice = _pDevice;
+	CShader::_pDXDC = _pDXDC;
+	CMesh::_pDevice = _pDevice;
+	CMesh::_pDXDC = _pDXDC;
+	CObject::_pDXDC = _pDXDC;
+	CTexture2D::_pDevice = _pDevice;
+	CTexture2D::_pDXDC = _pDXDC;
+	CCamera::_pDevice = _pDevice;
+	CCamera::_pDXDC = _pDXDC;
 
 	if (!result)
 		return false;
@@ -87,13 +87,14 @@ bool FJRenderingEngine::DXSetup(HWND i_hWnd)
 	//블렌드 상태 객체 생성
 	BlendStateCreate();
 
+	CTexture2D::SamplerCreate();
 
 	//----------------------------------------
 	// 2단계 : 기타 렌더링 관련 추가 설정.
 	//----------------------------------------
 	// 렌더링에 필요한 사용자 객체등을 생성/관리 합니다.
 	// 카메라, 조명, 폰트, 셰이더 등등...
-
+	CShader::CreateDefaultBuffer();
 
 	return true;
 }
@@ -107,6 +108,7 @@ bool FJRenderingEngine::DXSetup(HWND i_hWnd)
 //
 void FJRenderingEngine::DXRelease()
 {
+	CTexture2D::SamplerRelease();
 	StateObjectRelease();
 	BlendStateRelease();
 

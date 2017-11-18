@@ -25,8 +25,8 @@ public:
 	LPRESOURCEVIEW _ResourceView;
 	UINT m_AddressFilter;
 private:
-	void SamplerCreate();
-	void SamplerRelease();
+	static void SamplerCreate();
+	static void SamplerRelease();
 
 public:
 	CTexture2D(LPCWSTR i_fileName);

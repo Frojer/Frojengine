@@ -40,15 +40,7 @@ CObject::~CObject()
 
 void CObject::BufferUpdate()
 {
-	if (m_pMesh == nullptr || m_pMaterial == nullptr)
-		return;
-
 	m_pMaterial->UpdateConstantBuffer(GetWorldMatrix());
-
-	FOR_STL(_childList)
-	{
-		(*iter)->BufferUpdate();
-	}
 }
 
 

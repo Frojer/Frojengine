@@ -2,24 +2,14 @@
 
 #include "Frojengine.h"
 
-struct CB_Default
-{
-	MATRIXA mWorld;
-	MATRIXA mView;
-	MATRIXA mWV;
-	MATRIXA mProj;
-
-	VECTOR mtrlDiffuse;  //주 광량(확산광) 의 반사율(%) 
-	VECTOR mtrlAmbient;  //보조 광량(주변광) 의 반사율(%) 
-};
-
 class CShader : public IObject
 {
 private:
 	static unordered_map<UINT, CShader*> _shaderMap;
-	
-	static CB_Default _cbDefault;
-	static LPBUFFER _pCBDefault;
+
+	static LPBUFFER _pWVP_CB;
+	static LPBUFFER _pLight_CB;
+	LPBUFFER _pConstBuffer;
 
 	static LPDEVICE _pDevice;
 	static LPDXDC _pDXDC;
@@ -30,6 +20,13 @@ private:
 
 	LPINPUTLAYOUT _pInputLayout;
 
+	UINT _countTexture;
+	UINT _countMatrix;
+	UINT _countVector;
+	UINT _countScalar;
+
+	bool _useLight;
+
 private:
 	static CShader* CreateShader(LPCWSTR i_fileName);
 	static HRESULT ShaderCompile(
@@ -39,16 +36,19 @@ private:
 		ID3DBlob** o_ppCode		//[출력] 컴파일된 셰이더 코드.
 	);
 
+	static void ShaderError(BOOL bMBox, TCHAR* msg, HRESULT hr, ID3DBlob* pBlob, LPCWSTR filename, char* EntryPoint, char* ShaderModel);
+
 	static void ClearMap();
 
 protected:
 	virtual void Render();
+	static HRESULT CreateDefaultBuffer();
 
 	HRESULT CreateConstantBuffer(UINT size, ID3D11Buffer** ppCB);
 	HRESULT CreateDynamicConstantBuffer(UINT size, LPVOID pData, ID3D11Buffer** ppCB);
-	HRESULT UpdateDynamicConstantBuffer(LPDXDC pDXDC, ID3D11Resource* pBuff, LPVOID pData, UINT size);
+	HRESULT UpdateDynamicConstantBuffer(ID3D11Resource* pBuff, LPVOID pData, UINT size);
 
-	HRESULT UpdateDefaultBuffer();
+	void UpdateConstantBuffer(LPVOID pCB, UINT size);
 
 public:
 	CShader();
@@ -60,5 +60,4 @@ public:
 	friend class FJRenderingEngine;
 	friend class FJSystemEngine;
 	friend class CMaterial;
-	friend class CScene;
 };

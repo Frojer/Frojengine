@@ -53,7 +53,7 @@ CObject* FileLoader::LoadXFile(LPCWSTR i_fileName)
 		switch (c)
 		{
 		case L'M':
-			pMtrl = new CMaterial(CShader::Find(L"Default"));
+			pMtrl = new CMaterial(CShader::Find(L"Standard"));
 			file >> str >> str;
 			pMtrl->m_name = str;
 			file >> str;
@@ -249,7 +249,7 @@ CObject* FileLoader::XFileLoadFrame(CObject* i_pObj, wifstream& file)
 					{
 						file >> str;
 
-						pMtrl = new CMaterial(CShader::Find(L"Default"));
+						pMtrl = new CMaterial(CShader::Find(L"Standard"));
 						pMtrl->m_name = pMesh->m_name + L" 1";
 
 						// Material Setting

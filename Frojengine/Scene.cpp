@@ -73,8 +73,8 @@ void CScene::Render()
 		if (_vecCam[i]->m_Enable)
 		{
 			_vecCam[i]->UseCamera();
-			CShader::_cbDefault.mView = mView;
-			CShader::_cbDefault.mProj = mProj;
+			CMaterial::_WVPData.mView = mView;
+			CMaterial::_WVPData.mProj = mProj;
 
 			FOR_STL(_listObj)
 			{

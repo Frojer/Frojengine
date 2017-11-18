@@ -12,10 +12,8 @@ LPDXDC CTexture2D::_pDXDC = nullptr;
 ID3D11SamplerState*	CTexture2D::_pSampler[ADDRESS_MAX];
 
 CTexture2D::CTexture2D(LPCWSTR i_fileName)
-	: m_vBorderColor(1.0f, 1.0f, 1.0f, 1.0f), _ResourceView(nullptr), m_AddressFilter(ADDRESS_CLAMP)
+	: m_vBorderColor(1.0f, 1.0f, 1.0f, 1.0f), _ResourceView(nullptr), m_AddressFilter(ADDRESS_WRAP)
 {
-	ZeroMemory(&_pSampler, sizeof(_pSampler));
-
 	_textureMap.insert(pair<UINT, CTexture2D*>(GetID(), this));
 	m_name = i_fileName;
 }
@@ -23,7 +21,6 @@ CTexture2D::CTexture2D(LPCWSTR i_fileName)
 
 CTexture2D::~CTexture2D()
 {
-	SamplerRelease();
 	SAFE_RELEASE(_ResourceView);
 }
 
@@ -151,10 +148,16 @@ void CTexture2D::SamplerCreate()
 	sd.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
 	sd.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
 	sd.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+	/*
 	sd.BorderColor[0] = m_vBorderColor.x;
 	sd.BorderColor[1] = m_vBorderColor.y;
 	sd.BorderColor[2] = m_vBorderColor.z;
 	sd.BorderColor[3] = m_vBorderColor.w;
+	*/
+	sd.BorderColor[0] = 1.0f;
+	sd.BorderColor[1] = 1.0f;
+	sd.BorderColor[2] = 1.0f;
+	sd.BorderColor[3] = 1.0f;
 	hr = _pDevice->CreateSamplerState(&sd, &_pSampler[ADDRESS_BORDER]);
 }
 

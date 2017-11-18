@@ -5,14 +5,14 @@
 
 
 unordered_map<UINT, CShader*> CShader::_shaderMap;
-CB_Default CShader::_cbDefault;
-LPBUFFER CShader::_pCBDefault;
+LPBUFFER CShader::_pWVP_CB;
+LPBUFFER CShader::_pLight_CB;
 LPDEVICE CShader::_pDevice = nullptr;
 LPDXDC CShader::_pDXDC = nullptr;
 
 
 CShader::CShader()
-	: _pVS(nullptr), _pPS(nullptr), _pVSCode(nullptr), _pInputLayout(nullptr)
+	: _pConstBuffer(nullptr), _pVS(nullptr), _pPS(nullptr), _pVSCode(nullptr), _pInputLayout(nullptr), _countTexture(0), _countMatrix(0), _countVector(0), _countScalar(0), _useLight(false)
 {
 	_shaderMap.insert(pair<UINT, CShader*>(GetID(), this));
 }
@@ -44,7 +44,7 @@ CShader* CShader::CreateShader(LPCWSTR i_fileName)
 	//--------------------------
 	// 정점 셰이더 컴파일 Compile the vertex shader
 	HRESULT hr = ShaderCompile(i_fileName, "VS_Main", "vs_5_0", &pShader->_pVSCode);
-	
+
 	if (FAILED(hr))
 	{
 		FJError(hr, L"Failed to Vertex Shader Compile");
@@ -56,11 +56,11 @@ CShader* CShader::CreateShader(LPCWSTR i_fileName)
 	}
 
 	// 정점 셰이더 객체 생성 Create the vertex shader
-	hr = _pDevice->CreateVertexShader(	pShader->_pVSCode->GetBufferPointer(), 
-									    pShader->_pVSCode->GetBufferSize(), 
-									    nullptr, 
-	  								    &pShader->_pVS
-			                            );
+	hr = _pDevice->CreateVertexShader(pShader->_pVSCode->GetBufferPointer(),
+		pShader->_pVSCode->GetBufferSize(),
+		nullptr,
+		&pShader->_pVS
+	);
 	if (FAILED(hr))
 	{
 		FJError(hr, L"Failed to CreateVertexShader()");
@@ -76,7 +76,7 @@ CShader* CShader::CreateShader(LPCWSTR i_fileName)
 	// 픽셀 셰이더 컴파일 Compile the pixel shader
 	ID3DBlob* pPSCode = nullptr;
 	hr = ShaderCompile(i_fileName, "PS_Main", "ps_5_0", &pPSCode);
-	
+
 	if (FAILED(hr))
 	{
 		FJError(hr, L"Failed to Pixel Shader Compile");
@@ -88,11 +88,11 @@ CShader* CShader::CreateShader(LPCWSTR i_fileName)
 		return nullptr;
 	}
 	// 픽셀 셰이더 객체 생성 Create the pixel shader
-	hr = _pDevice->CreatePixelShader(	pPSCode->GetBufferPointer(), 
-										pPSCode->GetBufferSize(), 
-										nullptr,
-										&pShader->_pPS
-									 );
+	hr = _pDevice->CreatePixelShader(pPSCode->GetBufferPointer(),
+		pPSCode->GetBufferSize(),
+		nullptr,
+		&pShader->_pPS
+	);
 
 	SAFE_RELEASE(pPSCode);				//임시 개체 제거.	
 
@@ -126,12 +126,12 @@ CShader* CShader::CreateShader(LPCWSTR i_fileName)
 	UINT numElements = ARRAYSIZE(layout);
 
 	// 정접 입력구조 객체 생성 Create the input layout
-	hr = _pDevice->CreateInputLayout(  layout,
-										numElements,
-										pShader->_pVSCode->GetBufferPointer(),
-										pShader->_pVSCode->GetBufferSize(),
-										&pShader->_pInputLayout
-									);
+	hr = _pDevice->CreateInputLayout(layout,
+		numElements,
+		pShader->_pVSCode->GetBufferPointer(),
+		pShader->_pVSCode->GetBufferSize(),
+		&pShader->_pInputLayout
+	);
 	if (FAILED(hr))
 		return nullptr;
 
@@ -175,12 +175,7 @@ HRESULT CShader::ShaderCompile(
 							ppCode,				//[출력] 컴파일된 셰이더 코드.
 							&pError				//[출력] 컴파일 에러 코드.
 							);
-	if (FAILED(hr))
-	{
-		OutputDebugString(reinterpret_cast<TCHAR*>(pError->GetBufferPointer()));
-		pError->Release();		 
-		return hr;
-	}
+	if (FAILED(hr)) ShaderError(TRUE, L"셰이더 컴파일 실패", hr, pError, FileName, EntryPoint, ShaderModel);
 	
 	SAFE_RELEASE(pError);
 	return hr;
@@ -199,6 +194,7 @@ void CShader::ClearMap()
 
 void CShader::Render()
 {
+	UINT i = 0;
 	//입력 레이아웃 설정. Set the input layout
 	_pDXDC->IASetInputLayout(_pInputLayout);
 
@@ -206,7 +202,42 @@ void CShader::Render()
 	_pDXDC->VSSetShader(_pVS, nullptr, 0);
 	_pDXDC->PSSetShader(_pPS, nullptr, 0);
 
-	_pDXDC->VSSetConstantBuffers(0, 1, &_pCBDefault);
+	_pDXDC->VSSetConstantBuffers(i++, 1, &_pWVP_CB);
+	if (_useLight)
+		_pDXDC->VSSetConstantBuffers(i++, 1, &_pLight_CB);
+	//if (_pConstBuffer != nullptr)
+	//	_pDXDC->VSSetConstantBuffers(i++, 1, &_pConstBuffer);
+}
+
+
+
+HRESULT CShader::CreateDefaultBuffer()
+{
+	HRESULT hr = S_OK;
+
+	//상수 버퍼 정보 설정.
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_DYNAMIC;				//동적 정점버퍼 설정.
+	bd.ByteWidth = sizeof(CMaterial::_WVPData);
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	//CPU 접근 설정.
+
+												//서브리소스 설정.
+	D3D11_SUBRESOURCE_DATA sd;
+	sd.pSysMem = &CMaterial::_WVPData;							//(외부) 상수 데이터 설정.
+	sd.SysMemPitch = 0;
+	sd.SysMemSlicePitch = 0;
+
+	//상수 버퍼 생성.
+	hr = _pDevice->CreateBuffer(&bd, &sd, &_pWVP_CB);
+	if (FAILED(hr))
+	{
+		FJError(hr, L"CreateDefaultBuffer : 기본버퍼 생성 실패");
+		return hr;
+	}
+
+	return hr;
 }
 
 
@@ -290,14 +321,14 @@ HRESULT CShader::CreateDynamicConstantBuffer(UINT size, LPVOID pData, ID3D11Buff
 //
 // 동적 버퍼 갱신.
 //
-HRESULT CShader::UpdateDynamicConstantBuffer(LPDXDC pDXDC, ID3D11Resource* pBuff, LPVOID pData, UINT size)
+HRESULT CShader::UpdateDynamicConstantBuffer(ID3D11Resource* pBuff, LPVOID pData, UINT size)
 {
 	HRESULT hr = S_OK;
 	D3D11_MAPPED_SUBRESOURCE mr;
 	ZeroMemory(&mr, sizeof(mr));
 
 	//상수버퍼 접근
-	hr = pDXDC->Map(pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mr);
+	hr = _pDXDC->Map(pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mr);
 	if (FAILED(hr))
 	{
 		FJError(hr, L"UpdateDynamicConstantBuffer : Map 실패");
@@ -308,16 +339,19 @@ HRESULT CShader::UpdateDynamicConstantBuffer(LPDXDC pDXDC, ID3D11Resource* pBuff
 	memcpy(mr.pData, pData, size);
 
 	//상수버퍼 닫기.
-	pDXDC->Unmap(pBuff, 0);
+	_pDXDC->Unmap(pBuff, 0);
 
 
 	return hr;
 }
 
 
-HRESULT CShader::UpdateDefaultBuffer()
+void CShader::UpdateConstantBuffer(LPVOID pCB, UINT size)
 {
-	return UpdateDynamicConstantBuffer(_pDXDC, _pCBDefault, &_cbDefault, sizeof(CB_Default));
+	UpdateDynamicConstantBuffer(_pWVP_CB, &CMaterial::_WVPData, sizeof(CMaterial::_WVPData));
+	if (_useLight)
+		UpdateDynamicConstantBuffer(_pLight_CB, &CMaterial::_LightData, sizeof(CMaterial::_LightData));
+	if (size != 0)	UpdateDynamicConstantBuffer(_pConstBuffer, pCB, size);
 }
 
 
@@ -340,4 +374,68 @@ CShader* CShader::Find(LPCWSTR name)
 	}
 
 	return nullptr;
+}
+
+
+
+
+////////////////////////////////////////////////////////////////////////////// 
+//
+// 에러 메세지 처리 : 셰이더 에러 처리용.
+// 
+void CShader::ShaderError(BOOL bMBox, TCHAR* msg, HRESULT hr, ID3DBlob* pBlob, LPCWSTR filename, char* EntryPoint, char* ShaderModel)
+{
+
+	/*//가변매개변수 처리.
+	TCHAR msgva[2048] = L"";
+	va_list vl;
+	va_start(vl, msg);
+	_vstprintf(msgva, msg, vl);
+	va_end(vl);
+	*/
+	//파라미터, 유니코드로 전환.
+	TCHAR func[80] = L"";
+	size_t len = strlen(EntryPoint);
+	::mbstowcs_s(&len, func, ARRAYSIZE(func), EntryPoint, strlen(EntryPoint));
+	TCHAR sm[20] = L"";
+	::mbstowcs_s(&len, sm, ARRAYSIZE(sm), ShaderModel, strlen(ShaderModel));
+
+
+	//셰이더 오류 메세지 읽기.
+	TCHAR errw[4096] = L"";
+	::mbstowcs_s(&len, errw, ARRAYSIZE(errw), (char*)pBlob->GetBufferPointer(), pBlob->GetBufferSize());
+
+
+	//HRESULT 에서 에러 메세지 얻기 
+	//시스템으로 부터 얻는 셰이더 오류메세지는 부정확하므로 생략.
+	TCHAR herr[1024] = L"아래의 오류를 확인하십시요.";
+	/*FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, 0, hr,
+	MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+	herr, 1024, NULL);
+	*/
+
+
+	//에러 메세지 붙이기.
+	TCHAR errmsg[1024];
+	_stprintf_s(errmsg, L"%s \nFile=%s  Entry=%s  Target=%s  \n에러코드(0x%08X) : %s \n\n%s",
+		msg, filename, func, sm,
+		hr, herr, errw);
+
+
+	//(디버깅 중) VS 출력창으로 출력..
+	OutputDebugString(L"\n");
+	OutputDebugString(errmsg);
+	//OutputDebugString(errw);
+
+
+	//로그파일로 출력.
+	//...
+
+
+	//메세지 창 출력..
+	if (bMBox)
+	{
+		MessageBox(NULL, errmsg, L"Yena::Error", MB_OK | MB_ICONERROR);
+		//MessageBox(NULL, errw, L"Yena::Error", MB_OK | MB_ICONERROR);
+	}
 }

@@ -253,17 +253,55 @@ void FJSystemEngine::MessagePump()
 
 void FJSystemEngine::LoadData()
 {
+	CShader* pShader = nullptr;
+	SceneManager* pSM = SceneManager::GetInstance();
+	CScene* pScene = nullptr;
+	VECTOR* pData;
+	UINT totalSize;
+
 	//==============
 	// 셰이더 로딩
 	//==============
-	CShader* pShader = CShader::CreateShader(L"./fx/Demo.fx");
-	pShader->m_name = L"Default";
+	pShader = CShader::CreateShader(L"./fx/Standard.fx");
+	pShader->m_name = L"Standard";
+	pShader->_countTexture = 1;
+	pShader->_countScalar = 1;
+	pShader->_countVector = 2;
+	pShader->_countMatrix = 0;
 
-	ZeroMemory(&CShader::_cbDefault, sizeof(CB_Default));
-	pShader->CreateDynamicConstantBuffer(sizeof(CB_Default), &CShader::_cbDefault, &CShader::_pCBDefault);
+	totalSize = (pShader->_countMatrix * 4) + pShader->_countVector + pShader->_countScalar;
+	if (totalSize != 0)
+	{
+		pData = new VECTOR[totalSize];
+		ZeroMemory(pData, sizeof(VECTOR) * totalSize);
+		pShader->CreateDynamicConstantBuffer(totalSize * sizeof(VECTOR), pData, &pShader->_pConstBuffer);
+		delete[] pData;
+	}
 
-	SceneManager* pSM = SceneManager::GetInstance();
-	CScene* pScene = nullptr;
+	pShader = CShader::CreateShader(L"./fx/Error.fx");
+	pShader->m_name = L"Error";
+
+	totalSize = (pShader->_countMatrix * 4) + pShader->_countVector + pShader->_countScalar;
+	if (totalSize != 0)
+	{
+		pData = new VECTOR[totalSize];
+		ZeroMemory(pData, sizeof(VECTOR) * totalSize);
+		pShader->CreateDynamicConstantBuffer(totalSize * sizeof(VECTOR), pData, &pShader->_pConstBuffer);
+		delete[] pData;
+	}
+	
+	pShader = CShader::CreateShader(L"./fx/Line.fx");
+	pShader->m_name = L"Line";
+	pShader->_countVector = 1;
+
+	totalSize = (pShader->_countMatrix * 4) + pShader->_countVector + pShader->_countScalar;
+	if (totalSize != 0)
+	{
+		pData = new VECTOR[totalSize];
+		ZeroMemory(pData, sizeof(VECTOR) * totalSize);
+		pShader->CreateDynamicConstantBuffer(totalSize * sizeof(VECTOR), pData, &pShader->_pConstBuffer);
+		delete[] pData;
+	}
 
 	//==========================================
 	// Scene 생성 후 SceneManager 에게 넣어준다
