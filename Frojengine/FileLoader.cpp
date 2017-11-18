@@ -53,6 +53,7 @@ CObject* FileLoader::LoadXFile(LPCWSTR i_fileName)
 		switch (c)
 		{
 		case L'M':
+			float power;
 			pMtrl = new CMaterial(CShader::Find(L"Standard"));
 			file >> str >> str;
 			pMtrl->m_name = str;
@@ -62,8 +63,8 @@ CObject* FileLoader::LoadXFile(LPCWSTR i_fileName)
 			file >> pMtrl->m_diffuse.x >> c >> pMtrl->m_diffuse.y >> c >> pMtrl->m_diffuse.z >> c >> pMtrl->m_diffuse.w >> str;
 
 			// Power 얻어오기
-			//file >> pMtrl->m_power >> str;
-			file >> str;
+			file >> power >> str;
+			//file >> str;
 
 			// Specular 얻어오기
 			file >> pMtrl->m_specular.x >> c >> pMtrl->m_specular.y >> c >> pMtrl->m_specular.z >> str;
@@ -95,6 +96,11 @@ CObject* FileLoader::LoadXFile(LPCWSTR i_fileName)
 
 				file >> str;
 			}
+
+			pMtrl->SetVector(0, pMtrl->m_diffuse);
+			pMtrl->SetVector(1, XMFLOAT4(pMtrl->m_ambient.x, pMtrl->m_ambient.y, pMtrl->m_ambient.z, 1.0f));
+			pMtrl->SetVector(2, XMFLOAT4(pMtrl->m_specular.x, pMtrl->m_specular.y, pMtrl->m_specular.z, 1.0f));
+			pMtrl->SetScalar(0, power);
 
 			break;
 

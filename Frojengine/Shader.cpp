@@ -205,8 +205,11 @@ void CShader::Render()
 	_pDXDC->VSSetConstantBuffers(i++, 1, &_pWVP_CB);
 	if (_useLight)
 		_pDXDC->VSSetConstantBuffers(i++, 1, &_pLight_CB);
-	//if (_pConstBuffer != nullptr)
-	//	_pDXDC->VSSetConstantBuffers(i++, 1, &_pConstBuffer);
+	if (_pConstBuffer != nullptr)
+	{
+		_pDXDC->VSSetConstantBuffers(i++, 1, &_pConstBuffer);
+		_pDXDC->PSSetConstantBuffers(0, 1, &_pConstBuffer);
+	}
 }
 
 

@@ -251,13 +251,29 @@ void FJSystemEngine::MessagePump()
 
 
 
+void FJSystemEngine::CreateShaderBuffer(CShader* i_pShader)
+{
+	VECTOR* pData;
+	UINT totalSize;
+
+	totalSize = (i_pShader->_countMatrix * 4) + i_pShader->_countVector + i_pShader->_countScalar;
+	if (totalSize != 0)
+	{
+		pData = new VECTOR[totalSize];
+		ZeroMemory(pData, sizeof(VECTOR) * totalSize);
+		i_pShader->CreateDynamicConstantBuffer(totalSize * sizeof(VECTOR), pData, &i_pShader->_pConstBuffer);
+		delete[] pData;
+	}
+}
+
+
+
+
 void FJSystemEngine::LoadData()
 {
 	CShader* pShader = nullptr;
 	SceneManager* pSM = SceneManager::GetInstance();
 	CScene* pScene = nullptr;
-	VECTOR* pData;
-	UINT totalSize;
 
 	//==============
 	// 셰이더 로딩
@@ -266,42 +282,21 @@ void FJSystemEngine::LoadData()
 	pShader->m_name = L"Standard";
 	pShader->_countTexture = 1;
 	pShader->_countScalar = 1;
-	pShader->_countVector = 2;
+	pShader->_countVector = 3;
 	pShader->_countMatrix = 0;
 
-	totalSize = (pShader->_countMatrix * 4) + pShader->_countVector + pShader->_countScalar;
-	if (totalSize != 0)
-	{
-		pData = new VECTOR[totalSize];
-		ZeroMemory(pData, sizeof(VECTOR) * totalSize);
-		pShader->CreateDynamicConstantBuffer(totalSize * sizeof(VECTOR), pData, &pShader->_pConstBuffer);
-		delete[] pData;
-	}
+	CreateShaderBuffer(pShader);
 
 	pShader = CShader::CreateShader(L"./fx/Error.fx");
 	pShader->m_name = L"Error";
 
-	totalSize = (pShader->_countMatrix * 4) + pShader->_countVector + pShader->_countScalar;
-	if (totalSize != 0)
-	{
-		pData = new VECTOR[totalSize];
-		ZeroMemory(pData, sizeof(VECTOR) * totalSize);
-		pShader->CreateDynamicConstantBuffer(totalSize * sizeof(VECTOR), pData, &pShader->_pConstBuffer);
-		delete[] pData;
-	}
+	CreateShaderBuffer(pShader);
 	
 	pShader = CShader::CreateShader(L"./fx/Line.fx");
 	pShader->m_name = L"Line";
 	pShader->_countVector = 1;
 
-	totalSize = (pShader->_countMatrix * 4) + pShader->_countVector + pShader->_countScalar;
-	if (totalSize != 0)
-	{
-		pData = new VECTOR[totalSize];
-		ZeroMemory(pData, sizeof(VECTOR) * totalSize);
-		pShader->CreateDynamicConstantBuffer(totalSize * sizeof(VECTOR), pData, &pShader->_pConstBuffer);
-		delete[] pData;
-	}
+	CreateShaderBuffer(pShader);
 
 	//==========================================
 	// Scene 생성 후 SceneManager 에게 넣어준다

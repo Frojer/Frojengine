@@ -21,6 +21,7 @@ struct SystemSetting
 };
 
 class FJRenderingEngine;
+class CShader;
 
 class FJSystemEngine
 {
@@ -48,6 +49,8 @@ private:
 	// 게임 세팅 저장, 로드
 	bool SaveSetting();
 	bool LoadSetting();
+
+	void CreateShaderBuffer(CShader* i_pShader);
 
 	void EngineTimer();
 

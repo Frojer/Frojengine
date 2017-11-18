@@ -7,6 +7,14 @@ cbuffer cbWVP
 	matrix mProj;   // 투영 변환 행렬.
 };
 
+cbuffer ConstBuffer
+{
+	float4 mtrlDiffuse;
+	float4 mtrlAmbient;
+	float4 mtrlSpecular;
+	float mtrlPower;
+};
+
 //VS 출력 구조체.
 struct v2p
 {
@@ -46,7 +54,7 @@ v2p VS_Main(
 	pos = mul(pos, mView);
 
 	////조명 계산.(Lighting)
-	float4 diff = 1;
+	float4 diff = mtrlDiffuse;
 
 	//원근 투영 변환 (Projection Transform)
 	pos = mul(pos, mProj);

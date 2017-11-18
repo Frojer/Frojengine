@@ -87,7 +87,8 @@ using namespace DirectX::SimpleMath;
 // ÂüÁ¶ : https://directxtk.codeplex.com/wikipage?title=SpriteFont
 //
 #include "SpriteFont.h"
-  
 
-
-/**************** end of "DirectXTK.h" ***********************************/
+//DirectX::XMFLOAT4& DirectX::XMFLOAT4::operator=(const DirectX::XMFLOAT3& lhs)
+//{
+//	return DirectX::XMFLOAT4(lhs.x, lhs.y, lhs.z, 1.0f);
+//}

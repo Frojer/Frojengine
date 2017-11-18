@@ -58,9 +58,9 @@ public:
 	void SetShader(CShader* shader);
 	CShader* GetShader();
 
-	void SetScala(UINT id, float scala);
-	void SetVector(UINT id, VECTOR4 vector);
-	void SetMatrix(UINT id, MATRIX matrix);
+	void SetScalar(UINT id, float scala);
+	void SetVector(UINT id, VECTOR4& vector);
+	void SetMatrix(UINT id, MATRIX& matrix);
 
 	static CMaterial* Find(UINT id);
 	static CMaterial* Find(LPCWSTR name);

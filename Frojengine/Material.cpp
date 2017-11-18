@@ -5,7 +5,7 @@ CMaterial::WVP_Data CMaterial::_WVPData;
 CMaterial::Light_Data CMaterial::_LightData;
 
 CMaterial::CMaterial(CShader* shader)
-	: _pShader(shader), _countTexture(0), _useLight(false), m_diffuse(VECTOR4(1.0f, 1.0f, 1.0f, 1.0f)), m_ambient(VECTOR3(1.0f, 1.0f, 1.0f)), m_specular(VECTOR3(1.0f, 1.0f, 1.0f))
+	: _pShader(shader), _countTexture(0), _useLight(false), m_diffuse(VECTOR4(1.0f, 1.0f, 1.0f, 1.0f)), m_ambient(VECTOR3(0.2f, 0.2f, 0.2f)), m_specular(VECTOR3(1.0f, 1.0f, 1.0f))
 {
 	ZeroMemory(m_pTexture, sizeof(m_pTexture));
 
@@ -40,13 +40,13 @@ void CMaterial::UpdateConstantBuffer(MATRIXA& mWorld)
 	if (_constData.size() > 0)
 	{
 		if (_vecMatrix.size() > 0)
-			memcpy_s(&_vecMatrix[0], sizeof(MATRIXA) * _vecMatrix.size(), &_constData[0], sizeof(MATRIXA) * _vecMatrix.size());
+			memcpy_s(&_constData[0], sizeof(MATRIXA) * _vecMatrix.size(), &_vecMatrix[0], sizeof(MATRIXA) * _vecMatrix.size());
 		if (_vecVector.size() > 0)
-			memcpy_s(&_vecVector[0], sizeof(VECTOR) * _vecVector.size(), &_constData[_vecMatrix.size() * 4], sizeof(VECTOR) * _vecVector.size());
+			memcpy_s(&_constData[_vecMatrix.size() * 4], sizeof(VECTOR) * _vecVector.size(), &_vecVector[0], sizeof(VECTOR) * _vecVector.size());
 		if (_vecScala.size() > 0)
-			memcpy_s(&_vecScala[0], sizeof(VECTOR) * _vecScala.size(), &_constData[(_vecMatrix.size() * 4) + _vecVector.size()], sizeof(VECTOR) * _vecScala.size());
+			memcpy_s(&_constData[(_vecMatrix.size() * 4) + _vecVector.size()], sizeof(VECTOR) * _vecScala.size(), &_vecScala[0], sizeof(VECTOR) * _vecScala.size());
 
-		_pShader->UpdateConstantBuffer(&_constData[0], _constData.size() * sizeof(float));
+		_pShader->UpdateConstantBuffer(&_constData[0], _constData.size() * sizeof(VECTOR));
 	}
 
 	else
@@ -130,6 +130,29 @@ void CMaterial::SetShader(CShader* shader)
 CShader* CMaterial::GetShader()
 {
 	return _pShader;
+}
+
+
+
+void CMaterial::SetScalar(UINT id, float scala)
+{
+	VECTOR vec;
+	memcpy(&vec, &scala, sizeof(VECTOR));
+	_vecScala[id] = vec;
+}
+
+
+
+void CMaterial::SetVector(UINT id, VECTOR4& vector)
+{
+	_vecVector[id] = XMLoadFloat4(&vector);
+}
+
+
+
+void CMaterial::SetMatrix(UINT id, MATRIX& matrix)
+{
+	_vecMatrix[id] = XMLoadFloat4x4(&matrix);
 }
 
 
