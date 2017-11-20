@@ -3,6 +3,8 @@
 COLOR FJRenderingEngine::_clearCol = COLOR(0.0f, 0.0f, 0.8f, 1.0f);
 byte FJRenderingEngine::_rsData = 0;
 byte FJRenderingEngine::_dsData = 0;
+LPDEVICE Device::_pDevice;
+LPDXDC Device::_pDXDC;
 
 FJRenderingEngine::FJRenderingEngine()
 	: _pDevice(nullptr), _pDXDC(nullptr), _pSwapChain(nullptr), _pRTView(nullptr), _pDS(nullptr), _pDSView(nullptr)
@@ -42,17 +44,9 @@ bool FJRenderingEngine::DXSetup(HWND i_hWnd)
 	// D3D 렌더링 장치 Device 및 스왑체인 Swap Chain 생성. 
 	result = CreateDeviceSwapChain(i_hWnd);
 
-	CShader::_pDevice = _pDevice;
-	CShader::_pDXDC = _pDXDC;
-	CMesh::_pDevice = _pDevice;
-	CMesh::_pDXDC = _pDXDC;
-	CObject::_pDXDC = _pDXDC;
-	CTexture2D::_pDevice = _pDevice;
-	CTexture2D::_pDXDC = _pDXDC;
-	CCamera::_pDevice = _pDevice;
-	CCamera::_pDXDC = _pDXDC;
-	Debug::_pDevice = _pDevice;
-	Debug::_pDXDC = _pDXDC;
+	Device::_pDevice = _pDevice;
+	Device::_pDXDC = _pDXDC;
+
 	if (!result)
 		return false;
 

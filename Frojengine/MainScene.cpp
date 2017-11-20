@@ -1,8 +1,7 @@
 #include "MainScene.h"
 #include "Hero.h"
 
-MainScene::MainScene(LPDEVICE i_pDevice, LPDXDC i_pDXDC)
-	: CScene(i_pDevice, i_pDXDC)
+MainScene::MainScene()
 {
 
 }
@@ -36,7 +35,7 @@ bool MainScene::Load()
 
 	CMaterial* pMtrl = new CMaterial(CShader::Find(L"Line"));
 
-	pBox->GetChildren().back()->m_pMaterial->SetShader(CShader::Find(L"Error"));
+	//pBox->GetChildren().back()->->m_pMaterial->SetShader(CShader::Find(L"Error"));
 	pBox->SetParent(pObj);
 
 	pPlane->SetParent(pObj);

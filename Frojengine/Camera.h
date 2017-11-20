@@ -2,12 +2,9 @@
 
 #include "Frojengine.h"
 
-class CCamera : public IObject
+class CCamera : public IObject, protected Device
 {
 private:
-	static LPDEVICE _pDevice;
-	static LPDXDC _pDXDC;
-
 	D3D11_VIEWPORT _Viewport;
 
 	float m_FOV;

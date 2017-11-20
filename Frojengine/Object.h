@@ -2,30 +2,24 @@
 
 #include "Frojengine.h"
 
-class CModel;
-class CMesh;
-class CMaterial;
+class Component;
 
 class CObject : public IObject
 {
 private:
-	static LPDXDC _pDXDC;
 	bool _bDead;
 
 protected:
 	CObject* _pParent;
 	list<CObject*> _childList;
+	list<Component*> _components;
 
 public:
 	VECTOR3 m_vPos;
 	VECTOR3 m_vRot;
 	VECTOR3 m_vScale;
 
-	CMesh*		m_pMesh;
-	CMaterial*	m_pMaterial;
-
 private:
-	void BufferUpdate();
 	MATRIXA GetWorldMatrix();
 	void Render();
 
@@ -45,11 +39,14 @@ public:
 	CObject* GetParent();
 	list<CObject*> GetChildren();
 
-	void ChangeMesh(CMesh* i_pMesh);
-	void ChangeMaterial(CMaterial* i_pMaterial);
+	bool AddComponent(wstring name);
+	Component* GetComponent(wstring name);
+	list<Component*> GetComponents(wstring name);
 
 	static CObject* Find(unsigned int id);
 
 	friend class FJRenderingEngine;
 	friend class CScene;
+	// Renderer::BufferUpdate()
+	friend class Renderer;
 };

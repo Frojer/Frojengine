@@ -1,8 +1,5 @@
 #include "Camera.h"
 
-LPDEVICE CCamera::_pDevice = nullptr;
-LPDXDC CCamera::_pDXDC = nullptr;
-
 CCamera::CCamera()
 {
 

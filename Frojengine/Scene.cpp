@@ -3,10 +3,9 @@
 MATRIXA CScene::mView;
 MATRIXA CScene::mProj;
 
-CScene::CScene(LPDEVICE i_pDevice, LPDXDC i_pDXDC)
+CScene::CScene()
 {
-	_pDevice = i_pDevice;
-	_pDXDC = i_pDXDC;
+
 }
 
 

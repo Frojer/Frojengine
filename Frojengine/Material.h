@@ -65,7 +65,8 @@ public:
 	static CMaterial* Find(UINT id);
 	static CMaterial* Find(LPCWSTR name);
 
-	friend class CObject;
+	// void Renderer::BufferUpdate()
+	friend class Renderer;
 	friend class CShader;
 	friend class CScene;
 	friend class FJSystemEngine;

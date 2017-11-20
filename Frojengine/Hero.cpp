@@ -21,7 +21,7 @@ void Hero::Initialize()
 
 void Hero::Update()
 {
-#define GRID_SIZE 10
+#define GRID_SIZE 50
 #define GRID_WIDTH 10
 	for (int i = 0; i <= GRID_SIZE; i++)
 	{

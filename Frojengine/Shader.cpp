@@ -7,8 +7,6 @@
 unordered_map<UINT, CShader*> CShader::_shaderMap;
 LPBUFFER CShader::_pWVP_CB;
 LPBUFFER CShader::_pLight_CB;
-LPDEVICE CShader::_pDevice = nullptr;
-LPDXDC CShader::_pDXDC = nullptr;
 
 
 CShader::CShader()

@@ -1,7 +1,5 @@
 #include "Object.h"
 
-LPDXDC CObject::_pDXDC = nullptr;
-
 CObject::CObject()
 {
 	ZeroMemory(&m_vPos, sizeof(VECTOR3));
@@ -14,14 +12,11 @@ CObject::CObject()
 
 	_pParent = nullptr;
 
-	m_pMesh = nullptr;
-	m_pMaterial = nullptr;
-
 	SceneManager::pCurrentScene->_listObj.push_back(this);
 }
 
 CObject::CObject(VECTOR3& pos, VECTOR3& rot, VECTOR3& scale)
-	: _bDead(false), _pParent(nullptr), m_vPos(pos), m_vRot(rot), m_vScale(scale), m_pMesh(nullptr), m_pMaterial(nullptr)
+	: _bDead(false), _pParent(nullptr), m_vPos(pos), m_vRot(rot), m_vScale(scale)
 {
 	SceneManager::pCurrentScene->_listObj.push_back(this);
 }
@@ -35,12 +30,6 @@ CObject::~CObject()
 		(*iter) = nullptr;
 		_childList.erase(iter++);
 	}
-}
-
-
-void CObject::BufferUpdate()
-{
-	m_pMaterial->UpdateConstantBuffer(GetWorldMatrix());
 }
 
 
@@ -71,6 +60,13 @@ void CObject::Initialize()
 
 void CObject::Update()
 {
+	FOR_STL(_components)
+	{
+		if (CheckComponentType((*iter)->_type, COMPONENT_TYPE_UPDATE))
+		{
+			(*iter)->Update();
+		}
+	}
 	FOR_STL(_childList)
 	{
 		(*iter)->Update();
@@ -80,15 +76,12 @@ void CObject::Update()
 
 void CObject::Render()
 {
-	if (m_pMesh != nullptr && m_pMaterial != nullptr)
+	FOR_STL(_components)
 	{
-		BufferUpdate();
-
-		m_pMesh->Render();
-		m_pMaterial->Render();
-
-		//±×¸®±â! Render a triangle ¡Ú
-		_pDXDC->DrawIndexed(m_pMesh->m_indics.size() * 3, 0, 0);
+		if (CheckComponentType((*iter)->_type, COMPONENT_TYPE_RENDER))
+		{
+			(*iter)->Render();
+		}
 	}
 
 	FOR_STL(_childList)
@@ -107,18 +100,6 @@ void CObject::Destroy()
 void CObject::Destroy(float time)
 {
 
-}
-
-
-void CObject::ChangeMesh(CMesh* i_pMesh)
-{
-	m_pMesh = i_pMesh;
-}
-
-
-void CObject::ChangeMaterial(CMaterial* i_pMaterial)
-{
-	m_pMaterial = i_pMaterial;
 }
 
 
@@ -153,6 +134,45 @@ CObject* CObject::GetParent()
 list<CObject*> CObject::GetChildren()
 {
 	return _childList;
+}
+
+bool CObject::AddComponent(wstring name)
+{
+	Component* com = nullptr;
+
+	if (name == L"Renderer")
+	{
+		com = new Renderer;
+	}
+
+	else
+	{
+		return false;
+	}
+
+	com->_pObj = this;
+	_components.push_back(com);
+
+	return true;
+}
+
+
+Component* CObject::GetComponent(wstring name)
+{
+	FOR_STL(_components)
+	{
+		if ((*iter)->m_name == name)
+			return (*iter);
+	}
+
+	return nullptr;
+}
+
+
+
+list<Component*> CObject::GetComponents(wstring name)
+{
+	return _components;
 }
 
 

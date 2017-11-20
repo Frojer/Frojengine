@@ -2,8 +2,6 @@
 #include "FJUtility.h"
 
 unordered_map<UINT, CMesh*> CMesh::_meshMap;
-LPDEVICE CMesh::_pDevice = nullptr;
-LPDXDC CMesh::_pDXDC = nullptr;
 
 CMesh::CMesh()
 	: _pVB(nullptr), _pIB(nullptr)

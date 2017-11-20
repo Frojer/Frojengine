@@ -7,7 +7,7 @@ class MainScene : public CScene
 public:
 
 public:
-	MainScene(LPDEVICE i_pDevice, LPDXDC i_pDXDC);
+	MainScene();
 	~MainScene();
 
 	virtual bool Load();

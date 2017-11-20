@@ -4,12 +4,9 @@
 
 class CMaterial;
 
-class Debug
+class Debug : protected Device
 {
 private:
-	static LPDEVICE _pDevice;
-	static LPDXDC _pDXDC;
-
 	static LPVERTEXBUFFER _pVB;
 	static VECTOR3 _linePos[2];
 	static CMaterial* _pLineMtrl;

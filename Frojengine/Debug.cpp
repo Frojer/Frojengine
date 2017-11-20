@@ -1,13 +1,12 @@
 #include "Debug.h"
 
-LPDEVICE Debug::_pDevice = nullptr;
-LPDXDC Debug::_pDXDC = nullptr;
 LPVERTEXBUFFER Debug::_pVB = nullptr;
 VECTOR3 Debug::_linePos[2];
 CMaterial* Debug::_pLineMtrl = nullptr;
 
 void Debug::DrawLine(VECTOR3 start, VECTOR3 end, COLOR col)
 {
+#ifdef _DEBUG
 	HRESULT hr = S_OK;
 
 	if (_linePos[0].x == start.x &&
@@ -72,4 +71,5 @@ void Debug::DrawLine(VECTOR3 start, VECTOR3 end, COLOR col)
 	_pLineMtrl->Render();
 
 	_pDXDC->Draw(2, 0);
+#endif
 }

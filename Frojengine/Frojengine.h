@@ -20,6 +20,7 @@ using namespace std;
 #include "FJDefine.h"
 #include "FJSystemEngine.h"
 #include "FJRenderingEngine.h"
+#include "Device.h"
 #include "FileLoader.h"
 #include "Debug.h"
 
@@ -32,7 +33,6 @@ using namespace std;
 #include "IObject.h"
 #include "Camera.h"
 #include "Object.h"
-#include "Model.h"
 #include "Mesh.h"
 #include "Material.h"
 #include "Shader.h"
@@ -48,3 +48,13 @@ using namespace std;
 ///////////////////////////////////////////
 
 #include "SceneManager.h"
+
+
+
+///////////////////////////////////////////
+//
+//  Frojer Engine Component Header
+//
+///////////////////////////////////////////
+#include "Component.h"
+#include "Renderer.h"

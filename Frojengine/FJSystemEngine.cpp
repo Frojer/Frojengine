@@ -303,7 +303,7 @@ void FJSystemEngine::LoadData()
 	//==========================================
 	// Scene 생성 후 SceneManager 에게 넣어준다
 	//==========================================
-	pScene = new MainScene(_pRenderer->_pDevice, _pRenderer->_pDXDC);
+	pScene = new MainScene();
 
 	pSM->AddScene(pScene);
 

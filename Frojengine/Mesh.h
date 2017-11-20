@@ -4,13 +4,10 @@
 
 class CObject;
 
-class CMesh : public IObject
+class CMesh : public IObject, protected Device
 {
 private:
 	static unordered_map<UINT, CMesh*> _meshMap;
-
-	static LPDEVICE _pDevice;
-	static LPDXDC _pDXDC;
 
 protected:
 	LPVERTEXBUFFER _pVB;
@@ -35,8 +32,10 @@ public:
 	static CMesh* Find(UINT id);
 	static CMesh* Find(wstring name);
 
-	friend class CObject;
-	friend class FJRenderingEngine;
+	// void Renderer::Render()
+	friend class Renderer;
+	// FJSystemEngine::~FJSystemEngine()
 	friend class FJSystemEngine;
+
 	friend class FileLoader;
 };

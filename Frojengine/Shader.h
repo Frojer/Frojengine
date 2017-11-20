@@ -2,7 +2,7 @@
 
 #include "Frojengine.h"
 
-class CShader : public IObject
+class CShader : public IObject, private Device
 {
 private:
 	static unordered_map<UINT, CShader*> _shaderMap;
@@ -10,9 +10,6 @@ private:
 	static LPBUFFER _pWVP_CB;
 	static LPBUFFER _pLight_CB;
 	LPBUFFER _pConstBuffer;
-
-	static LPDEVICE _pDevice;
-	static LPDXDC _pDXDC;
 
 	LPVERTEXSHADER _pVS;
 	LPPIXELSHADER _pPS;
@@ -40,7 +37,6 @@ private:
 
 	static void ClearMap();
 
-protected:
 	virtual void Render();
 	static HRESULT CreateDefaultBuffer();
 

@@ -2,13 +2,10 @@
 
 #include "Frojengine.h"
 
-class CTexture2D : public IObject
+class CTexture2D : public IObject, private Device
 {
 private:
 	static unordered_map<UINT, CTexture2D*> _textureMap;
-
-	static LPDEVICE _pDevice;
-	static LPDXDC _pDXDC;
 
 	enum
 	{

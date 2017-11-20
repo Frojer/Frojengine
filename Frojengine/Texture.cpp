@@ -7,8 +7,6 @@
 #include "FJUtility.h"
 
 unordered_map<UINT, CTexture2D*> CTexture2D::_textureMap;
-LPDEVICE CTexture2D::_pDevice = nullptr;
-LPDXDC CTexture2D::_pDXDC = nullptr;
 ID3D11SamplerState*	CTexture2D::_pSampler[ADDRESS_MAX];
 
 CTexture2D::CTexture2D(LPCWSTR i_fileName)
