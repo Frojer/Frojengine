@@ -111,6 +111,15 @@
     <ClCompile Include="main.cpp">
       <Filter>Frojengine</Filter>
     </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>Frojengine\System\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug.cpp">
+      <Filter>Frojengine\Object\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>Frojengine\Object\Source File</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FJDefine.h">
@@ -172,6 +181,18 @@
     </ClInclude>
     <ClInclude Include="DefaultShader.h">
       <Filter>Frojengine\Default\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>Frojengine\System\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug.h">
+      <Filter>Frojengine\Object\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="Line.h">
+      <Filter>Frojengine\Object\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Frojengine\Object\Header File</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

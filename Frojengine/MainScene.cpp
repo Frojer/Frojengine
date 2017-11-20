@@ -25,7 +25,7 @@ bool MainScene::Load()
 	vp.MinDepth = 0.0f;
 	vp.MaxDepth = 1.0f;
 
-	cam->Create(VECTOR3(0.0f, 5.0f, -50.0f), VECTOR3(0.0f, 1.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), 45.0f, 1.0f, 100.0f, g_setting.displayMode.Width, g_setting.displayMode.Height, vp);
+	cam->Create(VECTOR3(0.0f, 200.0f, 0.0f), VECTOR3(0.0f, 0.0f, 1.0f), VECTOR3(0.0f, 0.0f, 0.0f), 45.0f, 1.0f, 1000.0f, g_setting.displayMode.Width, g_setting.displayMode.Height, vp);
 
 
 	CObject* pPlane = FileLoader::ObjectFileLoad(L"./Data/JN-4/airplane02.x");

@@ -21,7 +21,7 @@ using namespace std;
 #include "FJSystemEngine.h"
 #include "FJRenderingEngine.h"
 #include "FileLoader.h"
-
+#include "Debug.h"
 
 ///////////////////////////////////////////
 //

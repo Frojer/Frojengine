@@ -154,6 +154,8 @@
     <ClCompile Include="FJUtility.cpp" />
     <ClCompile Include="Hero.cpp" />
     <ClCompile Include="IObject.cpp" />
+    <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="Line.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainScene.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -165,10 +167,12 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="DefaultShader.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DXTK\Inc\DirectXTK.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="FileLoader.h" />
     <ClInclude Include="FJDefine.h" />
     <ClInclude Include="FJRenderingEngine.h" />
@@ -177,6 +181,8 @@
     <ClInclude Include="Frojengine.h" />
     <ClInclude Include="Hero.h" />
     <ClInclude Include="IObject.h" />
+    <ClInclude Include="Debug.h" />
+    <ClInclude Include="Line.h" />
     <ClInclude Include="MainScene.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
@@ -187,6 +193,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="DefaultShader.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Time.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="fx\Standard.fx">

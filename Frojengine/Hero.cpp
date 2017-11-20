@@ -21,6 +21,14 @@ void Hero::Initialize()
 
 void Hero::Update()
 {
+#define GRID_SIZE 10
+#define GRID_WIDTH 10
+	for (int i = 0; i <= GRID_SIZE; i++)
+	{
+		Debug::DrawLine(VECTOR3(-(GRID_SIZE * GRID_WIDTH / 2), 0, -(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH)), VECTOR3(GRID_SIZE * GRID_WIDTH / 2, 0, -(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH)), COLOR(1, 0, 0, 1));
+		Debug::DrawLine(VECTOR3(-(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH), 0, -(GRID_SIZE * GRID_WIDTH / 2)), VECTOR3(-(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH), 0, (GRID_SIZE * GRID_WIDTH / 2)), COLOR(1, 0, 0, 1));
+	}
+	Debug::DrawLine(m_vPos, VECTOR3(0, 0, 0), COLOR(0, 1, 1, 1));
 	if (IsKeyUp(VK_SPACE))
 		FJRenderingEngine::SetWireFrame(!FJRenderingEngine::GetWireFrame());
 

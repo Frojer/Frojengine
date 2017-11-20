@@ -259,10 +259,12 @@ void FJSystemEngine::CreateShaderBuffer(CShader* i_pShader)
 	totalSize = (i_pShader->_countMatrix * 4) + i_pShader->_countVector + i_pShader->_countScalar;
 	if (totalSize != 0)
 	{
-		pData = new VECTOR[totalSize];
+		pData = (VECTOR*)_aligned_malloc(sizeof(VECTOR) * totalSize, 16);
+		//pData = new VECTOR[totalSize];
 		ZeroMemory(pData, sizeof(VECTOR) * totalSize);
 		i_pShader->CreateDynamicConstantBuffer(totalSize * sizeof(VECTOR), pData, &i_pShader->_pConstBuffer);
-		delete[] pData;
+		//delete[] pData;
+		_aligned_free(pData);
 	}
 }
 

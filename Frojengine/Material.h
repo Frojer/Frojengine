@@ -69,4 +69,5 @@ public:
 	friend class CShader;
 	friend class CScene;
 	friend class FJSystemEngine;
+	friend class Debug;
 };

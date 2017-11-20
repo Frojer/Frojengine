@@ -51,7 +51,8 @@ bool FJRenderingEngine::DXSetup(HWND i_hWnd)
 	CTexture2D::_pDXDC = _pDXDC;
 	CCamera::_pDevice = _pDevice;
 	CCamera::_pDXDC = _pDXDC;
-
+	Debug::_pDevice = _pDevice;
+	Debug::_pDXDC = _pDXDC;
 	if (!result)
 		return false;
 
