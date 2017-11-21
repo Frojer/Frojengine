@@ -55,6 +55,15 @@
     <Filter Include="Frojengine\Default\Header File">
       <UniqueIdentifier>{0c9f7156-ce06-41ff-b21f-c8b062798a94}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Frojengine\Component">
+      <UniqueIdentifier>{86fe3fdf-5ca3-456d-8ff0-6bca816f43ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\Component\Header File">
+      <UniqueIdentifier>{394fdcd5-5940-459f-85d8-9d04625e4265}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Frojengine\Component\Source File">
+      <UniqueIdentifier>{af83611a-2b64-4815-b6b4-2d17246e7bdd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FJSystemEngine.cpp">
@@ -99,9 +108,6 @@
     <ClCompile Include="FileLoader.cpp">
       <Filter>Frojengine\System\Source File</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Frojengine\Object\Source File</Filter>
-    </ClCompile>
     <ClCompile Include="DefaultShader.cpp">
       <Filter>Frojengine\Default\Source File</Filter>
     </ClCompile>
@@ -111,14 +117,20 @@
     <ClCompile Include="Time.cpp">
       <Filter>Frojengine\System\Source File</Filter>
     </ClCompile>
-    <ClCompile Include="Debug.cpp">
-      <Filter>Frojengine\Object\Source File</Filter>
-    </ClCompile>
     <ClCompile Include="Line.cpp">
       <Filter>Frojengine\Object\Source File</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer.cpp">
+    <ClCompile Include="Debug.cpp">
       <Filter>Frojengine\Object\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Frojengine\Component\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Frojengine\Component\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Frojengine\Component\Source File</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -136,9 +148,6 @@
     </ClInclude>
     <ClInclude Include="..\DXTK\Inc\DirectXTK.h">
       <Filter>Frojengine\System\Header File</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Frojengine\Object\Header File</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
       <Filter>Frojengine\Object\Header File</Filter>
@@ -173,9 +182,6 @@
     <ClInclude Include="FileLoader.h">
       <Filter>Frojengine\System\Header File</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Frojengine\Object\Header File</Filter>
-    </ClInclude>
     <ClInclude Include="DefaultShader.h">
       <Filter>Frojengine\Default\Header File</Filter>
     </ClInclude>
@@ -188,14 +194,23 @@
     <ClInclude Include="Line.h">
       <Filter>Frojengine\Object\Header File</Filter>
     </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>Frojengine\Object\Header File</Filter>
-    </ClInclude>
     <ClInclude Include="Device.h">
       <Filter>Frojengine\System\Header File</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.h">
+    <ClInclude Include="Component.h">
+      <Filter>Frojengine\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Frojengine\Component\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Frojengine\Component\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
       <Filter>Frojengine\Object\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Frojengine\Component\Header File</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

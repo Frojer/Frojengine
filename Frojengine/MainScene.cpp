@@ -29,7 +29,8 @@ bool MainScene::Load()
 
 	CObject* pPlane = FileLoader::ObjectFileLoad(L"./Data/JN-4/airplane02.x");
 	CObject* pBox = FileLoader::ObjectFileLoad(L"./Data/Box/Box.x");
-	pBox->m_vPos = VECTOR3(0.0f, -20.0f, 0.0f);
+	pBox->m_pTransform->m_vPos = VECTOR3(0.0f, -20.0f, 0.0f);
+
 	CObject* pObj = new Hero(VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f));
 	pObj->m_name = L"Hero";
 
@@ -39,7 +40,7 @@ bool MainScene::Load()
 	pBox->SetParent(pObj);
 
 	pPlane->SetParent(pObj);
-	pPlane->m_vScale = VECTOR3(3.0f, 3.0f, 3.0f);
+	pPlane->m_pTransform->m_vScale = VECTOR3(3.0f, 3.0f, 3.0f);
 
 	// Clear할 색 설정
 	FJRenderingEngine::SetClearColor(COLOR(0.0f, 0.125f, 0.3f, 1.0f));

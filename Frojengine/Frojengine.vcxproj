@@ -168,6 +168,7 @@
     <ClCompile Include="DefaultShader.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Time.cpp" />
+    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DXTK\Inc\DirectXTK.h" />
@@ -195,6 +196,7 @@
     <ClInclude Include="DefaultShader.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />
+    <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="fx\Standard.fx">

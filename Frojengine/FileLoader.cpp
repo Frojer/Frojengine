@@ -171,7 +171,7 @@ CObject* FileLoader::XFileLoadFrame(CObject* i_pObj, wifstream& file)
 
 		else if (_wcsnicmp(str, L"Mesh", 5) == 0)
 		{
-			pObj->AddComponent(L"Renderer");
+			pObj->AddComponent<Renderer>();
 			pMesh = new CMesh;
 
 			file >> str;

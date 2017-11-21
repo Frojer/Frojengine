@@ -3,6 +3,8 @@
 #include "Frojengine.h"
 
 class Component;
+class Transform;
+class Renderer;
 
 class CObject : public IObject
 {
@@ -15,12 +17,12 @@ protected:
 	list<Component*> _components;
 
 public:
-	VECTOR3 m_vPos;
-	VECTOR3 m_vRot;
-	VECTOR3 m_vScale;
+	Transform* m_pTransform;
+	Renderer* m_pRenderer;
 
-private:
-	MATRIXA GetWorldMatrix();
+protected:
+	virtual void Update();
+	void AfterUpdate();
 	void Render();
 
 public:
@@ -30,8 +32,6 @@ public:
 
 	virtual void Initialize();
 
-	virtual void Update();
-
 	void Destroy();
 	void Destroy(float time);
 
@@ -39,7 +39,47 @@ public:
 	CObject* GetParent();
 	list<CObject*> GetChildren();
 
-	bool AddComponent(wstring name);
+	template <typename T>
+	Component* AddComponent()
+	{
+		Component* pCom = nullptr;
+
+		if (!is_base_of<Component, T>::value)
+			return nullptr;
+
+		if (is_base_of<Transform, T>::value)
+		{
+			if (m_pTransform == nullptr)
+			{
+				pCom = new T;
+				m_pTransform = (Transform*)pCom;
+			}
+			else
+				return nullptr;
+		}
+
+		else if (is_base_of<Renderer, T>::value)
+		{
+			if (m_pRenderer == nullptr)
+			{
+				pCom = new T;
+				m_pRenderer = (Renderer*)pCom;
+			}
+			else
+				return nullptr;
+		}
+
+		else
+		{
+			pCom = new T;
+		}
+
+		pCom->_pObj = this;
+		_components.push_back(pCom);
+
+		return pCom;
+	}
+
 	Component* GetComponent(wstring name);
 	list<Component*> GetComponents(wstring name);
 
@@ -47,6 +87,4 @@ public:
 
 	friend class FJRenderingEngine;
 	friend class CScene;
-	// Renderer::BufferUpdate()
-	friend class Renderer;
 };

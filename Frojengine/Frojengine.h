@@ -57,4 +57,5 @@ using namespace std;
 //
 ///////////////////////////////////////////
 #include "Component.h"
+#include "Transform.h"
 #include "Renderer.h"

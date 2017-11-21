@@ -48,6 +48,12 @@ void CScene::Update()
 	iter = _listObj.begin();
 	while (iter != _listObj.end())
 	{
+		(*(iter++))->AfterUpdate();
+	}
+
+	iter = _listObj.begin();
+	while (iter != _listObj.end())
+	{
 		ClearWasteBin(iter++);
 	}
 }

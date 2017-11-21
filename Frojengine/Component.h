@@ -8,14 +8,15 @@ class IObject;
 enum
 {
 	COMPONENT_TYPE_UPDATE = 0x80,
-	COMPONENT_TYPE_RENDER = 0x40
+	COMPONENT_TYPE_AFTERUPDATE = 0x40,
+	COMPONENT_TYPE_RENDER = 0x20
 };
 
 class Component : public IObject
 {
 protected:
-	// Update Render
-	// 0      0      000000
+	// Update AfterUpdate Render
+	// 0      0           0      00000
 	unsigned char _type;
 	CObject* _pObj;
 
@@ -24,8 +25,9 @@ public:
 	~Component() {}
 
 protected:
-	virtual void Update() = 0;
-	virtual void Render() = 0;
+	virtual void Update() {}
+	virtual void AfterUpdate() {}
+	virtual void Render() {}
 
 	friend class CObject;
 };

@@ -1,23 +1,21 @@
 #include "Object.h"
 
 CObject::CObject()
+	: _bDead(false), _pParent(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
 {
-	ZeroMemory(&m_vPos, sizeof(VECTOR3));
-	ZeroMemory(&m_vRot, sizeof(VECTOR3));
-	m_vScale.x = 1.0f;
-	m_vScale.y = 1.0f;
-	m_vScale.z = 1.0f;
-	
-	_bDead = false;
-
-	_pParent = nullptr;
+	AddComponent<Transform>();
 
 	SceneManager::pCurrentScene->_listObj.push_back(this);
 }
 
 CObject::CObject(VECTOR3& pos, VECTOR3& rot, VECTOR3& scale)
-	: _bDead(false), _pParent(nullptr), m_vPos(pos), m_vRot(rot), m_vScale(scale)
+	: _bDead(false), _pParent(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
 {
+	AddComponent<Transform>();
+
+	m_pTransform->m_vPos = pos;
+	m_pTransform->m_vRot = rot;
+	m_pTransform->m_vScale = scale;
 	SceneManager::pCurrentScene->_listObj.push_back(this);
 }
 
@@ -30,24 +28,6 @@ CObject::~CObject()
 		(*iter) = nullptr;
 		_childList.erase(iter++);
 	}
-}
-
-
-MATRIXA CObject::GetWorldMatrix()
-{
-	MATRIXA mPos, mRot, mScale;
-	MATRIXA mWorld;
-
-	mPos = DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&m_vPos));
-	mRot = DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_vRot));
-	mScale = DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&m_vScale));
-
-	mWorld = mScale * mRot * mPos;
-
-	if (_pParent != nullptr)
-		mWorld *= _pParent->GetWorldMatrix();
-
-	return mWorld;
 }
 
 
@@ -67,9 +47,28 @@ void CObject::Update()
 			(*iter)->Update();
 		}
 	}
+
 	FOR_STL(_childList)
 	{
 		(*iter)->Update();
+	}
+}
+
+
+
+void CObject::AfterUpdate()
+{
+	FOR_STL(_components)
+	{
+		if (CheckComponentType((*iter)->_type, COMPONENT_TYPE_AFTERUPDATE))
+		{
+			(*iter)->AfterUpdate();
+		}
+	}
+
+	FOR_STL(_childList)
+	{
+		(*iter)->AfterUpdate();
 	}
 }
 
@@ -134,26 +133,6 @@ CObject* CObject::GetParent()
 list<CObject*> CObject::GetChildren()
 {
 	return _childList;
-}
-
-bool CObject::AddComponent(wstring name)
-{
-	Component* com = nullptr;
-
-	if (name == L"Renderer")
-	{
-		com = new Renderer;
-	}
-
-	else
-	{
-		return false;
-	}
-
-	com->_pObj = this;
-	_components.push_back(com);
-
-	return true;
 }
 
 
