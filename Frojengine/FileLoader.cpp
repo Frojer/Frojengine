@@ -47,14 +47,13 @@ CObject* FileLoader::LoadXFile(LPCWSTR i_fileName)
 
 	while (!file.eof())
 	{
-		file.get(c);
+		file >> str;
 
-		switch (c)
+		if (_wcsnicmp(str, L"Material", 9) == 0)
 		{
-		case L'M':
 			float power;
 			pMtrl = new CMaterial(CShader::Find(L"Standard"));
-			file >> str >> str;
+			file >> str;
 			pMtrl->m_name = str;
 			file >> str;
 
@@ -70,7 +69,8 @@ CObject* FileLoader::LoadXFile(LPCWSTR i_fileName)
 
 			// Emissive 얻어오기
 			//file >> pMtrl->m_emissive.x >> c >> pMtrl->m_emissive.y >> c >> pMtrl->m_emissive.z >> str;
-			file >> str;
+			file.getline(str, sizeof(str));
+			file.getline(str, sizeof(str));
 
 			file >> str;
 			if (_wcsnicmp(str, L"TextureFilename", 16) == 0)
@@ -100,22 +100,18 @@ CObject* FileLoader::LoadXFile(LPCWSTR i_fileName)
 			pMtrl->SetVector(1, XMFLOAT4(pMtrl->m_ambient.x, pMtrl->m_ambient.y, pMtrl->m_ambient.z, 1.0f));
 			pMtrl->SetVector(2, XMFLOAT4(pMtrl->m_specular.x, pMtrl->m_specular.y, pMtrl->m_specular.z, 1.0f));
 			pMtrl->SetScalar(0, power);
-
-			break;
-
-		case L'F':
-			file >> str;
-			if (_wcsnicmp(str, L"rame", 5) == 0)
-			{
-				pObj = XFileLoadFrame(nullptr, file);
-			}
-
-			break;
-
-		default:
-			file.getline(str, sizeof(str));
 		}
+
+		else if (_wcsnicmp(str, L"Frame", 6) == 0)
+			pObj = XFileLoadFrame(nullptr, file);
+
+		else
+			file.getline(str, sizeof(str));
 	}
+
+	UINT offset = _fileName.rfind(L"/", _fileName.length()) + 1;
+	UINT nameLength = _fileName.rfind(L".", _fileName.length()) - offset;
+	pObj->m_name = _fileName.substr(offset, nameLength).c_str();
 
 	return pObj;
 }
@@ -137,16 +133,16 @@ CObject* FileLoader::XFileLoadFrame(CObject* i_pObj, wifstream& file)
 	UINT num;
 	WCHAR c;
 
-	file >> str;
-	pObj = new CObject();
+	file.getline(str, sizeof(str));
+
+	pObj = new CObject(true);
 	pObj->m_name = str;
+	pObj->m_name = pObj->m_name.erase(pObj->m_name.length() - 2, 2);
 
 	if (i_pObj != nullptr)
 	{
 		pObj->SetParent(i_pObj);
 	}
-
-	file >> str;
 
 	while (true)
 	{
@@ -230,9 +226,11 @@ CObject* FileLoader::XFileLoadFrame(CObject* i_pObj, wifstream& file)
 					file >> temp >> str;
 					file.getline(str, sizeof(str));
 
-					for (int i = 0; i < temp; i++)
+					file >> c;
+
+					while (c != L';')
 					{
-						file.getline(str, sizeof(str));
+						file >> c;
 					}
 
 					file >> str;
@@ -255,6 +253,7 @@ CObject* FileLoader::XFileLoadFrame(CObject* i_pObj, wifstream& file)
 					{
 						file >> str;
 
+						float power;
 						pMtrl = new CMaterial(CShader::Find(L"Standard"));
 						pMtrl->m_name = pMesh->m_name + L" 1";
 
@@ -265,15 +264,15 @@ CObject* FileLoader::XFileLoadFrame(CObject* i_pObj, wifstream& file)
 						file >> pMtrl->m_diffuse.x >> c >> pMtrl->m_diffuse.y >> c >> pMtrl->m_diffuse.z >> c >> pMtrl->m_diffuse.w >> str;
 
 						// Power 얻어오기
-						//file >> pMtrl->m_power >> str;
-						file >> str;
+						file >> power >> str;
 
 						// Specular 얻어오기
 						file >> pMtrl->m_specular.x >> c >> pMtrl->m_specular.y >> c >> pMtrl->m_specular.z >> str;
 
 						// Emissive 얻어오기
 						//file >> pMtrl->m_emissive.x >> c >> pMtrl->m_emissive.y >> c >> pMtrl->m_emissive.z >> str;
-						file >> str;
+						file.getline(str, sizeof(str));
+						file.getline(str, sizeof(str));
 						
 						file >> str;
 						if (_wcsnicmp(str, L"TextureFilename", 16) == 0)
@@ -291,12 +290,17 @@ CObject* FileLoader::XFileLoadFrame(CObject* i_pObj, wifstream& file)
 								// Load Texture;
 								wstring ws = str;
 								CTexture2D* pTex = new CTexture2D(ws.substr(1, ws.length() - 3).c_str());
-								pTex->CreateTexture2D((_fileName.substr(0, _fileName.rfind(L"/", _fileName.length() - 1) + 1) + ws.substr(1, ws.length() - 3)).c_str());
+								pTex->CreateTexture2D((_fileName.substr(0, _fileName.rfind(L"/", _fileName.length() - 1) + 1) + pTex->m_name).c_str());
 								pMtrl->m_pTexture[i++] = pTex;
 							}
 
 							file >> str;
 						}
+
+						pMtrl->SetVector(0, pMtrl->m_diffuse);
+						pMtrl->SetVector(1, XMFLOAT4(pMtrl->m_ambient.x, pMtrl->m_ambient.y, pMtrl->m_ambient.z, 1.0f));
+						pMtrl->SetVector(2, XMFLOAT4(pMtrl->m_specular.x, pMtrl->m_specular.y, pMtrl->m_specular.z, 1.0f));
+						pMtrl->SetScalar(0, power);
 					}
 
 					file >> str;

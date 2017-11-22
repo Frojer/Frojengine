@@ -10,7 +10,7 @@ unordered_map<UINT, CTexture2D*> CTexture2D::_textureMap;
 ID3D11SamplerState*	CTexture2D::_pSampler[ADDRESS_MAX];
 
 CTexture2D::CTexture2D(LPCWSTR i_fileName)
-	: m_vBorderColor(1.0f, 1.0f, 1.0f, 1.0f), _ResourceView(nullptr), m_AddressFilter(ADDRESS_WRAP)
+	: m_vBorderColor(1.0f, 1.0f, 1.0f, 1.0f), _pResourceView(nullptr), m_AddressFilter(ADDRESS_WRAP)
 {
 	_textureMap.insert(pair<UINT, CTexture2D*>(GetID(), this));
 	m_name = i_fileName;
@@ -19,7 +19,7 @@ CTexture2D::CTexture2D(LPCWSTR i_fileName)
 
 CTexture2D::~CTexture2D()
 {
-	SAFE_RELEASE(_ResourceView);
+	SAFE_RELEASE(_pResourceView);
 }
 
 
@@ -35,12 +35,17 @@ bool CTexture2D::CreateTexture2D(LPCWSTR i_fileName)
 		hr = DirectX::CreateDDSTextureFromFileEx(_pDevice, _pDXDC, i_fileName, 0,
 			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
 			0, D3D11_RESOURCE_MISC_GENERATE_MIPS, false,
-			nullptr, &_ResourceView);
+			nullptr, &_pResourceView);
 		
 		if (FAILED(hr))
 		{
-			//FJError(hr, L"텍스처 로드 실패 \nFile=%s", fileName);
-			return false;
+			hr = DirectX::CreateDDSTextureFromFile(_pDevice, i_fileName, nullptr, &_pResourceView);
+
+			if (FAILED(hr))
+			{
+				//FJError(hr, L"텍스처 로드 실패 \nFile=%s", fileName);
+				return false;
+			}
 		}
 	}
 
@@ -53,12 +58,17 @@ bool CTexture2D::CreateTexture2D(LPCWSTR i_fileName)
 		hr = DirectX::CreateWICTextureFromFileEx(_pDevice, _pDXDC, i_fileName, 0,
 			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
 			0, D3D11_RESOURCE_MISC_GENERATE_MIPS, WIC_LOADER_DEFAULT,
-			nullptr, &_ResourceView);
+			nullptr, &_pResourceView);
 		
 		if (FAILED(hr))
 		{
-			//FJError(hr, L"텍스처 로드 실패 \nFile=%s", fileName);
-			return false;
+			hr = DirectX::CreateWICTextureFromFile(_pDevice, i_fileName, nullptr, &_pResourceView);
+
+			if (FAILED(hr))
+			{
+				//FJError(hr, L"텍스처 로드 실패 \nFile=%s", fileName);
+				return false;
+			}
 		}
 	}
 

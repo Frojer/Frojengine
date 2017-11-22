@@ -37,6 +37,17 @@ void CScene::ClearWasteBin(list<CObject*>::iterator i_iter)
 
 
 
+void CScene::Initialize()
+{
+	auto iter = _listObj.begin();
+	while (iter != _listObj.end())
+	{
+		(*(iter++))->Initialize();
+	}
+}
+
+
+
 void CScene::Update()
 {
 	auto iter = _listObj.begin();

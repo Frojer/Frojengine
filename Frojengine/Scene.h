@@ -31,9 +31,11 @@ private:
 	
 public:
 	CScene();
-	~CScene();
+	virtual ~CScene();
 
 	virtual bool Load() = 0;
+	
+	void Initialize();
 
 	void Update();
 	void Render();
@@ -43,6 +45,7 @@ public:
 	void AddCamera(CCamera* pCam);
 	CCamera* GetCamera(UINT index);
 
+	// GameObject()
 	friend class CObject;
 	friend class CMesh;
 	friend class CCamera;

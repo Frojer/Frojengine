@@ -1,5 +1,11 @@
 #include "Object.h"
 
+CObject::CObject(bool isData)
+	: IObject(isData), _bDead(false), _pParent(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
+{
+	AddComponent<Transform>();
+}
+
 CObject::CObject()
 	: _bDead(false), _pParent(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
 {
@@ -19,6 +25,11 @@ CObject::CObject(VECTOR3& pos, VECTOR3& rot, VECTOR3& scale)
 	SceneManager::pCurrentScene->_listObj.push_back(this);
 }
 
+CObject& CObject::operator= (const CObject& obj)
+{
+
+}
+
 CObject::~CObject()
 {
 	auto iter = _childList.begin();
@@ -33,7 +44,18 @@ CObject::~CObject()
 
 void CObject::Initialize()
 {
+	FOR_STL(_components)
+	{
+		if (CheckComponentType((*iter)->_type, COMPONENT_TYPE_UPDATE))
+		{
+			(*iter)->Initialize();
+		}
+	}
 
+	FOR_STL(_childList)
+	{
+		(*iter)->Initialize();
+	}
 }
 
 
@@ -109,7 +131,7 @@ void CObject::SetParent(CObject* i_pParent)
 		_pParent->_childList.remove(this);
 		_pParent = nullptr;
 
-		if (i_pParent == nullptr)
+		if (i_pParent == nullptr && !_isData)
 		{
 			SceneManager::pCurrentScene->_listObj.push_back(this);
 		}
@@ -120,7 +142,9 @@ void CObject::SetParent(CObject* i_pParent)
 	if (_pParent != nullptr)
 	{
 		_pParent->_childList.push_back(this);
-		SceneManager::pCurrentScene->_listObj.remove(this);
+
+		if (!_isData)
+			SceneManager::pCurrentScene->_listObj.remove(this);
 	}
 }
 

@@ -16,7 +16,7 @@ private:
 
 public:
 	Transform();
-	~Transform();
+	virtual ~Transform();
 
 	// Renderer::BufferUpdate()
 	friend class Renderer;

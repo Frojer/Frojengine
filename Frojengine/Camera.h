@@ -26,7 +26,7 @@ public:
 public:
 	CCamera();
 	CCamera(const CCamera& obj);
-	~CCamera();
+	virtual ~CCamera();
 
 	bool Create(VECTOR3 pos, VECTOR3 up, VECTOR3 lookAt, float fovAngle, float zNear, float zFar, UINT width, UINT height, D3D11_VIEWPORT& viewport);
 

@@ -2,8 +2,6 @@
 
 #include "Frojengine.h"
 
-class CObject;
-
 class CMesh : public IObject, protected Device
 {
 private:

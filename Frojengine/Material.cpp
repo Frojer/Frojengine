@@ -71,7 +71,7 @@ void CMaterial::Render()
 		if (m_pTexture[i] == nullptr)
 			_pShader->_pDXDC->PSSetShaderResources(i, 1, &lpNullSV);
 		else
-			_pShader->_pDXDC->PSSetShaderResources(i, 1, &m_pTexture[i]->_ResourceView);
+			_pShader->_pDXDC->PSSetShaderResources(i, 1, &m_pTexture[i]->_pResourceView);
 	}
 
 	_pShader->Render();

@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Behaviour.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="FileLoader.cpp" />
     <ClCompile Include="FJRenderingEngine.cpp" />
@@ -160,21 +161,27 @@
     <ClCompile Include="MainScene.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="DefaultShader.cpp" />
+    <ClCompile Include="System.cpp" />
+    <ClCompile Include="temp.cpp" />
+    <ClCompile Include="Template.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Windmill.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DXTK\Inc\DirectXTK.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Device.h" />
+    <ClInclude Include="Behaviour.h" />
     <ClInclude Include="FileLoader.h" />
     <ClInclude Include="FJDefine.h" />
     <ClInclude Include="FJRenderingEngine.h" />
@@ -188,15 +195,20 @@
     <ClInclude Include="MainScene.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="DefaultShader.h" />
+    <ClInclude Include="System.h" />
+    <ClInclude Include="temp.h" />
+    <ClInclude Include="Template.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="Windmill.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="fx\Standard.fx">

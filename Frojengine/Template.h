@@ -1,13 +1,10 @@
 #pragma once
 
-#include "Frojengine.h"
+#include "Behaviour.h"
 
-class Hero : public Behaviour
+class Template : public Behaviour
 {
 public:
-	Hero();
-	~Hero();
-
 	virtual void Initialize() override;
 	virtual void Update() override;
 };

@@ -300,6 +300,10 @@ void FJSystemEngine::LoadData()
 
 	CreateShaderBuffer(pShader);
 
+	FileLoader::ObjectFileLoad(L"./Data/Terrain/terrain.x");
+	FileLoader::ObjectFileLoad(L"./Data/Windmill/Windmill.x");
+	FileLoader::ObjectFileLoad(L"./Data/Box/Box.x");
+
 	//==========================================
 	// Scene 생성 후 SceneManager 에게 넣어준다
 	//==========================================

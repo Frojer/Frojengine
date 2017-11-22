@@ -19,7 +19,7 @@ private:
 	static ID3D11SamplerState*	_pSampler[ADDRESS_MAX];
 public:
 	VECTOR4 m_vBorderColor;
-	LPRESOURCEVIEW _ResourceView;
+	LPRESOURCEVIEW _pResourceView;
 	UINT m_AddressFilter;
 private:
 	static void SamplerCreate();

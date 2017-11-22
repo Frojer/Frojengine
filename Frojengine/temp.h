@@ -2,11 +2,11 @@
 
 #include "Frojengine.h"
 
-class Hero : public Behaviour
+class Temp : public Behaviour
 {
 public:
-	Hero();
-	~Hero();
+	Temp();
+	~Temp();
 
 	virtual void Initialize() override;
 	virtual void Update() override;

@@ -15,7 +15,7 @@ private:
 
 public:
 	Renderer();
-	~Renderer();
+	virtual ~Renderer();
 
 	void ChangeMesh(CMesh* i_pMesh);
 	void ChangeMaterial(CMaterial* i_pMaterial);

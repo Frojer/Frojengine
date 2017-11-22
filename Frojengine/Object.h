@@ -20,17 +20,22 @@ public:
 	Transform* m_pTransform;
 	Renderer* m_pRenderer;
 
+private:
+	CObject(const CObject& obj) {}
+	CObject& operator= (const CObject& obj);
+
 protected:
-	virtual void Update();
+	void Update();
 	void AfterUpdate();
 	void Render();
+	CObject(bool isData);
 
 public:
 	CObject();
 	CObject(VECTOR3& pos, VECTOR3& rot, VECTOR3& scale);
-	~CObject();
+	virtual ~CObject();
 
-	virtual void Initialize();
+	void Initialize();
 
 	void Destroy();
 	void Destroy(float time);
@@ -84,7 +89,9 @@ public:
 	list<Component*> GetComponents(wstring name);
 
 	static CObject* Find(unsigned int id);
+	static CObject* Find(unsigned int id);
 
 	friend class FJRenderingEngine;
+	friend class FileLoader;
 	friend class CScene;
 };

@@ -86,4 +86,6 @@ void SceneManager::ChangeScene()
 	_pChangeScene = nullptr;
 
 	SceneManager::pCurrentScene->Load();
+
+	SceneManager::pCurrentScene->Initialize();
 }

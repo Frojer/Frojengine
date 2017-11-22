@@ -132,6 +132,22 @@
     <ClCompile Include="Renderer.cpp">
       <Filter>Frojengine\Component\Source File</Filter>
     </ClCompile>
+    <ClCompile Include="Behaviour.cpp">
+      <Filter>Frojengine\Component\Source File</Filter>
+    </ClCompile>
+    <ClCompile Include="temp.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="System.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Template.cpp" />
+    <ClCompile Include="Windmill.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Frojengine\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FJDefine.h">
@@ -148,9 +164,6 @@
     </ClInclude>
     <ClInclude Include="..\DXTK\Inc\DirectXTK.h">
       <Filter>Frojengine\System\Header File</Filter>
-    </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>Frojengine\Object\Header File</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Frojengine\Object\Header File</Filter>
@@ -211,6 +224,25 @@
     </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>Frojengine\Component\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviour.h">
+      <Filter>Frojengine\Component\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="temp.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="System.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Template.h" />
+    <ClInclude Include="Windmill.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Frojengine\Object\Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Frojengine\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
