@@ -135,7 +135,7 @@ CObject* FileLoader::XFileLoadFrame(CObject* i_pObj, wifstream& file)
 
 	file.getline(str, sizeof(str));
 
-	pObj = new CObject(true);
+	pObj = new CObject();
 	pObj->m_name = str;
 	pObj->m_name = pObj->m_name.erase(pObj->m_name.length() - 2, 2);
 

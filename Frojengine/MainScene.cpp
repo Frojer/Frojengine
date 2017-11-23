@@ -2,6 +2,7 @@
 #include "Hero.h"
 #include "System.h"
 #include "Windmill.h"
+#include "Plane.h"
 
 MainScene::MainScene()
 {
@@ -26,8 +27,10 @@ bool MainScene::Load()
 	vp.MinDepth = 0.0f;
 	vp.MaxDepth = 1.0f;
 
-	//cam->Create(VECTOR3(0.0f, 200.0f, 0.0f), VECTOR3(0.0f, 0.0f, 1.0f), VECTOR3(0.0f, 0.0f, 0.0f), 45.0f, 1.0f, 1000.0f, g_setting.displayMode.Width, g_setting.displayMode.Height, vp);
-	cam->Create(VECTOR3(0.0f, 5.0f, -30.0f), VECTOR3(0.0f, 1.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), 45.0f, 1.0f, 1000.0f, g_setting.displayMode.Width, g_setting.displayMode.Height, vp);
+	//cam->Create(VECTOR3(0.0f, 50.0f, 0.0f), VECTOR3(0.0f, 0.0f, 1.0f), VECTOR3(0.0f, 0.0f, 0.0f), 45.0f, 1.0f, 1000.0f, g_setting.displayMode.Width, g_setting.displayMode.Height, vp);
+	cam->Create(VECTOR3(50.0f, 0.0f, 0.0f), VECTOR3(0.0f, 1.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), 45.0f, 1.0f, 1000.0f, g_setting.displayMode.Width, g_setting.displayMode.Height, vp);
+	//cam->Create(VECTOR3(0.0f, 0.0f, 50.0f), VECTOR3(0.0f, 1.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), 45.0f, 1.0f, 1000.0f, g_setting.displayMode.Width, g_setting.displayMode.Height, vp);
+	//cam->Create(VECTOR3(0.0f, 5.0f, -30.0f), VECTOR3(0.0f, 1.0f, 0.0f), VECTOR3(0.0f, 0.0f, 0.0f), 45.0f, 1.0f, 1000.0f, g_setting.displayMode.Width, g_setting.displayMode.Height, vp);
 
 	CObject* pSystem = new CObject();
 	pSystem->AddComponent<System>();
@@ -35,13 +38,18 @@ bool MainScene::Load()
 	CObject* pHero = new CObject();
 	pHero->AddComponent<Hero>();
 
-	CObject* pTerrain = CObject::CreateModel();
-	//pTerrain = *pSystem;
-	pTerrain.m_pTransform->m_vPos = VECTOR3(0, -0.0005f, 0);
+	CObject* pTerrain = FileLoader::ObjectFileLoad(L"./Data/Terrain/terrain.x");
+	pTerrain->m_pTransform->m_vPos = VECTOR3(0, -0.0005f, 0);
 
 	// 浅瞒 积己
-	CObject* pWindmill = FileLoader::ObjectFileLoad(L"./Data/Windmill/Windmill.x");
-	pWindmill->AddComponent<Windmill>();
+	//CObject* pWindmill = FileLoader::ObjectFileLoad(L"./Data/Windmill/Windmill.x");
+	//pWindmill->AddComponent<Windmill>();
+
+	// 厚青扁 积己
+	CObject* pPlaneModel = FileLoader::ObjectFileLoad(L"./Data/JN-4/airplane02.x");
+	CObject* pPlane = new CObject();
+	pPlane->AddComponent<Plane>();
+	pPlaneModel->SetParent(pPlane);
 
 	// 惑磊 积己
 	CObject* pBox = FileLoader::ObjectFileLoad(L"./Data/Box/Box.x");

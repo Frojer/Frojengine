@@ -142,11 +142,14 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Template.cpp" />
-    <ClCompile Include="Windmill.cpp">
-      <Filter>헤더 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Model.cpp">
       <Filter>Frojengine\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Windmill.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -235,14 +238,17 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Template.h" />
-    <ClInclude Include="Windmill.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Object.h">
       <Filter>Frojengine\Object\Header File</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Frojengine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Windmill.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

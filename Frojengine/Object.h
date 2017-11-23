@@ -10,6 +10,7 @@ class CObject : public IObject
 {
 private:
 	bool _bDead;
+	static list<CObject*> _dataList;
 
 protected:
 	CObject* _pParent;
@@ -23,6 +24,8 @@ public:
 private:
 	CObject(const CObject& obj) {}
 	CObject& operator= (const CObject& obj);
+
+	static CObject* FindChildList(unsigned int id, list<CObject*> childList);
 
 protected:
 	void Update();
@@ -89,7 +92,8 @@ public:
 	list<Component*> GetComponents(wstring name);
 
 	static CObject* Find(unsigned int id);
-	static CObject* Find(unsigned int id);
+	static CObject* FindModel(wstring name);
+	static CObject* CopyObject(const CObject& origin);
 
 	friend class FJRenderingEngine;
 	friend class FileLoader;

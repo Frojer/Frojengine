@@ -1,5 +1,7 @@
 #include "Object.h"
 
+list<CObject*> CObject::_dataList;
+
 CObject::CObject(bool isData)
 	: IObject(isData), _bDead(false), _pParent(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
 {
@@ -27,7 +29,8 @@ CObject::CObject(VECTOR3& pos, VECTOR3& rot, VECTOR3& scale)
 
 CObject& CObject::operator= (const CObject& obj)
 {
-
+	CObject c;
+	return c;
 }
 
 CObject::~CObject()
@@ -181,10 +184,58 @@ list<Component*> CObject::GetComponents(wstring name)
 
 CObject* CObject::Find(unsigned int id)
 {
+	CObject* obj = nullptr;
+
 	FOR_STL(SceneManager::pCurrentScene->_listObj)
 	{
 		if ((*iter)->GetID() == id)
 			return (*iter);
+
+		obj = FindChildList(id, (*iter)->_childList);
+
+		if (obj != nullptr)
+			return obj;
+	}
+
+	return nullptr;
+}
+CObject* CObject::FindChildList(unsigned int id, list<CObject*> childList)
+{
+	CObject* obj = nullptr;
+
+	FOR_STL(childList)
+	{
+		if ((*iter)->GetID() == id)
+			return (*iter);
+
+		obj = FindChildList(id, (*iter)->_childList);
+
+		if (obj != nullptr)
+			return obj;
+	}
+
+	return nullptr;
+}
+
+CObject* CObject::FindModel(wstring name)
+{
+	FOR_STL(_dataList)
+	{
+		if ((*iter)->m_name == name)
+			return (*iter);
+	}
+
+	return nullptr;
+}
+
+
+CObject* CObject::CopyObject(const CObject& origin)
+{
+	CObject* obj = new CObject();
+
+	FOR_STL(origin._components)
+	{
+		//(*iter)->
 	}
 
 	return nullptr;
