@@ -40,3 +40,27 @@ void Transform::AfterUpdate()
 {
 
 }
+
+VECTOR3 operator+ (const VECTOR3& lhs, const VECTOR3& rhs)
+{
+	VECTOR3 vec;
+	vec.x = lhs.x + rhs.x;
+	vec.y = lhs.y + rhs.y;
+	vec.z = lhs.z + rhs.z;
+	return vec;
+}
+
+VECTOR3 Transform::GetWorldPositioni()
+{
+	CObject* pObj = _pObj->GetParent();
+
+	VECTOR3 pos = m_vPos;
+
+	while (pObj != nullptr)
+	{
+		pos = pos + pObj->m_pTransform->m_vPos;
+		pObj = pObj->GetParent();
+	}
+
+	return pos;
+}

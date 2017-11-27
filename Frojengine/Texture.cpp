@@ -9,11 +9,11 @@
 unordered_map<UINT, CTexture2D*> CTexture2D::_textureMap;
 ID3D11SamplerState*	CTexture2D::_pSampler[ADDRESS_MAX];
 
-CTexture2D::CTexture2D(LPCWSTR i_fileName)
+CTexture2D::CTexture2D(LPCWSTR name)
 	: m_vBorderColor(1.0f, 1.0f, 1.0f, 1.0f), _pResourceView(nullptr), m_AddressFilter(ADDRESS_WRAP)
 {
 	_textureMap.insert(pair<UINT, CTexture2D*>(GetID(), this));
-	m_name = i_fileName;
+	m_name = name;
 }
 
 

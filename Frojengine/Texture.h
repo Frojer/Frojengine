@@ -26,7 +26,7 @@ private:
 	static void SamplerRelease();
 
 public:
-	CTexture2D(LPCWSTR i_fileName);
+	CTexture2D(LPCWSTR name);
 	~CTexture2D();
 
 	bool CreateTexture2D(LPCWSTR i_fileName);

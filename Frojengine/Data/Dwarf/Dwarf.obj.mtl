@@ -1,0 +1,51 @@
+# File produced by Open Asset Import Library (http://www.assimp.sf.net)
+# (assimp v3.1.187496374)
+
+newmtl material0
+Kd 1 1 1
+Ks 0 0 0
+Ke 0 0 0
+Ns 1
+illum 2
+map_Kd Weapons.dds
+
+newmtl material0
+Kd 1 1 1
+Ks 0 0 0
+Ke 0 0 0
+Ns 1
+illum 2
+map_Kd Pack.dds
+
+newmtl JoinedMaterial_#5
+Kd 1 1 1
+Ks 0 0 0
+Ke 0 0 0
+Ns 1
+illum 2
+map_Kd Body.dds
+
+newmtl material0
+Kd 1 1 1
+Ks 0 0 0
+Ke 0 0 0
+Ns 1
+illum 2
+map_Kd Armor.dds
+
+newmtl material0
+Kd 1 1 1
+Ks 0 0 0
+Ke 0 0 0
+Ns 1
+illum 2
+map_Kd Headgear.dds
+
+newmtl material0
+Kd 1 1 1
+Ks 0 0 0
+Ke 0 0 0
+Ns 1
+illum 2
+map_Kd DwarfHead.dds
+

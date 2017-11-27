@@ -1,0 +1,86 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 26.10.2017 02:22:58
+
+newmtl 01_Weapon
+	Ns 1.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5500 0.5500 0.5500
+	Kd 1.0000 1.0000 1.0000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\Works\Lecture 2017\00.DirectX (11)\01.Basic\T12_Mesh\Data\Dwarf\Weapons.dds
+	map_Kd D:\Works\Lecture 2017\00.DirectX (11)\01.Basic\T12_Mesh\Data\Dwarf\Weapons.dds
+
+newmtl 06_Pack
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\Works\Lecture 2017\00.DirectX (11)\01.Basic\T12_Mesh\Data\Dwarf\Pack.dds
+	map_Kd D:\Works\Lecture 2017\00.DirectX (11)\01.Basic\T12_Mesh\Data\Dwarf\Pack.dds
+
+newmtl 02_Body
+	Ns 1.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5500 0.5500 0.5500
+	Kd 1.0000 1.0000 1.0000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\Works\Lecture 2017\00.DirectX (11)\01.Basic\T12_Mesh\Data\Dwarf\Body.dds
+	map_Kd D:\Works\Lecture 2017\00.DirectX (11)\01.Basic\T12_Mesh\Data\Dwarf\Body.dds
+
+newmtl 03_Armor
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\Works\Lecture 2017\00.DirectX (11)\01.Basic\T12_Mesh\Data\Dwarf\Armor.dds
+	map_Kd D:\Works\Lecture 2017\00.DirectX (11)\01.Basic\T12_Mesh\Data\Dwarf\Armor.dds
+
+newmtl 05_HeadGear
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\Works\Lecture 2017\00.DirectX (11)\01.Basic\T12_Mesh\Data\Dwarf\Headgear.dds
+	map_Kd D:\Works\Lecture 2017\00.DirectX (11)\01.Basic\T12_Mesh\Data\Dwarf\Headgear.dds
+
+newmtl 04_Head
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka D:\Works\Lecture 2017\00.DirectX (11)\01.Basic\T12_Mesh\Data\Dwarf\DwarfHead.dds
+	map_Kd D:\Works\Lecture 2017\00.DirectX (11)\01.Basic\T12_Mesh\Data\Dwarf\DwarfHead.dds

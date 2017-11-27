@@ -1,3 +1,5 @@
+#define LIGHT_SIZE 5
+
 // 상수 버퍼
 cbuffer cbWVP
 {
@@ -5,6 +7,22 @@ cbuffer cbWVP
 	matrix mView;   // 뷰 변환 행렬. 
 	matrix mWV;     // 월드-뷰 변환 행렬. 
 	matrix mProj;   // 투영 변환 행렬.
+};
+
+struct Light
+{
+	float4 diffuse;
+	float4 ambient;
+	float3 position;
+	float3 direction;
+	float range;
+	uint lightType;
+	bool useLight;
+};
+
+cbuffer cbLight
+{
+	Light light[LIGHT_SIZE];
 };
 
 cbuffer ConstBuffer
@@ -23,10 +41,59 @@ struct v2p
 	float2 uv  : TEXCOORD0;
 };
 
+////////////////////////////////////////////////////////////////////////////// 
+//
+// 조명 계산 : 램버트 라이팅 모델 적용. Lambert Lighting Model
+//          : 뷰 공간 View Space 기준 처리.
+float4 LightCalc(float4 nrm, float4 pos)
+{
+	float4 N = nrm;    N.w = 0;
+	float4 L;
+	float4 lightPos;
+	float4 dir;
+	float4 diff;
+	float dist;
 
-///*
-// 조명 처리 함수.★
-float4 Light(float4 nrm, float4 pos);
+	N = mul(N, mWV);
+	N = normalize(N);
+
+	for (int i = 0; i < LIGHT_SIZE; i++)
+	{
+		//if (light[i].useLight)
+		{
+			L = float4(light[i].direction, 0);
+
+			//뷰공간으로 정보를 변환.
+			L = mul(L, mView);
+
+			switch (light[i].lightType)
+			{
+			// Direction Light
+			case 0:
+				diff += max(dot(N, L), 0) * light[i].diffuse * mtrlDiffuse;
+				diff += light[i].ambient * mtrlAmbient;
+				break;
+			
+			// Point Light
+			case 1:
+				lightPos = mul(float4(light[i].position, 1), mView);
+				dir = normalize(lightPos - pos);
+				dist = distance(pos, lightPos);
+				
+				if (dist < light[i].range)
+				{
+					diff += max(dot(N, dir), 0) * abs((dist / light[i].range) - 1) * light[i].diffuse * mtrlDiffuse;
+					diff += light[i].ambient * mtrlAmbient * abs((dist / light[i].range) - 1);
+				}
+				break;
+			}
+		}
+	}
+	
+	diff.a = mtrlDiffuse.a;
+
+	return diff;
+}
 
 
 
@@ -43,6 +110,8 @@ v2p VS_Main(
 	float2 uv : TEXCOORD0    //[입력] 텍스처 좌표 Texture Coordiates.
 )
 {
+	float4 diff = mtrlDiffuse;
+
 	//* 아래의 테스트를 수행하기 전에  
 	//* VS 에 상수 버퍼가 설정되어 있어야 합니다.    
 	pos.w = 1;
@@ -53,8 +122,8 @@ v2p VS_Main(
 								//시야-뷰 변환 (View Transform)
 	pos = mul(pos, mView);
 
-	////조명 계산.(Lighting)
-	float4 diff = mtrlDiffuse;
+	//조명 계산.(Lighting)
+	diff = LightCalc(nrm, pos);
 
 	//원근 투영 변환 (Projection Transform)
 	pos = mul(pos, mProj);

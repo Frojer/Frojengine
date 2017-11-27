@@ -84,6 +84,9 @@ void CScene::Render()
 	//	}
 	//}
 
+	// Light Buffer Setting
+	CMaterial::UpdateLightData();
+
 	for (UINT i = 0; i < _vecCam.size(); i++)
 	{
 		if (_vecCam[i]->m_Enable)

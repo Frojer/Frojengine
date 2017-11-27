@@ -18,6 +18,8 @@ public:
 	Transform();
 	virtual ~Transform();
 
+	VECTOR3 GetWorldPositioni();
+
 	// Renderer::BufferUpdate()
 	friend class Renderer;
 };

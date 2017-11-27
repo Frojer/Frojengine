@@ -201,8 +201,7 @@ void CShader::Render()
 	_pDXDC->PSSetShader(_pPS, nullptr, 0);
 
 	_pDXDC->VSSetConstantBuffers(i++, 1, &_pWVP_CB);
-	if (_useLight)
-		_pDXDC->VSSetConstantBuffers(i++, 1, &_pLight_CB);
+	_pDXDC->VSSetConstantBuffers(i++, 1, &_pLight_CB);
 	if (_pConstBuffer != nullptr)
 	{
 		_pDXDC->VSSetConstantBuffers(i++, 1, &_pConstBuffer);
@@ -224,7 +223,7 @@ HRESULT CShader::CreateDefaultBuffer()
 	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	//CPU 접근 설정.
 
-												//서브리소스 설정.
+	// 서브리소스 설정.
 	D3D11_SUBRESOURCE_DATA sd;
 	sd.pSysMem = &CMaterial::_WVPData;							//(외부) 상수 데이터 설정.
 	sd.SysMemPitch = 0;
@@ -232,6 +231,29 @@ HRESULT CShader::CreateDefaultBuffer()
 
 	//상수 버퍼 생성.
 	hr = _pDevice->CreateBuffer(&bd, &sd, &_pWVP_CB);
+	if (FAILED(hr))
+	{
+		FJError(hr, L"CreateDefaultBuffer : 기본버퍼 생성 실패");
+		return hr;
+	}
+
+
+	hr = S_OK;
+
+	//상수 버퍼 정보 설정.
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_DYNAMIC;				//동적 정점버퍼 설정.
+	bd.ByteWidth = sizeof(CMaterial::_LightData);
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	//CPU 접근 설정.
+
+	// 서브리소스 설정.
+	sd.pSysMem = CMaterial::_LightData;							//(외부) 상수 데이터 설정.
+	sd.SysMemPitch = 0;
+	sd.SysMemSlicePitch = 0;
+
+	//상수 버퍼 생성.
+	hr = _pDevice->CreateBuffer(&bd, &sd, &_pLight_CB);
 	if (FAILED(hr))
 	{
 		FJError(hr, L"CreateDefaultBuffer : 기본버퍼 생성 실패");

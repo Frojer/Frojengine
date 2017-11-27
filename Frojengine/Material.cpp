@@ -1,8 +1,9 @@
 #include "Material.h"
 
 unordered_map<UINT, CMaterial*> CMaterial::_mtrlMap;
+CTexture2D* CMaterial::_pDefaultTex = nullptr;
 CMaterial::WVP_Data CMaterial::_WVPData;
-CMaterial::Light_Data CMaterial::_LightData;
+CMaterial::Light_Data CMaterial::_LightData[LIGHT_SIZE];
 
 CMaterial::CMaterial(CShader* shader)
 	: _pShader(shader), _countTexture(0), _useLight(false), m_diffuse(VECTOR4(1.0f, 1.0f, 1.0f, 1.0f)), m_ambient(VECTOR3(0.2f, 0.2f, 0.2f)), m_specular(VECTOR3(1.0f, 1.0f, 1.0f))
@@ -29,6 +30,31 @@ void CMaterial::ClearMap()
 
 	while (i != _mtrlMap.end())
 		delete (i++)->second;
+}
+
+
+void CMaterial::UpdateLightData()
+{
+	auto iter = Light::_lightList.begin();
+	VECTOR3 vec;
+	
+	ZeroMemory(_LightData, sizeof(_LightData));
+
+	for (UINT i = 0; iter != Light::_lightList.end() && i < LIGHT_SIZE; iter++)
+	{
+		while (!(*iter)->GetEnable()) continue;
+
+		_LightData[i].diffuse = XMLoadFloat4(&(*iter)->m_diffuse);
+		_LightData[i].ambient = XMLoadFloat4(&(*iter)->m_ambient);
+		_LightData[i].position = XMLoadFloat3(&(*iter)->_pObj->m_pTransform->GetWorldPositioni());
+		vec = (*iter)->_pObj->m_pTransform->m_vRot;
+		_LightData[i].direction = XMVector3Transform(XMLoadFloat3(&VECTOR3(0.0f, 0.0f, 1.0f)), XMMatrixRotationRollPitchYaw(vec.x, vec.y, vec.z));
+		_LightData[i].range = (*iter)->m_range;
+		_LightData[i].lightType = (*iter)->m_lightType;
+		_LightData[i].useLight = true;
+
+		++i;
+	}
 }
 
 
@@ -59,7 +85,6 @@ void CMaterial::Render()
 	if (_pShader == nullptr)
 		return;
 
-	LPRESOURCEVIEW lpNullSV = nullptr;
 	auto sampler = CTexture2D::GetSampler(1);
 
 	// 셈플러 설정
@@ -69,7 +94,7 @@ void CMaterial::Render()
 	{
 		// 셰이더 리소스 설정.
 		if (m_pTexture[i] == nullptr)
-			_pShader->_pDXDC->PSSetShaderResources(i, 1, &lpNullSV);
+			_pShader->_pDXDC->PSSetShaderResources(i, 1, &_pDefaultTex->_pResourceView);
 		else
 			_pShader->_pDXDC->PSSetShaderResources(i, 1, &m_pTexture[i]->_pResourceView);
 	}

@@ -277,6 +277,9 @@ void FJSystemEngine::LoadData()
 	SceneManager* pSM = SceneManager::GetInstance();
 	CScene* pScene = nullptr;
 
+	CMaterial::_pDefaultTex = new CTexture2D(L"default");
+	CMaterial::_pDefaultTex->CreateTexture2D(L"./Data/Default/default.png");
+
 	//==============
 	// ¼ÎÀÌ´õ ·Îµù
 	//==============
@@ -286,6 +289,7 @@ void FJSystemEngine::LoadData()
 	pShader->_countScalar = 1;
 	pShader->_countVector = 3;
 	pShader->_countMatrix = 0;
+	pShader->_useLight = true;
 
 	CreateShaderBuffer(pShader);
 

@@ -60,3 +60,4 @@ using namespace std;
 #include "Transform.h"
 #include "Renderer.h"
 #include "Behaviour.h"
+#include "Light.h"

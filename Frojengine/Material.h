@@ -5,6 +5,8 @@
 class CShader;
 class CTexture2D;
 
+#define LIGHT_SIZE 5
+
 class CMaterial : public IObject
 {
 private:
@@ -18,19 +20,22 @@ private:
 
 	struct Light_Data
 	{
-		VECTOR4 diffuse;
-		VECTOR4 ambient;
-		VECTOR3 position;
-		VECTOR3 direction;
+		VECTOR diffuse;
+		VECTOR ambient;
+		VECTOR position;
+		VECTOR direction;
 		float range;
+		UINT lightType;
+		bool useLight;
 	};
 
 	static unordered_map<UINT, CMaterial*> _mtrlMap;
+	static CTexture2D* _pDefaultTex;
 	
 	CShader* _pShader;
 	UINT _countTexture;
 	static WVP_Data _WVPData;
-	static Light_Data _LightData;
+	static Light_Data _LightData[LIGHT_SIZE];
 	vector<VECTOR> _constData;
 
 	vector<VECTOR>	_vecScala;
@@ -48,6 +53,7 @@ public:
 
 private:
 	static void ClearMap();
+	static void UpdateLightData();
 	void UpdateConstantBuffer(MATRIXA& mWorld);
 	void Render();
 
