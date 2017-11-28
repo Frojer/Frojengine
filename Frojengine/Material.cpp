@@ -70,8 +70,8 @@ void CMaterial::UpdateConstantBuffer(MATRIXA& mWorld)
 			memcpy_s(&_constData[0], sizeof(MATRIXA) * _vecMatrix.size(), &_vecMatrix[0], sizeof(MATRIXA) * _vecMatrix.size());
 		if (_vecVector.size() > 0)
 			memcpy_s(&_constData[_vecMatrix.size() * 4], sizeof(VECTOR) * _vecVector.size(), &_vecVector[0], sizeof(VECTOR) * _vecVector.size());
-		if (_vecScala.size() > 0)
-			memcpy_s(&_constData[(_vecMatrix.size() * 4) + _vecVector.size()], sizeof(VECTOR) * _vecScala.size(), &_vecScala[0], sizeof(VECTOR) * _vecScala.size());
+		if (_vecScalarA.size() > 0)
+			memcpy_s(&_constData[(_vecMatrix.size() * 4) + _vecVector.size()], sizeof(VECTOR) * _vecScalarA.size(), &_vecScalarA[0], sizeof(VECTOR) * _vecScalarA.size());
 
 		_pShader->UpdateConstantBuffer(&_constData[0], _constData.size() * sizeof(VECTOR));
 	}
@@ -108,6 +108,7 @@ void CMaterial::Render()
 void CMaterial::SetShader(CShader* shader)
 {
 	UINT totalSize = 0;
+	UINT scalarSize = 0;
 
 	if (_pShader == nullptr)
 	{
@@ -117,11 +118,16 @@ void CMaterial::SetShader(CShader* shader)
 
 	else _pShader = shader;
 
+	scalarSize = (_pShader->_countScalar / 4) + (_pShader->_countScalar % 4 == 0 ? 0 : 1);
+
 	_countTexture = _pShader->_countTexture;
 	totalSize += _pShader->_countMatrix * 4;
-	totalSize += _pShader->_countVector + _pShader->_countScalar;
+	totalSize += _pShader->_countVector;
+	totalSize += scalarSize;
+
 	_constData.resize(totalSize);
-	_vecScala.resize(_pShader->_countScalar);
+	_vecScalar.resize(scalarSize);
+	_vecScalarA.resize(scalarSize);
 	_vecVector.resize(_pShader->_countVector);
 	_vecMatrix.resize(_pShader->_countMatrix);
 
@@ -160,11 +166,17 @@ CShader* CMaterial::GetShader()
 
 
 
-void CMaterial::SetScalar(UINT id, float scala)
+void CMaterial::SetScalar(UINT id, float scalar)
 {
-	VECTOR vec;
+	/*VECTOR vec;
 	memcpy(&vec, &scala, sizeof(VECTOR));
-	_vecScala[id] = vec;
+	_vecScala[id] = vec;*/
+	*((float*)&_vecScalar[id / 4] + (id % 4)) = scalar;
+
+	for (UINT i = 0; i < _vecScalarA.size(); i++)
+	{
+		_vecScalarA[i] = XMLoadFloat4(&_vecScalar[i]);
+	}
 }
 
 

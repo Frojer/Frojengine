@@ -39,7 +39,8 @@ private:
 	static Light_Data _LightData[LIGHT_SIZE];
 	vector<VECTOR> _constData;
 
-	vector<VECTOR>	_vecScala;
+	vector<VECTOR4>	_vecScalar;
+	vector<VECTOR>	_vecScalarA;
 	vector<VECTOR>	_vecVector;
 	vector<MATRIXA>	_vecMatrix;
 
@@ -65,7 +66,7 @@ public:
 	void SetShader(CShader* shader);
 	CShader* GetShader();
 
-	void SetScalar(UINT id, float scala);
+	void SetScalar(UINT id, float scalar);
 	void SetVector(UINT id, VECTOR4& vector);
 	void SetMatrix(UINT id, MATRIX& matrix);
 

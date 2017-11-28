@@ -256,7 +256,7 @@ void FJSystemEngine::CreateShaderBuffer(CShader* i_pShader)
 	VECTOR* pData;
 	UINT totalSize;
 
-	totalSize = (i_pShader->_countMatrix * 4) + i_pShader->_countVector + i_pShader->_countScalar;
+	totalSize = (i_pShader->_countMatrix * 4) + i_pShader->_countVector + ((i_pShader->_countScalar / 4) + (i_pShader->_countScalar % 4 == 0 ? 0 : 1));
 	if (totalSize != 0)
 	{
 		pData = (VECTOR*)_aligned_malloc(sizeof(VECTOR) * totalSize, 16);
@@ -283,6 +283,7 @@ void FJSystemEngine::LoadData()
 	//==============
 	// ¼ÎÀÌ´õ ·Îµù
 	//==============
+	/*
 	pShader = CShader::CreateShader(L"./fx/Standard.fx");
 	pShader->m_name = L"Standard";
 	pShader->_countTexture = 1;
@@ -290,18 +291,28 @@ void FJSystemEngine::LoadData()
 	pShader->_countVector = 3;
 	pShader->_countMatrix = 0;
 	pShader->_useLight = true;
-
 	CreateShaderBuffer(pShader);
+	*/
+
+
+	pShader = CShader::CreateShader(L"./fx/Standard.fx");
+	pShader->m_name = L"Standard";
+	pShader->_countTexture = 1;
+	pShader->_countScalar = 3;
+	pShader->_countVector = 4;
+	pShader->_countMatrix = 0;
+	pShader->_useLight = true;
+	CreateShaderBuffer(pShader);
+
 
 	pShader = CShader::CreateShader(L"./fx/Error.fx");
 	pShader->m_name = L"Error";
-
 	CreateShaderBuffer(pShader);
 	
+
 	pShader = CShader::CreateShader(L"./fx/Line.fx");
 	pShader->m_name = L"Line";
 	pShader->_countVector = 1;
-
 	CreateShaderBuffer(pShader);
 
 	//FileLoader::ObjectFileLoad(L"./Data/Terrain/terrain.x");
