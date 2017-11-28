@@ -200,12 +200,18 @@ void CShader::Render()
 	_pDXDC->VSSetShader(_pVS, nullptr, 0);
 	_pDXDC->PSSetShader(_pPS, nullptr, 0);
 
-	_pDXDC->VSSetConstantBuffers(i++, 1, &_pWVP_CB);
-	_pDXDC->VSSetConstantBuffers(i++, 1, &_pLight_CB);
+	_pDXDC->VSSetConstantBuffers(i, 1, &_pWVP_CB);
+	_pDXDC->PSSetConstantBuffers(i++, 1, &_pWVP_CB);
+	if (_useLight)
+	{
+		_pDXDC->VSSetConstantBuffers(i, 1, &_pLight_CB);
+		_pDXDC->PSSetConstantBuffers(i++, 1, &_pLight_CB);
+	}
+
 	if (_pConstBuffer != nullptr)
 	{
-		_pDXDC->VSSetConstantBuffers(i++, 1, &_pConstBuffer);
-		_pDXDC->PSSetConstantBuffers(0, 1, &_pConstBuffer);
+		_pDXDC->VSSetConstantBuffers(i, 1, &_pConstBuffer);
+		_pDXDC->PSSetConstantBuffers(i++, 1, &_pConstBuffer);
 	}
 }
 

@@ -1,20 +1,16 @@
 #include "Hero.h"
 
-Hero::Hero()
-{
-	
-}
-
-
-Hero::~Hero()
-{
-
-}
-
-
 void Hero::Initialize()
 {
-
+	auto list = _pObj->GetChildren();
+	FOR_STL(list)
+	{
+		if ((*iter)->m_pRenderer != nullptr)
+		{
+			(*iter)->m_pRenderer->m_pMaterial->SetScalar(0, 30.0f);
+			(*iter)->m_pRenderer->m_pMaterial->SetVector(2, VECTOR4(1.0f, 1.0f, 1.0f, 1.0f));
+		}
+	}
 }
 
 

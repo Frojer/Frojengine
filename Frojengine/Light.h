@@ -19,6 +19,7 @@ public:
 	UINT	m_lightType;
 	COLOR	m_diffuse;			// ¡÷ ±§∑Æ : »ÆªÍ±§ Diffuse Light.
 	COLOR	m_ambient;			// ∫∏¡∂ ±§∑Æ : ¡÷∫Ø±§ Ambient Light.
+	COLOR	m_specular;			// ∫∏¡∂ ±§∑Æ : ¡÷∫Ø±§ Ambient Light.
 	FLOAT	m_range;			// ∫˚ µµ¥ﬁ ∞≈∏Æ.
 
 public:

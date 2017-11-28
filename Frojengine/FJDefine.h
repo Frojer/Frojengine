@@ -141,4 +141,4 @@ struct IndexFormat
 
 #define ErrMsgBox(msg)	MessageBox(nullptr, msg, L"Error", MB_OK | MB_ICONERROR)
 
-#define FOR_STL(stl) for (auto iter = stl.begin(); iter != stl.end(); iter++)
+#define FOR_STL(stl) for (auto iter = (stl).begin(); iter != (stl).end(); iter++)

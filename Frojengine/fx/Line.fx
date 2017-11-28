@@ -1,4 +1,4 @@
-cbuffer cbWVP
+cbuffer cbWVP : register(b0)
 {
 	matrix mTM;
 	matrix mView;
@@ -6,7 +6,7 @@ cbuffer cbWVP
 	matrix mProj;
 };
 
-cbuffer ConstBuffer
+cbuffer ConstBuffer : register(b1)
 {
 	float4 col;
 };

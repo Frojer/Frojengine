@@ -5,9 +5,6 @@
 class Hero : public Behaviour
 {
 public:
-	Hero();
-	~Hero();
-
 	virtual void Initialize() override;
 	virtual void Update() override;
 };

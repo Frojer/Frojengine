@@ -1,4 +1,4 @@
-cbuffer cbWVP
+cbuffer cbWVP : register(b0)
 {
 	matrix mTM;
 	matrix mView;

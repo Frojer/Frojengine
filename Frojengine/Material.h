@@ -20,13 +20,14 @@ private:
 
 	struct Light_Data
 	{
-		VECTOR diffuse;
-		VECTOR ambient;
-		VECTOR position;
-		VECTOR direction;
 		float range;
 		UINT lightType;
 		bool useLight;
+		VECTOR diffuse;
+		VECTOR ambient;
+		VECTOR specular;
+		VECTOR position;
+		VECTOR direction;
 	};
 
 	static unordered_map<UINT, CMaterial*> _mtrlMap;

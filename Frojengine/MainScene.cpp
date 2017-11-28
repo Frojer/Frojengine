@@ -59,7 +59,8 @@ bool MainScene::Load()
 
 	
 	CObject* pLight = new CObject;
-	pLight->m_pTransform->m_vRot = VECTOR3(-XM_PI / 2, 0.0f, 0.0f);
+	//pLight->m_pTransform->m_vRot = VECTOR3(-XM_PI / 2, 0.0f, 0.0f);
+	pLight->m_pTransform->m_vRot = VECTOR3(XM_PI, 0.0f, 0.0f);
 
 	Light* light = (Light*)pLight->AddComponent<Light>();
 	light->m_diffuse = COLOR(1.0f, 1.0f, 1.0f, 1.0f);
