@@ -298,6 +298,16 @@ void FJSystemEngine::LoadData()
 	pShader = CShader::CreateShader(L"./fx/Standard.fx");
 	pShader->m_name = L"Standard";
 	pShader->_countTexture = 1;
+	pShader->_countScalar = 1;
+	pShader->_countVector = 3;
+	pShader->_countMatrix = 0;
+	pShader->_useLight = true;
+	CreateShaderBuffer(pShader);
+
+
+	pShader = CShader::CreateShader(L"./fx/Fog.fx");
+	pShader->m_name = L"Fog";
+	pShader->_countTexture = 1;
 	pShader->_countScalar = 3;
 	pShader->_countVector = 4;
 	pShader->_countMatrix = 0;

@@ -159,7 +159,7 @@ float4 FogCalc(float depth)
 	float fog = 1 - ((fogWidth - (depth - fogDepthMin)) / fogWidth);
 
 	if (fog < 0)
-		return 0
+		return 0;
 	
 	return fogColor * fog;
 }
@@ -240,7 +240,7 @@ float4 PS_Main(v2p i) : SV_TARGET               //[Ãâ·Â] »ö»ó.(ÇÊ¼ö), "·»´õÅ¸°Ù"
 	diff += SpecLight(i.pos3d, i.nrm3d);
 	diff *= tex;
 
-	diff * FogCalc(i.pos3d.z);
+	return diff + FogCalc(i.pos3d.z);
 
 	clip(diff.a < 0.5f ? -1 : 1);
 

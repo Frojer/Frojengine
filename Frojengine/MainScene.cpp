@@ -38,6 +38,16 @@ bool MainScene::Load()
 	CObject* pTerrain = FileLoader::ObjectFileLoad(L"./Data/Terrain/terrain.x");
 	pTerrain->m_pTransform->m_vPos = VECTOR3(0, -0.0005f, 0);
 
+	list<CObject*> list;
+	CObject* temp;
+	temp = pTerrain->GetChildren().back()->GetChildren().back();
+	temp->m_pRenderer->m_pMaterial->SetShader(CShader::Find(L"Fog"));
+	temp->m_pRenderer->m_pMaterial->SetScalar(1, 10.0f);
+	temp->m_pRenderer->m_pMaterial->SetScalar(2, 60.0f);
+	temp->m_pRenderer->m_pMaterial->SetVector(3, VECTOR4(0.8f, 0.8f, 0.8f, 1.0f));
+
+
+
 	CObject* pDwarf = FileLoader::ObjectFileLoad(L"./Data/Dwarf/Dwarf.x");
 	pDwarf->m_pTransform->m_vScale = VECTOR3(3, 3, 3);
 	pDwarf->AddComponent<Hero>();
@@ -80,7 +90,8 @@ bool MainScene::Load()
 	plight->m_lightType = LIGHT_TYPE_POINT;
 
 	// Clear할 색 설정
-	FJRenderingEngine::SetClearColor(COLOR(0.0f, 0.125f, 0.3f, 1.0f));
+	//FJRenderingEngine::SetClearColor(COLOR(0.0f, 0.125f, 0.3f, 1.0f));
+	FJRenderingEngine::SetClearColor(COLOR(0.8f, 0.8f, 0.8f, 1.0f));
 
 	return true;
 }
