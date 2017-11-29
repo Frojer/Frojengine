@@ -2,8 +2,12 @@
 
 #include "Frojengine.h"
 
-class Template : public Behaviour
+class CameraControl : public Behaviour
 {
+public:
+	Transform* _pHeroTr;
+	Camera* cam;
+
 public:
 	virtual void Initialize() override;
 	virtual void Update() override;

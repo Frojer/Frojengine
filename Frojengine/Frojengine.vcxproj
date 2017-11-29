@@ -149,7 +149,9 @@
   <ItemGroup>
     <ClCompile Include="Behaviour.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraControl.cpp" />
     <ClCompile Include="FileLoader.cpp" />
+    <ClCompile Include="FJMath.cpp" />
     <ClCompile Include="FJRenderingEngine.cpp" />
     <ClCompile Include="FJSystemEngine.cpp" />
     <ClCompile Include="FJUtility.cpp" />
@@ -186,11 +188,13 @@
   <ItemGroup>
     <ClInclude Include="..\DXTK\Inc\DirectXTK.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraControl.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="FileLoader.h" />
     <ClInclude Include="FJDefine.h" />
+    <ClInclude Include="FJMath.h" />
     <ClInclude Include="FJRenderingEngine.h" />
     <ClInclude Include="FJSystemEngine.h" />
     <ClInclude Include="FJUtility.h" />

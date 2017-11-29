@@ -31,7 +31,6 @@ using namespace std;
 ///////////////////////////////////////////
 
 #include "IObject.h"
-#include "Camera.h"
 #include "Object.h"
 #include "Mesh.h"
 #include "Material.h"
@@ -61,3 +60,4 @@ using namespace std;
 #include "Renderer.h"
 #include "Behaviour.h"
 #include "Light.h"
+#include "Camera.h"

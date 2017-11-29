@@ -20,7 +20,7 @@ public:
 
 private:
 	IObject(const IObject& obj) { }
-	IObject(bool isData) { _isData = isData; _ID = _countID++; _dataObjList.push_back(this);; }
+	IObject(bool isData) { _isData = isData; _ID = _countID++; _dataObjList.push_back(this); }
 
 public:
 	IObject() { _isData = false; _ID = _countID++; _objList.push_back(this); }

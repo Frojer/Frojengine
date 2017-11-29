@@ -89,7 +89,7 @@ void CScene::Render()
 
 	for (UINT i = 0; i < _vecCam.size(); i++)
 	{
-		if (_vecCam[i]->m_Enable)
+		if (_vecCam[i]->GetEnable())
 		{
 			_vecCam[i]->UseCamera();
 			CMaterial::_WVPData.mView = mView;
@@ -116,13 +116,13 @@ void CScene::Release()
 }
 
 
-void CScene::AddCamera(CCamera* pCam)
+void CScene::AddCamera(Camera* pCam)
 {
 	_vecCam.push_back(pCam);
 }
 
 
-CCamera* CScene::GetCamera(UINT index)
+Camera* CScene::GetCamera(UINT index)
 {
 	if (_vecCam.size() <= index)
 		return nullptr;

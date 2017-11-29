@@ -31,8 +31,8 @@ public:
 
 	bool CreateTexture2D(LPCWSTR i_fileName);
 
-	CTexture2D* Find(UINT id);
-	CTexture2D* Find(LPCWSTR name);
+	static CTexture2D* Find(UINT id);
+	static CTexture2D* Find(LPCWSTR name);
 
 	static ID3D11SamplerState* GetSampler(UINT addressFilter);
 

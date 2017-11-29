@@ -1,26 +1,29 @@
 #include "Camera.h"
+#include "FJMath.h"
 
-CCamera::CCamera()
+Camera::Camera()
+{
+	m_name = L"Camera";
+
+	_vp.TopLeftX = 0;
+	_vp.TopLeftY = 0;
+	_vp.Width = g_setting.displayMode.Width;
+	_vp.Height = g_setting.displayMode.Height;
+	_vp.MinDepth = 0.0f;
+	_vp.MaxDepth = 1.0f;
+
+	Create(45.0f, 1.0f, 1000.0f, g_setting.displayMode.Width, g_setting.displayMode.Height);
+}
+
+
+Camera::~Camera()
 {
 
 }
 
-CCamera::CCamera(const CCamera& obj)
+
+void Camera::Create(float fovAngle, float zNear, float zFar, UINT width, UINT height)
 {
-
-}
-
-CCamera::~CCamera()
-{
-
-}
-
-bool CCamera::Create(VECTOR3 pos, VECTOR3 up, VECTOR3 lookAt, float fovAngle, float zNear, float zFar, UINT width, UINT height, D3D11_VIEWPORT& viewport)
-{
-	m_Pos = pos;
-	m_Up = up;
-	m_LookAt = lookAt;
-
 	m_FOV = XMConvertToRadians(fovAngle);
 	m_Znear = zNear;
 	m_Zfar = zFar;
@@ -30,45 +33,41 @@ bool CCamera::Create(VECTOR3 pos, VECTOR3 up, VECTOR3 lookAt, float fovAngle, fl
 
 	m_Aspect = (FLOAT)m_Width / (FLOAT)m_Height;
 
-	_Viewport = viewport;
-
 	SceneManager::pCurrentScene->AddCamera(this);
-
-	m_Enable = true;
-
-	return true;
 }
 
 
 
-void CCamera::SetViewport(D3D11_VIEWPORT& viewport)
+void Camera::SetViewport(D3D11_VIEWPORT& viewport)
 {
-	_Viewport = viewport;
+	_vp = viewport;
 }
 
 
 
-void CCamera::UseCamera()
+void Camera::UseCamera()
 {
-	_pDXDC->RSSetViewports(1, &_Viewport);
+	_pDXDC->RSSetViewports(1, &_vp);
 	CScene::mView = GetViewMatrixLH();
 	CScene::mProj = GetPerspectiveFovLH();
 }
 
 
-
-void CCamera::CameraUpdate()
+void Camera::LookAt(VECTOR3 target)
 {
+	VECTOR3 dir;
+	XMStoreFloat3(&dir, XMVector3Normalize(XMLoadFloat3(&(target - _pObj->m_pTransform->GetPositionWorld()))));
 
+	_pObj->m_pTransform->SetRotationRadian(dir * 180.0f);
 }
 
 
 
-MATRIXA CCamera::GetViewMatrixLH()
+MATRIXA Camera::GetViewMatrixLH()
 {
-	VECTOR pos = XMLoadFloat3(&m_Pos);
-	VECTOR lookAt = XMLoadFloat3(&m_LookAt);
-	VECTOR up = XMLoadFloat3(&m_Up);
+	VECTOR pos = XMLoadFloat3(&_pObj->m_pTransform->GetPositionWorld());
+	VECTOR lookAt = XMLoadFloat3(&(_pObj->m_pTransform->GetLookAt() + _pObj->m_pTransform->GetPositionWorld()));
+	VECTOR up = XMLoadFloat3(&_pObj->m_pTransform->GetUpVector());
 
 	//MATRIX mView;
 	//XMStoreFloat4x4(&mView, XMMatrixLookAtLH(pos, lookAt, up));
@@ -79,7 +78,7 @@ MATRIXA CCamera::GetViewMatrixLH()
 }
 
 
-MATRIXA CCamera::GetPerspectiveFovLH()
+MATRIXA Camera::GetPerspectiveFovLH()
 {
 	//MATRIX mProj;
 	//XMStoreFloat4x4(&mProj, XMMatrixPerspectiveFovLH(m_FOV, m_Aspect, m_Znear, m_Zfar));
@@ -90,7 +89,7 @@ MATRIXA CCamera::GetPerspectiveFovLH()
 }
 
 
-float CCamera::GetAspect()
+float Camera::GetAspect()
 {
 	return m_Aspect;
 }

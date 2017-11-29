@@ -3,7 +3,7 @@
 #include "Frojengine.h"
 
 class CObject;
-class CCamera;
+class Camera;
 
 enum RenderingLayer
 {
@@ -18,7 +18,7 @@ class CScene : private Device
 protected:
 	list<CObject*>	_listObj;
 	//list<CObject*>	_listManageDrawObj[RL_NUM];
-	vector<CCamera*> _vecCam;
+	vector<Camera*> _vecCam;
 
 	static MATRIXA mView;
 	static MATRIXA mProj;
@@ -42,11 +42,11 @@ public:
 
 	void Release();
 
-	void AddCamera(CCamera* pCam);
-	CCamera* GetCamera(UINT index);
+	void AddCamera(Camera* pCam);
+	Camera* GetCamera(UINT index);
 
 	// GameObject()
 	friend class CObject;
 	friend class CMesh;
-	friend class CCamera;
+	friend class Camera;
 };

@@ -244,5 +244,6 @@ float4 PS_Main(v2p i) : SV_TARGET
 
 	clip(diff.a < 0.5f ? -1 : 1);
 
-	return (f * diff) + ((1 - f) * fogColor);
+	return diff;
+	//return (f * diff) + ((1 - f) * fogColor);
 }
