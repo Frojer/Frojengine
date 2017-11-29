@@ -156,12 +156,12 @@ float4 SpecLight(float4 pos, float4 nrm)
 float4 FogCalc(float depth)
 {
 	float fogWidth = fogDepthMax - fogDepthMin;
-	float fog = 1 - ((fogWidth - (depth - fogDepthMin)) / fogWidth);
+	float fog = (fogWidth - (depth - fogDepthMin)) / fogWidth;
 
 	if (fog < 0)
 		return 0;
 	
-	return fogColor * fog;
+	return fog;
 }
 
 
@@ -229,20 +229,20 @@ v2p VS_Main(
 //
 ////////////////////////////////////////////////////////////////////////////// 
 
-float4 PS_Main(v2p i) : SV_TARGET               //[출력] 색상.(필수), "렌더타겟" 으로 출력합니다.
+float4 PS_Main(v2p i) : SV_TARGET
 {
 	float4 tex = texDiffuse.Sample(smpLinear, i.uv);
-
 	float4 diff = tex * i.col;
+	float f;
 
 	diff = LightCalc(i.nrm3d, i.pos3d);
 
 	diff += SpecLight(i.pos3d, i.nrm3d);
 	diff *= tex;
 
-	return diff + FogCalc(i.pos3d.z);
+	f = FogCalc(distance(0, i.pos3d));
 
 	clip(diff.a < 0.5f ? -1 : 1);
 
-	return diff;
+	return (f * diff) + ((1 - f) * fogColor);
 }

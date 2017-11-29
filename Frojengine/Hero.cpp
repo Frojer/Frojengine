@@ -10,7 +10,7 @@ void Hero::Initialize()
 			(*iter)->m_pRenderer->m_pMaterial->SetShader(CShader::Find(L"Fog"));
 			(*iter)->m_pRenderer->m_pMaterial->SetScalar(0, 30.0f);
 			(*iter)->m_pRenderer->m_pMaterial->SetScalar(1, 10.0f);
-			(*iter)->m_pRenderer->m_pMaterial->SetScalar(2, 60.0f);
+			(*iter)->m_pRenderer->m_pMaterial->SetScalar(2, 40.0f);
 			(*iter)->m_pRenderer->m_pMaterial->SetVector(2, VECTOR4(1.0f, 1.0f, 1.0f, 1.0f));
 			(*iter)->m_pRenderer->m_pMaterial->SetVector(3, VECTOR4(0.8f, 0.8f, 0.8f, 1.0f));
 		}

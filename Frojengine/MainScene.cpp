@@ -43,7 +43,7 @@ bool MainScene::Load()
 	temp = pTerrain->GetChildren().back()->GetChildren().back();
 	temp->m_pRenderer->m_pMaterial->SetShader(CShader::Find(L"Fog"));
 	temp->m_pRenderer->m_pMaterial->SetScalar(1, 10.0f);
-	temp->m_pRenderer->m_pMaterial->SetScalar(2, 60.0f);
+	temp->m_pRenderer->m_pMaterial->SetScalar(2, 40.0f);
 	temp->m_pRenderer->m_pMaterial->SetVector(3, VECTOR4(0.8f, 0.8f, 0.8f, 1.0f));
 
 
