@@ -35,7 +35,7 @@ MATRIXA Transform::GetWorldMatrix()
 
 	if (_pObj->GetParent() != nullptr)
 		mWorld *= _pObj->GetParent()->m_pTransform->GetRotPosMatrix();
-
+	
 	return mWorld;
 }
 
@@ -124,15 +124,12 @@ void Transform::SetRotationRadian(VECTOR3& radian)
 
 VECTOR3 Transform::GetPositionWorld()
 {
-	CObject* pObj = _pObj->GetParent();
+	VECTOR v = XMVectorZero();
+	VECTOR3 pos;
 
-	VECTOR3 pos = m_vPos;
+	v = XMVector3TransformCoord(v, GetWorldMatrix());
 
-	while (pObj != nullptr)
-	{
-		pos = pos + pObj->m_pTransform->m_vPos;
-		pObj = pObj->GetParent();
-	}
+	XMStoreFloat3(&pos, v);
 
 	return pos;
 }

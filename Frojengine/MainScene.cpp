@@ -22,11 +22,11 @@ bool MainScene::Load()
 	Camera* cam = (Camera*)pCam->AddComponent<Camera>();
 	CameraControl* cc = (CameraControl*)pCam->AddComponent<CameraControl>();
 
-	//pCam->m_pTransform->SetPositionLocal(VECTOR3(0.0f, 5.0f, -30.0f));
-	//pCam->m_pTransform->SetRotationDegree(VECTOR3(0.0f, 0.0f, 0.0f));
+	pCam->m_pTransform->SetPositionLocal(VECTOR3(0.0f, 5.0f, -30.0f));
+	pCam->m_pTransform->SetRotationDegree(VECTOR3(0.0f, 0.0f, 0.0f));
 
-	pCam->m_pTransform->SetPositionLocal(VECTOR3(0.0f, 50.0f, 0.0f));
-	pCam->m_pTransform->SetRotationDegree(VECTOR3(90.0f, 0.0f, 0.0f));
+	//pCam->m_pTransform->SetPositionLocal(VECTOR3(0.0f, 50.0f, 0.0f));
+	//pCam->m_pTransform->SetRotationDegree(VECTOR3(90.0f, 0.0f, 0.0f));
 	
 	CObject* pSystem = new CObject();
 	pSystem->AddComponent<System>();
