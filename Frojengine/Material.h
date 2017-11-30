@@ -44,8 +44,6 @@ private:
 	vector<VECTOR>	_vecVector;
 	vector<MATRIXA>	_vecMatrix;
 
-	bool _useLight;
-
 public:
 	VECTOR4 m_diffuse;
 	VECTOR3 m_ambient;

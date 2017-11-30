@@ -116,7 +116,7 @@ float4 LightCalc(float4 nrm, float4 pos)
 ////////////////////////////////////////////////////////////////////////////// 
 //
 // 정반사광 조명 계산 : 블린퐁 모델 적용. Blinn-Phong Lighting Model
-//                   : 뷰 공간 View Space 기준 처리.
+//                  : 뷰 공간 View Space 기준 처리.
 float4 SpecLight(float4 pos, float4 nrm)
 {
 	float4 N = nrm;

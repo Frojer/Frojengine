@@ -8,7 +8,7 @@ void System::Initialize()
 
 void System::Update()
 {
-	///*
+	/*
 #define GRID_SIZE 50
 #define GRID_WIDTH 1
 	for (int i = 0; i <= GRID_SIZE; i++)

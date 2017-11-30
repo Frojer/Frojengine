@@ -6,7 +6,7 @@ CMaterial::WVP_Data CMaterial::_WVPData;
 CMaterial::Light_Data CMaterial::_LightData[LIGHT_SIZE];
 
 CMaterial::CMaterial(CShader* shader)
-	: _pShader(shader), _countTexture(0), _useLight(false), m_diffuse(VECTOR4(1.0f, 1.0f, 1.0f, 1.0f)), m_ambient(VECTOR3(0.2f, 0.2f, 0.2f)), m_specular(VECTOR3(1.0f, 1.0f, 1.0f))
+	: _pShader(shader), _countTexture(0), m_diffuse(VECTOR4(1.0f, 1.0f, 1.0f, 1.0f)), m_ambient(VECTOR3(0.2f, 0.2f, 0.2f)), m_specular(VECTOR3(1.0f, 1.0f, 1.0f))
 {
 	ZeroMemory(m_pTexture, sizeof(m_pTexture));
 
@@ -153,8 +153,6 @@ void CMaterial::SetShader(CShader* shader)
 			ZeroMemory(&_vecMatrix[0], _vecMatrix.size() * sizeof(MATRIXA));
 		}
 	}*/
-
-	_useLight = _pShader->_useLight;
 }
 
 

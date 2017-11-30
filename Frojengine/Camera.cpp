@@ -55,10 +55,7 @@ void Camera::UseCamera()
 
 void Camera::LookAt(VECTOR3 target)
 {
-	VECTOR3 dir;
-	XMStoreFloat3(&dir, XMVector3Normalize(XMLoadFloat3(&(target - _pObj->m_pTransform->GetPositionWorld()))));
 
-	_pObj->m_pTransform->SetRotationRadian(dir * 180.0f);
 }
 
 

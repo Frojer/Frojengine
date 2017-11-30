@@ -21,6 +21,7 @@ bool MainScene::Load()
 	CObject* pCam = new CObject();
 	Camera* cam = (Camera*)pCam->AddComponent<Camera>();
 	CameraControl* cc = (CameraControl*)pCam->AddComponent<CameraControl>();
+	cc->cam = cam;
 
 	pCam->m_pTransform->SetPositionLocal(VECTOR3(0.0f, 5.0f, -30.0f));
 	pCam->m_pTransform->SetRotationDegree(VECTOR3(0.0f, 0.0f, 0.0f));
