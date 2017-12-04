@@ -15,7 +15,7 @@ Renderer::~Renderer()
 
 void Renderer::BufferUpdate()
 {
-	m_pMaterial->UpdateConstantBuffer(_pObj->m_pTransform->GetWorldMatrix());
+	m_pMaterial->UpdateConstantBuffer(GetMyObject()->m_pTransform->GetWorldMatrix());
 }
 
 

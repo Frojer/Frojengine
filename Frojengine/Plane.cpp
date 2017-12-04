@@ -2,7 +2,7 @@
 
 void Plane::Initialize()
 {
-	plane = _pObj->GetChildren().back();
+	plane = GetMyObject()->GetChildren().back();
 	plane->m_pTransform->m_vRot = VECTOR3(0.0f, -XM_PI / 2.0f, XM_PI / 8);
 	plane->m_pTransform->m_vPos = VECTOR3(0.0f, 10.0f, 10.0f);
 	
@@ -40,7 +40,7 @@ void Plane::Initialize()
 
 void Plane::Update()
 {
-	_pObj->m_pTransform->m_vRot.y += XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+	GetMyObject()->m_pTransform->m_vRot.y += XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
 	
 	
 	//if (IsKeyDown('W')) propeller->m_pTransform->m_vRot.x += XM_PI * 0.1f * FJSystemEngine::GetInstance()->m_fDeltaTime;

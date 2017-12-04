@@ -24,17 +24,19 @@ MATRIXA Transform::GetWorldMatrix()
 	MATRIXA mPos, mRot, mScale;
 	MATRIXA mWorld;
 
+	CObject* pObj = GetMyObject();
+
 	mPos = DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&m_vPos));
 	mRot = DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_vRot));
 	mScale = DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&m_vScale));
 
-	if (_pObj->GetParent() != nullptr)
-		mScale *= _pObj->GetParent()->m_pTransform->GetScaleMatrix();
+	if (pObj->GetParent() != nullptr)
+		mScale *= pObj->GetParent()->m_pTransform->GetScaleMatrix();
 
 	mWorld = mScale * mRot * mPos;
 
-	if (_pObj->GetParent() != nullptr)
-		mWorld *= _pObj->GetParent()->m_pTransform->GetRotPosMatrix();
+	if (pObj->GetParent() != nullptr)
+		mWorld *= pObj->GetParent()->m_pTransform->GetRotPosMatrix();
 	
 	return mWorld;
 }
@@ -42,11 +44,13 @@ MATRIXA Transform::GetWorldMatrix()
 
 MATRIXA Transform::GetPositionMatrix()
 {
+	CObject* pObj = GetMyObject();
+
 	MATRIXA mPos;
 	mPos = DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&m_vPos));
 
-	if (_pObj->GetParent() != nullptr)
-		mPos *= _pObj->GetParent()->m_pTransform->GetPositionMatrix();
+	if (pObj->GetParent() != nullptr)
+		mPos *= pObj->GetParent()->m_pTransform->GetPositionMatrix();
 
 	return mPos;
 }
@@ -54,11 +58,13 @@ MATRIXA Transform::GetPositionMatrix()
 
 MATRIXA Transform::GetRotationMatrix()
 {
+	CObject* pObj = GetMyObject();
+
 	MATRIXA mRot;
 	mRot = DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&m_vRot));
 
-	if (_pObj->GetParent() != nullptr)
-		mRot *= _pObj->GetParent()->m_pTransform->GetRotationMatrix();
+	if (pObj->GetParent() != nullptr)
+		mRot *= pObj->GetParent()->m_pTransform->GetRotationMatrix();
 
 	return mRot;
 }
@@ -66,14 +72,16 @@ MATRIXA Transform::GetRotationMatrix()
 
 MATRIXA Transform::GetRotPosMatrix()
 {
+	CObject* pObj = GetMyObject();
+
 	MATRIXA mPos, mRot, mRP;
 	mPos = DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&m_vPos));
 	mRot = DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_vRot));
 
 	mRP = mRot * mPos;
 
-	if (_pObj->GetParent() != nullptr)
-		mRP *= _pObj->GetParent()->m_pTransform->GetRotPosMatrix();
+	if (pObj->GetParent() != nullptr)
+		mRP *= pObj->GetParent()->m_pTransform->GetRotPosMatrix();
 
 	return mRP;
 }
@@ -81,11 +89,13 @@ MATRIXA Transform::GetRotPosMatrix()
 
 MATRIXA Transform::GetScaleMatrix()
 {
+	CObject* pObj = GetMyObject();
+
 	MATRIXA mScale;
 	mScale = DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&m_vScale));
 
-	if (_pObj->GetParent() != nullptr)
-		mScale *= _pObj->GetParent()->m_pTransform->GetScaleMatrix();
+	if (pObj->GetParent() != nullptr)
+		mScale *= pObj->GetParent()->m_pTransform->GetScaleMatrix();
 
 	return mScale;
 }
@@ -166,7 +176,7 @@ VECTOR3 Transform::GetLookAt()
 
 VECTOR3 Transform::GetUpVector()
 {
-	VECTOR rot = XMLoadFloat3(&_pObj->m_pTransform->m_vRot);
+	VECTOR rot = XMLoadFloat3(&GetMyObject()->m_pTransform->m_vRot);
 	VECTOR3 up;
 
 	XMStoreFloat3(&up, XMVector3Transform(XMLoadFloat3(&VECTOR3(0.0f, 1.0f, 0.0f)), XMMatrixRotationRollPitchYawFromVector(rot)));
@@ -177,7 +187,7 @@ VECTOR3 Transform::GetUpVector()
 
 VECTOR3 Transform::GetRightVector()
 {
-	VECTOR rot = XMLoadFloat3(&_pObj->m_pTransform->m_vRot);
+	VECTOR rot = XMLoadFloat3(&GetMyObject()->m_pTransform->m_vRot);
 	VECTOR3 right;
 
 	XMStoreFloat3(&right, XMVector3Transform(XMLoadFloat3(&VECTOR3(1.0f, 0.0f, 0.0f)), XMMatrixRotationRollPitchYawFromVector(rot)));

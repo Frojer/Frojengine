@@ -15,15 +15,19 @@ enum
 
 class Component : public IObject
 {
+private:
+	CObject* _pObj;
+
 protected:
 	// Init Update AfterUpdate Render
 	// 0    0      0           00000
 	unsigned char _type;
-	CObject* _pObj;
 
 public:
 	Component() : _type(0), _pObj(nullptr) {}
 	virtual ~Component() {}
+
+	CObject* GetMyObject() { return _pObj; }
 
 protected:
 	virtual void Initialize() {}

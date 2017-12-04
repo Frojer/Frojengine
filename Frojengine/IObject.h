@@ -21,13 +21,29 @@ public:
 private:
 	IObject(const IObject& obj) { }
 	IObject(bool isData) { _isData = isData; _ID = _countID++; _dataObjList.push_back(this); }
+	void SetID(unsigned int id) { _ID = id; }
 
 public:
 	IObject() { _isData = false; _ID = _countID++; _objList.push_back(this); }
 	virtual ~IObject()
 	{
-		FOR_STL(_objList) { if ((*iter) == this) _objList.erase(iter); break; }
-		FOR_STL(_dataObjList) { if ((*iter) == this) _dataObjList.erase(iter); break; }
+		FOR_STL(_objList)
+		{
+			if ((*iter) == this)
+			{
+				_objList.erase(iter);
+				break;
+			}
+		}
+
+		FOR_STL(_dataObjList)
+		{
+			if ((*iter) == this)
+			{
+				_dataObjList.erase(iter);
+				break;
+			}
+		}
 	}
 
 	unsigned int GetID() { return _ID; }
@@ -43,5 +59,6 @@ public:
 		return nullptr;
 	}
 
+	// CObject* CObject::CopyObject(const CObject* origin)
 	friend class CObject;
 };

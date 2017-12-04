@@ -23,7 +23,7 @@ public:
 
 private:
 	CObject(const CObject& obj) {}
-	CObject& operator= (const CObject& obj);
+	CObject& operator= (const CObject& obj) = delete;
 
 	static CObject* FindChildList(unsigned int id, list<CObject*> childList);
 
@@ -89,11 +89,11 @@ public:
 	}
 
 	Component* GetComponent(wstring name);
-	list<Component*> GetComponents(wstring name);
+	list<Component*> GetComponents();
 
 	static CObject* Find(unsigned int id);
 	static CObject* FindModel(wstring name);
-	static CObject* CopyObject(const CObject& origin);
+	static CObject* CopyObject(const CObject* origin);
 
 	friend class FJRenderingEngine;
 	friend class FileLoader;

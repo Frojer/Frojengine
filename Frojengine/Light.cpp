@@ -11,7 +11,7 @@ Light::Light()
 
 Light::~Light()
 {
-	
+	_lightList.remove(this);
 }
 
 

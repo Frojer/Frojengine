@@ -135,9 +135,6 @@
     <ClCompile Include="Behaviour.cpp">
       <Filter>Frojengine\Component\Source File</Filter>
     </ClCompile>
-    <ClCompile Include="temp.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="System.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -240,9 +237,6 @@
     <ClInclude Include="Behaviour.h">
       <Filter>Frojengine\Component\Header File</Filter>
     </ClInclude>
-    <ClInclude Include="temp.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="System.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -267,6 +261,9 @@
     </ClInclude>
     <ClInclude Include="CameraControl.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomComponent.h">
+      <Filter>Frojengine\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

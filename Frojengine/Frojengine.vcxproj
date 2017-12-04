@@ -196,7 +196,6 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="DefaultShader.cpp" />
     <ClCompile Include="System.cpp" />
-    <ClCompile Include="temp.cpp" />
     <ClCompile Include="Template.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -214,6 +213,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraControl.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="CustomComponent.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="FileLoader.h" />
@@ -239,7 +239,6 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="DefaultShader.h" />
     <ClInclude Include="System.h" />
-    <ClInclude Include="temp.h" />
     <ClInclude Include="Template.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

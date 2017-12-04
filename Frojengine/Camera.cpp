@@ -62,9 +62,11 @@ void Camera::LookAt(VECTOR3 target)
 
 MATRIXA Camera::GetViewMatrixLH()
 {
-	VECTOR pos = XMLoadFloat3(&_pObj->m_pTransform->GetPositionWorld());
-	VECTOR lookAt = XMLoadFloat3(&(_pObj->m_pTransform->GetLookAt() + _pObj->m_pTransform->GetPositionWorld()));
-	VECTOR up = XMLoadFloat3(&_pObj->m_pTransform->GetUpVector());
+	CObject* pObj = GetMyObject();
+
+	VECTOR pos = XMLoadFloat3(&pObj->m_pTransform->GetPositionWorld());
+	VECTOR lookAt = XMLoadFloat3(&(pObj->m_pTransform->GetLookAt() + pObj->m_pTransform->GetPositionWorld()));
+	VECTOR up = XMLoadFloat3(&pObj->m_pTransform->GetUpVector());
 
 	//MATRIX mView;
 	//XMStoreFloat4x4(&mView, XMMatrixLookAtLH(pos, lookAt, up));

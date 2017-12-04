@@ -1,5 +1,8 @@
 #include "Object.h"
 
+#include <typeinfo>
+#include "CustomComponent.h"
+
 list<CObject*> CObject::_dataList;
 
 CObject::CObject(bool isData)
@@ -27,12 +30,6 @@ CObject::CObject(VECTOR3& pos, VECTOR3& rot, VECTOR3& scale)
 	SceneManager::pCurrentScene->_listObj.push_back(this);
 }
 
-CObject& CObject::operator= (const CObject& obj)
-{
-	CObject c;
-	return c;
-}
-
 CObject::~CObject()
 {
 	auto iter = _childList.begin();
@@ -41,6 +38,14 @@ CObject::~CObject()
 		delete (*iter);
 		(*iter) = nullptr;
 		_childList.erase(iter++);
+	}
+
+	auto iter2 = _components.begin();
+	while (iter2 != _components.end())
+	{
+		delete (*iter2);
+		(*iter2) = nullptr;
+		_components.erase(iter2++);
 	}
 }
 
@@ -176,7 +181,7 @@ Component* CObject::GetComponent(wstring name)
 
 
 
-list<Component*> CObject::GetComponents(wstring name)
+list<Component*> CObject::GetComponents()
 {
 	return _components;
 }
@@ -229,14 +234,104 @@ CObject* CObject::FindModel(wstring name)
 }
 
 
-CObject* CObject::CopyObject(const CObject& origin)
+CObject* CObject::CopyObject(const CObject* origin)
 {
 	CObject* obj = new CObject();
+	obj->m_name = origin->m_name;
 
-	FOR_STL(origin._components)
+	Component* cp;
+	unsigned int id = 0;
+
+	FOR_STL(origin->_components)
 	{
-		//(*iter)->
+		const type_info& ti = typeid(*(*iter));
+
+		if (ti == typeid(Transform))
+		{
+			cp = obj->m_pTransform;
+			id = cp->GetID();
+			memcpy_s(cp, sizeof(Transform), (*iter), sizeof(Transform));
+			cp->SetID(id);
+			cp->_pObj = obj;
+		}
+
+		else if (ti == typeid(Renderer))
+		{
+			cp = obj->AddComponent<Renderer>();
+			id = cp->GetID();
+			memcpy_s(cp, sizeof(Renderer), (*iter), sizeof(Renderer));
+			cp->SetID(id);
+			cp->_pObj = obj;
+		}
+
+		else if (ti == typeid(Light))
+		{
+			cp = obj->AddComponent<Light>();
+			id = cp->GetID();
+			memcpy_s(cp, sizeof(Light), (*iter), sizeof(Light));
+			cp->SetID(id);
+			cp->_pObj = obj;
+		}
+
+		else if (ti == typeid(Camera))
+		{
+			cp = obj->AddComponent<Camera>();
+			id = cp->GetID();
+			memcpy_s(cp, sizeof(Camera), (*iter), sizeof(Camera));
+			cp->SetID(id);
+			cp->_pObj = obj;
+		}
+
+		else if (ti == typeid(CameraControl))
+		{
+			cp = obj->AddComponent<CameraControl>();
+			id = cp->GetID();
+			memcpy_s(cp, sizeof(CameraControl), (*iter), sizeof(CameraControl));
+			cp->SetID(id);
+			cp->_pObj = obj;
+		}
+
+		else if (ti == typeid(Hero))
+		{
+			cp = obj->AddComponent<Hero>();
+			id = cp->GetID();
+			memcpy_s(cp, sizeof(Hero), (*iter), sizeof(Hero));
+			cp->SetID(id);
+			cp->_pObj = obj;
+		}
+
+		else if (ti == typeid(Plane))
+		{
+			cp = obj->AddComponent<Plane>();
+			id = cp->GetID();
+			memcpy_s(cp, sizeof(Plane), (*iter), sizeof(Plane));
+			cp->SetID(id);
+			cp->_pObj = obj;
+		}
+
+		else if (ti == typeid(System))
+		{
+			cp = obj->AddComponent<System>();
+			id = cp->GetID();
+			memcpy_s(cp, sizeof(System), (*iter), sizeof(System));
+			cp->SetID(id);
+			cp->_pObj = obj;
+		}
+
+		else if (ti == typeid(Windmill))
+		{
+			cp = obj->AddComponent<Windmill>();
+			id = cp->GetID();
+			memcpy_s(cp, sizeof(Windmill), (*iter), sizeof(Windmill));
+			cp->SetID(id);
+			cp->_pObj = obj;
+		}
 	}
 
-	return nullptr;
+	FOR_STL(origin->_childList)
+	{
+		CopyObject((*iter))->SetParent(obj);
+	}
+
+	return obj;
 }

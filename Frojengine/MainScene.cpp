@@ -19,6 +19,7 @@ MainScene::~MainScene()
 bool MainScene::Load()
 {
 	CObject* pCam = new CObject();
+	pCam->m_name = L"Camera";
 	Camera* cam = (Camera*)pCam->AddComponent<Camera>();
 	CameraControl* cc = (CameraControl*)pCam->AddComponent<CameraControl>();
 	cc->cam = cam;
@@ -30,9 +31,11 @@ bool MainScene::Load()
 	//pCam->m_pTransform->SetRotationDegree(VECTOR3(90.0f, 0.0f, 0.0f));
 	
 	CObject* pSystem = new CObject();
+	pSystem->m_name = L"System";
 	pSystem->AddComponent<System>();
 
 	CObject* pTerrain = FileLoader::ObjectFileLoad(L"./Data/Terrain/terrain.x");
+	pTerrain->m_name = L"Terrain";
 	pTerrain->m_pTransform->m_vPos = VECTOR3(0, -0.0005f, 0);
 
 	list<CObject*> list;
@@ -46,6 +49,7 @@ bool MainScene::Load()
 
 
 	CObject* pDwarf = FileLoader::ObjectFileLoad(L"./Data/Dwarf/Dwarf.x");
+	pDwarf->m_name = L"Dwarf";
 	pDwarf->m_pTransform->m_vScale = VECTOR3(3, 3, 3);
 	pDwarf->AddComponent<Hero>();
 	cc->_pHeroTr = pDwarf->m_pTransform;
@@ -56,12 +60,14 @@ bool MainScene::Load()
 
 	// 비행기 생성
 	CObject* pPlaneModel = FileLoader::ObjectFileLoad(L"./Data/JN-4/airplane02.x");
+	pPlaneModel->m_name = L"Plane";
 	CObject* pPlane = new CObject();
 	pPlane->AddComponent<Plane>();
 	pPlaneModel->SetParent(pPlane);
 
 	// 상자 생성
 	CObject* pBox = FileLoader::ObjectFileLoad(L"./Data/Box/Box.x");
+	pBox->m_name = L"Box";
 	pBox->m_pTransform->m_vPos = VECTOR3(-3.0f, 1.0f, -25.0f);
 	pBox->m_pTransform->m_vScale = VECTOR3(0.2f, 0.2f, 0.2f);
 
@@ -73,6 +79,7 @@ bool MainScene::Load()
 
 	
 	CObject* pLight = new CObject;
+	pLight->m_name = L"Direction Light";
 
 	//pLight->m_pTransform->m_vRot = VECTOR3(-XM_PI / 2, 0.0f, 0.0f);
 	pLight->m_pTransform->m_vRot = VECTOR3(XM_PI, 0.0f, 0.0f);
@@ -85,6 +92,7 @@ bool MainScene::Load()
 
 
 	CObject* pointLit = new CObject;
+	pointLit->m_name = L"Point Light";
 	pointLit->AddComponent<Renderer>();
 	pointLit->SetParent(pDwarf);
 	pointLit->m_pTransform->m_vPos = VECTOR3(3.5f, 3.0f, 0.0f);
@@ -107,6 +115,12 @@ bool MainScene::Load()
 	pMtrl->m_pTexture[0] = CTexture2D::Find(L"woodbox.bmp");
 	pointLit->m_pRenderer->ChangeMaterial(pMtrl);
 	pointLit->m_pRenderer->ChangeMesh(CMesh::Find(L"Box001"));
+
+	CObject* pDwarf2 = CObject::CopyObject(pDwarf);
+	pDwarf2->m_name = L"Dwarf 2";
+	pDwarf2->m_pTransform->SetPositionWorld(VECTOR3(0.0f, 5.0f, 0.0f));
+
+	//pDwarf2->Destroy();
 
 	// Clear할 색 설정
 	//FJRenderingEngine::SetClearColor(COLOR(0.0f, 0.125f, 0.3f, 1.0f));
