@@ -48,7 +48,7 @@ public:
 	list<CObject*> GetChildren();
 
 	template <typename T>
-	Component* AddComponent()
+	T* AddComponent()
 	{
 		Component* pCom = nullptr;
 
@@ -85,7 +85,7 @@ public:
 		pCom->_pObj = this;
 		_components.push_back(pCom);
 
-		return pCom;
+		return (T*)pCom;
 	}
 
 	Component* GetComponent(wstring name);

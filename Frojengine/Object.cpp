@@ -240,91 +240,64 @@ CObject* CObject::CopyObject(const CObject* origin)
 	obj->m_name = origin->m_name;
 
 	Component* cp;
-	unsigned int id = 0;
 
 	FOR_STL(origin->_components)
 	{
+#define COPY_SIZE(custom) sizeof(custom) - sizeof(Component)
 		const type_info& ti = typeid(*(*iter));
 
 		if (ti == typeid(Transform))
 		{
 			cp = obj->m_pTransform;
-			id = cp->GetID();
-			memcpy_s(cp, sizeof(Transform), (*iter), sizeof(Transform));
-			cp->SetID(id);
-			cp->_pObj = obj;
+			memcpy_s((char*)cp + sizeof(Component), COPY_SIZE(Transform), (char*)(*iter) + sizeof(Component), COPY_SIZE(Transform));
 		}
 
 		else if (ti == typeid(Renderer))
 		{
 			cp = obj->AddComponent<Renderer>();
-			id = cp->GetID();
-			memcpy_s(cp, sizeof(Renderer), (*iter), sizeof(Renderer));
-			cp->SetID(id);
-			cp->_pObj = obj;
+			memcpy_s((char*)cp + sizeof(Component), COPY_SIZE(Renderer), (char*)(*iter) + sizeof(Component), COPY_SIZE(Renderer));
 		}
 
 		else if (ti == typeid(Light))
 		{
 			cp = obj->AddComponent<Light>();
-			id = cp->GetID();
-			memcpy_s(cp, sizeof(Light), (*iter), sizeof(Light));
-			cp->SetID(id);
-			cp->_pObj = obj;
+			memcpy_s((char*)cp + sizeof(Component), COPY_SIZE(Light), (char*)(*iter) + sizeof(Component), COPY_SIZE(Light));
 		}
 
 		else if (ti == typeid(Camera))
 		{
 			cp = obj->AddComponent<Camera>();
-			id = cp->GetID();
-			memcpy_s(cp, sizeof(Camera), (*iter), sizeof(Camera));
-			cp->SetID(id);
-			cp->_pObj = obj;
+			memcpy_s((char*)cp + sizeof(Component), COPY_SIZE(Camera), (char*)(*iter) + sizeof(Component), COPY_SIZE(Camera));
 		}
 
 		else if (ti == typeid(CameraControl))
 		{
 			cp = obj->AddComponent<CameraControl>();
-			id = cp->GetID();
-			memcpy_s(cp, sizeof(CameraControl), (*iter), sizeof(CameraControl));
-			cp->SetID(id);
-			cp->_pObj = obj;
+			memcpy_s((char*)cp + sizeof(Component), COPY_SIZE(CameraControl), (char*)(*iter) + sizeof(Component), COPY_SIZE(CameraControl));
 		}
 
 		else if (ti == typeid(Hero))
 		{
 			cp = obj->AddComponent<Hero>();
-			id = cp->GetID();
-			memcpy_s(cp, sizeof(Hero), (*iter), sizeof(Hero));
-			cp->SetID(id);
-			cp->_pObj = obj;
+			memcpy_s((char*)cp + sizeof(Component), COPY_SIZE(Hero), (char*)(*iter) + sizeof(Component), COPY_SIZE(Hero));
 		}
 
 		else if (ti == typeid(Plane))
 		{
 			cp = obj->AddComponent<Plane>();
-			id = cp->GetID();
-			memcpy_s(cp, sizeof(Plane), (*iter), sizeof(Plane));
-			cp->SetID(id);
-			cp->_pObj = obj;
+			memcpy_s((char*)cp + sizeof(Component), COPY_SIZE(Plane), (char*)(*iter) + sizeof(Component), COPY_SIZE(Plane));
 		}
 
 		else if (ti == typeid(System))
 		{
 			cp = obj->AddComponent<System>();
-			id = cp->GetID();
-			memcpy_s(cp, sizeof(System), (*iter), sizeof(System));
-			cp->SetID(id);
-			cp->_pObj = obj;
+			memcpy_s((char*)cp + sizeof(Component), COPY_SIZE(System), (char*)(*iter) + sizeof(Component), COPY_SIZE(System));
 		}
 
 		else if (ti == typeid(Windmill))
 		{
 			cp = obj->AddComponent<Windmill>();
-			id = cp->GetID();
-			memcpy_s(cp, sizeof(Windmill), (*iter), sizeof(Windmill));
-			cp->SetID(id);
-			cp->_pObj = obj;
+			memcpy_s((char*)cp + sizeof(Component), COPY_SIZE(Windmill), (char*)(*iter) + sizeof(Component), COPY_SIZE(Windmill));
 		}
 	}
 
