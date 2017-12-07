@@ -245,7 +245,7 @@ CObject* FileLoader::XFileLoadFrame(CObject* i_pObj, wifstream& file)
 								break;
 
 							// Material Setting
-							((Renderer*)pObj->GetComponent(L"Renderer"))->m_pMaterial = CMaterial::Find(str);
+							((Renderer*)pObj->GetComponent(typeid(Renderer)))->m_pMaterial = CMaterial::Find(str);
 						}
 					}
 
@@ -258,7 +258,7 @@ CObject* FileLoader::XFileLoadFrame(CObject* i_pObj, wifstream& file)
 						pMtrl->m_name = pMesh->m_name + L" 1";
 
 						// Material Setting
-						((Renderer*)pObj->GetComponent(L"Renderer"))->m_pMaterial = pMtrl;
+						((Renderer*)pObj->GetComponent(typeid(Renderer)))->m_pMaterial = pMtrl;
 
 						// Diffuse 얻어오기
 						file >> pMtrl->m_diffuse.x >> c >> pMtrl->m_diffuse.y >> c >> pMtrl->m_diffuse.z >> c >> pMtrl->m_diffuse.w >> str;
@@ -337,7 +337,7 @@ CObject* FileLoader::XFileLoadFrame(CObject* i_pObj, wifstream& file)
 
 			pMesh->CreateBuffer(vertics, indics);
 
-			((Renderer*)pObj->GetComponent(L"Renderer"))->ChangeMesh(pMesh);
+			((Renderer*)pObj->GetComponent(typeid(Renderer)))->ChangeMesh(pMesh);
 		}
 
 		else if (_wcsnicmp(str, L"}", 2) == 0)

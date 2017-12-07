@@ -88,7 +88,7 @@ public:
 		return (T*)pCom;
 	}
 
-	Component* GetComponent(wstring name);
+	Component* GetComponent(const type_info& type);
 	list<Component*> GetComponents();
 
 	static CObject* Find(unsigned int id);

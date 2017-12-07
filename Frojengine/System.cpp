@@ -8,7 +8,10 @@ void System::Initialize()
 
 void System::Update()
 {
-	///*
+	if (IsKeyUp(VK_SPACE))
+		FJRenderingEngine::SetWireFrame(!FJRenderingEngine::GetWireFrame());
+
+	/*
 #define GRID_SIZE 50
 #define GRID_WIDTH 1
 	for (int i = 0; i <= GRID_SIZE; i++)

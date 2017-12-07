@@ -121,11 +121,11 @@ bool MainScene::Load()
 	tripWind2->wing[2] = pWindmillWing;
 
 
-
+	// 드워프 생성
 	CObject* pDwarf = FileLoader::ObjectFileLoad(L"./Data/Dwarf/Dwarf.x");
 	pDwarf->m_name = L"Dwarf";
 	pDwarf->m_pTransform->m_vScale = VECTOR3(3, 3, 3);
-	pDwarf->AddComponent<Hero>();
+	pDwarf->AddComponent<Hero>()->state = 0;
 	cc->_pHeroTr = pDwarf->m_pTransform;
 
 
@@ -158,7 +158,6 @@ bool MainScene::Load()
 	Light* light = (Light*)pLight->AddComponent<Light>();
 	light->m_diffuse = COLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	light->m_ambient = COLOR(0.2f, 0.2f, 0.2f, 1.0f);
-	//light->m_ambient = COLOR(0.2f, 0.2f, 0.2f, 1.0f);
 	light->m_lightType = LIGHT_TYPE_DIRECTION;
 
 
@@ -186,6 +185,9 @@ bool MainScene::Load()
 	pMtrl->m_pTexture[0] = CTexture2D::Find(L"woodbox.bmp");
 	pointLit->m_pRenderer->ChangeMaterial(pMtrl);
 	pointLit->m_pRenderer->ChangeMesh(CMesh::Find(L"Box001"));
+
+
+	((Hero*)CObject::CopyObject(pDwarf)->GetComponent(typeid(Hero)))->state = 1;
 
 	// Clear할 색 설정
 	//FJRenderingEngine::SetClearColor(COLOR(0.0f, 0.125f, 0.3f, 1.0f));

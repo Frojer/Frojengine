@@ -168,11 +168,11 @@ list<CObject*> CObject::GetChildren()
 }
 
 
-Component* CObject::GetComponent(wstring name)
+Component* CObject::GetComponent(const type_info& type)
 {
 	FOR_STL(_components)
 	{
-		if ((*iter)->m_name == name)
+		if (typeid(*(*iter)) == type)
 			return (*iter);
 	}
 

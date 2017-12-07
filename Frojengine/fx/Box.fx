@@ -31,10 +31,7 @@ cbuffer ConstBuffer : register(b2)
 	float4 mtrlDiffuse;
 	float4 mtrlAmbient;
 	float4 mtrlSpecular;
-	float4 fogColor;
 	float mtrlPower;
-	float fogDepthMin;
-	float fogDepthMax;
 };
 
 
@@ -78,15 +75,15 @@ float4 LightCalc(float4 nrm, float4 pos)
 	{
 		if (light[i].useLight)
 		{
+			L = float4(light[i].direction, 0);
+
+			//뷰공간으로 정보를 변환.
+			L = mul(L, mView);
+
 			switch (light[i].lightType)
 			{
 			// Direction Light
 			case 0:
-				L = float4(light[i].direction, 0);
-
-				//뷰공간으로 정보를 변환.
-				L = mul(L, mView);
-
 				diff += max(dot(N, L), 0) * light[i].diffuse * mtrlDiffuse;
 				diff += light[i].ambient * mtrlAmbient;
 				break;
@@ -119,7 +116,7 @@ float4 LightCalc(float4 nrm, float4 pos)
 ////////////////////////////////////////////////////////////////////////////// 
 //
 // 정반사광 조명 계산 : 블린퐁 모델 적용. Blinn-Phong Lighting Model
-//                   : 뷰 공간 View Space 기준 처리.
+//                  : 뷰 공간 View Space 기준 처리.
 float4 SpecLight(float4 pos, float4 nrm)
 {
 	float4 N = nrm;
@@ -130,11 +127,7 @@ float4 SpecLight(float4 pos, float4 nrm)
 
 	for (int i = 0; i < LIGHT_SIZE; i++)
 	{
-        if (light[i].lightType != 0)
-            continue;
-
 		L = float4(light[i].direction, 0);
-        L = mul(L, mView);
 
 		// 시선백터 계산.
 		E = normalize(-pos);
@@ -149,23 +142,6 @@ float4 SpecLight(float4 pos, float4 nrm)
 	spec.w = 1;
 
 	return spec;
-}
-
-
-
-////////////////////////////////////////////////////////////////////////////// 
-//
-// 정반사광 조명 계산 : 블린퐁 모델 적용. Blinn-Phong Lighting Model
-//                   : 뷰 공간 View Space 기준 처리.
-float4 FogCalc(float depth)
-{
-	float fogWidth = fogDepthMax - fogDepthMin;
-	float fog = (fogWidth - (depth - fogDepthMin)) / fogWidth;
-
-	if (fog < 0)
-		return 0;
-	
-	return fog;
 }
 
 
@@ -233,21 +209,18 @@ v2p VS_Main(
 //
 ////////////////////////////////////////////////////////////////////////////// 
 
-float4 PS_Main(v2p i) : SV_TARGET
+float4 PS_Main(v2p i) : SV_TARGET               //[출력] 색상.(필수), "렌더타겟" 으로 출력합니다.
 {
 	float4 tex = texDiffuse.Sample(smpLinear, i.uv);
+
 	float4 diff = tex * i.col;
-	float f;
 
 	diff = LightCalc(i.nrm3d, i.pos3d);
 
 	diff += SpecLight(i.pos3d, i.nrm3d);
 	diff *= tex;
 
-	f = FogCalc(distance(0, i.pos3d));
-
 	clip(diff.a < 0.5f ? -1 : 1);
 
-	//return diff;
-	return (f * diff) + ((1 - f) * fogColor);
+	return diff;
 }
