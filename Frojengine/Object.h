@@ -93,6 +93,7 @@ public:
 
 	static CObject* Find(unsigned int id);
 	static CObject* FindModel(wstring name);
+	static CObject* CopyObject(const CObject* origin, VECTOR3 pos);
 	static CObject* CopyObject(const CObject* origin);
 
 	friend class FJRenderingEngine;

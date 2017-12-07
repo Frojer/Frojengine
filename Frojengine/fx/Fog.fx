@@ -78,15 +78,15 @@ float4 LightCalc(float4 nrm, float4 pos)
 	{
 		if (light[i].useLight)
 		{
-			L = float4(light[i].direction, 0);
-
-			//뷰공간으로 정보를 변환.
-			L = mul(L, mView);
-
 			switch (light[i].lightType)
 			{
 			// Direction Light
 			case 0:
+				L = float4(light[i].direction, 0);
+
+				//뷰공간으로 정보를 변환.
+				L = mul(L, mView);
+
 				diff += max(dot(N, L), 0) * light[i].diffuse * mtrlDiffuse;
 				diff += light[i].ambient * mtrlAmbient;
 				break;
@@ -244,6 +244,6 @@ float4 PS_Main(v2p i) : SV_TARGET
 
 	clip(diff.a < 0.5f ? -1 : 1);
 
-	//return diff;
+	return diff;
 	return (f * diff) + ((1 - f) * fogColor);
 }

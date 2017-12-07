@@ -234,6 +234,15 @@ CObject* CObject::FindModel(wstring name)
 }
 
 
+CObject* CObject::CopyObject(const CObject* origin, VECTOR3 pos)
+{
+	CObject* copy = CopyObject(origin);
+	copy->m_pTransform->SetPositionLocal(pos);
+
+	return copy;
+}
+
+
 CObject* CObject::CopyObject(const CObject* origin)
 {
 	CObject* obj = new CObject();
@@ -298,6 +307,18 @@ CObject* CObject::CopyObject(const CObject* origin)
 		{
 			cp = obj->AddComponent<Windmill>();
 			memcpy_s((char*)cp + sizeof(Component), COPY_SIZE(Windmill), (char*)(*iter) + sizeof(Component), COPY_SIZE(Windmill));
+		}
+
+		else if (ti == typeid(TripleWindmill))
+		{
+			cp = obj->AddComponent<TripleWindmill>();
+			memcpy_s((char*)cp + sizeof(Component), COPY_SIZE(TripleWindmill), (char*)(*iter) + sizeof(Component), COPY_SIZE(TripleWindmill));
+		}
+
+		else if (ti == typeid(TripleWindmill2))
+		{
+			cp = obj->AddComponent<TripleWindmill2>();
+			memcpy_s((char*)cp + sizeof(Component), COPY_SIZE(TripleWindmill2), (char*)(*iter) + sizeof(Component), COPY_SIZE(TripleWindmill2));
 		}
 	}
 

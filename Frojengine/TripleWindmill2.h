@@ -2,12 +2,11 @@
 
 #include "Frojengine.h"
 
-class Windmill : public Behaviour
+class TripleWindmill2 : public Behaviour
 {
 public:
 	CObject* body;
-	CObject* wing;
-
+	CObject* wing[3];
 public:
 	virtual void Initialize() override;
 	virtual void Update() override;

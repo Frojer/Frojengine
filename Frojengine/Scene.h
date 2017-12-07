@@ -17,6 +17,7 @@ class CScene : private Device
 {
 protected:
 	list<CObject*>	_listObj;
+	list<CObject*>	_listObjBk;
 	//list<CObject*>	_listManageDrawObj[RL_NUM];
 	vector<Camera*> _vecCam;
 
