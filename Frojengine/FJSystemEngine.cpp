@@ -347,8 +347,8 @@ void FJSystemEngine::LoadData()
 	pShader = CShader::CreateShader(L"./fx/Box.fx");
 	pShader->m_name = L"Box";
 	pShader->_countTexture = 4;
-	pShader->_countVector = 4;
-	pShader->_countScalar = 2;
+	pShader->_countVector = 5;
+	pShader->_countScalar = 4;
 	pShader->_useLight = true;
 	CreateShaderBuffer(pShader);
 

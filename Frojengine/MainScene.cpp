@@ -63,6 +63,7 @@ bool MainScene::Load()
 #pragma endregion
 
 
+
 #pragma region 唱公 积己
 	CObject* pTree = FileLoader::ObjectFileLoad(L"./Data/Tree/tree.x");
 	temp = pTree->GetChildren().back()->GetChildren().back();
@@ -91,6 +92,7 @@ bool MainScene::Load()
 #pragma endregion
 
 
+
 #pragma region 浅瞒 积己
 	CObject* pWindmill = new CObject;
 	Windmill* wind = pWindmill->AddComponent<Windmill>();
@@ -104,6 +106,7 @@ bool MainScene::Load()
 	wind->wing = pWindmillWing;
 	wind->system = system;
 #pragma endregion
+
 
 
 #pragma region 伙窜浅瞒1 积己
@@ -123,6 +126,7 @@ bool MainScene::Load()
 #pragma endregion
 
 
+
 #pragma region 伙窜浅瞒2 积己
 	CObject* pTripleWindmill2 = new CObject;
 	TripleWindmill2* tripWind2 = pTripleWindmill2->AddComponent<TripleWindmill2>();
@@ -140,21 +144,43 @@ bool MainScene::Load()
 #pragma endregion
 
 
-	// 靛况橇 积己
-#pragma region a
+
+#pragma region 靛况橇 积己
 	CObject* pDwarf = FileLoader::ObjectFileLoad(L"./Data/Dwarf/Dwarf.x");
 	pDwarf->m_name = L"Dwarf";
 	pDwarf->m_pTransform->m_vScale = VECTOR3(3, 3, 3);
 	pDwarf->AddComponent<Hero>()->state = 0;
 	cc->_pHeroTr = pDwarf->m_pTransform;
-#pragma endregion a
+#pragma endregion
 
-	// 厚青扁 积己
+	
+
+#pragma region 厚青扁 积己
 	CObject* pPlaneModel = FileLoader::ObjectFileLoad(L"./Data/JN-4/airplane02.x");
 	pPlaneModel->m_name = L"Plane";
 	CObject* pPlane = new CObject();
 	pPlane->AddComponent<Plane>();
 	pPlaneModel->SetParent(pPlane);
+#pragma endregion
+
+
+#pragma region 惑磊 积己
+	CObject* pBox = FileLoader::ObjectFileLoad(L"./Data/Box/Box.x");
+	pBox->m_name = L"Box";
+	pBox->m_pTransform->m_vPos = VECTOR3(-3.0f, 1.0f, -25.0f);
+	pBox->m_pTransform->m_vScale = VECTOR3(0.2f, 0.2f, 0.2f);
+
+	temp = pBox->GetChildren().back();
+	temp->m_pRenderer->m_pMaterial->SetShader(CShader::Find(L"Box"));
+	temp->m_pRenderer->m_pMaterial->SetScalar(1, system->seasonCount);
+	temp->m_pRenderer->m_pMaterial->SetScalar(2, FOG_MIN);
+	temp->m_pRenderer->m_pMaterial->SetScalar(3, FOG_MAX);
+	temp->m_pRenderer->m_pMaterial->SetVector(3, AUTUMN_COLOR);
+	temp->m_pRenderer->m_pMaterial->m_pTexture[1] = CTexture2D::Find(L"Grass.jpg");
+	temp->m_pRenderer->m_pMaterial->m_pTexture[2] = CTexture2D::Find(L"Mask2.bmp");
+	temp->m_pRenderer->m_pMaterial->m_pTexture[3] = CTexture2D::Find(L"snow_mask2.png");
+	system->pBoxMaterial = temp->m_pRenderer->m_pMaterial;
+#pragma endregion
 
 	
 	CObject* pLight = new CObject;
@@ -184,7 +210,7 @@ bool MainScene::Load()
 	plight->m_range = 5.0f;
 	plight->m_lightType = LIGHT_TYPE_POINT;
 
-	CMaterial* pMtrl = new CMaterial(CShader::Find(L"Fog"));
+	CMaterial* pMtrl = new CMaterial(CShader::Find(L"Standard"));
 	pMtrl->SetScalar(0, 30.0f);
 	pMtrl->SetScalar(1, 10.0f);
 	pMtrl->SetScalar(2, 40.0f);
@@ -199,23 +225,6 @@ bool MainScene::Load()
 
 	((Hero*)CObject::CopyObject(pDwarf)->GetComponent(typeid(Hero)))->state = 1;
 
-
-
-
-	// 惑磊 积己
-	CObject* pBox = FileLoader::ObjectFileLoad(L"./Data/Box/Box.x");
-	pBox->m_name = L"Box";
-	pBox->m_pTransform->m_vPos = VECTOR3(-3.0f, 1.0f, -25.0f);
-	pBox->m_pTransform->m_vScale = VECTOR3(0.2f, 0.2f, 0.2f);
-
-	temp = pBox->GetChildren().back();
-	temp->m_pRenderer->m_pMaterial->SetShader(CShader::Find(L"Box"));
-	temp->m_pRenderer->m_pMaterial->SetScalar(1, system->seasonCount);
-	temp->m_pRenderer->m_pMaterial->SetVector(3, AUTUMN_COLOR);
-	temp->m_pRenderer->m_pMaterial->m_pTexture[1] = CTexture2D::Find(L"Grass.jpg");
-	temp->m_pRenderer->m_pMaterial->m_pTexture[2] = CTexture2D::Find(L"Mask2.bmp");
-	temp->m_pRenderer->m_pMaterial->m_pTexture[3] = CTexture2D::Find(L"snow_mask2.png");
-	system->pBoxMaterial = temp->m_pRenderer->m_pMaterial;
 
 	// Clear且 祸 汲沥
 	//FJRenderingEngine::SetClearColor(COLOR(0.0f, 0.125f, 0.3f, 1.0f));

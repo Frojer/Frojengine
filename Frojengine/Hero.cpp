@@ -8,7 +8,7 @@ void Hero::Initialize()
 		if ((*iter)->m_pRenderer != nullptr)
 		{
 			(*iter)->m_pRenderer->m_pMaterial->SetShader(CShader::Find(L"Fog"));
-			(*iter)->m_pRenderer->m_pMaterial->SetScalar(0, 30.0f);
+			(*iter)->m_pRenderer->m_pMaterial->SetScalar(0, 3000.0f);
 			(*iter)->m_pRenderer->m_pMaterial->SetScalar(1, 10.0f);
 			(*iter)->m_pRenderer->m_pMaterial->SetScalar(2, 40.0f);
 			(*iter)->m_pRenderer->m_pMaterial->SetVector(2, VECTOR4(1.0f, 1.0f, 1.0f, 1.0f));

@@ -51,7 +51,7 @@ void System::Update()
 		{
 			clearColor = WINTER_COLOR;
 			// FOGCOLOR
-			//pBoxMaterial->SetVector(4, WINTER_COLOR);
+			pBoxMaterial->SetVector(4, WINTER_COLOR);
 			pTerrainMtrl->SetVector(4, WINTER_COLOR);
 			pTreeMtrl->SetVector(4, WINTER_COLOR);
 			pWindmillMtrl->SetVector(4, WINTER_COLOR);
@@ -61,7 +61,7 @@ void System::Update()
 		{
 			clearColor = clearColArr[timeCount];
 			// FOGCOLOR
-			//pBoxMaterial->SetVector(4, clearColArr[timeCount]);
+			pBoxMaterial->SetVector(4, clearColArr[timeCount]);
 			pTerrainMtrl->SetVector(4, clearColArr[timeCount]);
 			pTreeMtrl->SetVector(4, clearColArr[timeCount]);
 			pWindmillMtrl->SetVector(4, clearColArr[timeCount]);

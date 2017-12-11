@@ -32,8 +32,11 @@ cbuffer ConstBuffer : register(b2)
 	float4 mtrlAmbient;
     float4 mtrlSpecular;
     float4 autumnColor;
+    float4 fogColor;
 	float mtrlPower;
     int seasonIndex;
+    float fogDepthMin;
+    float fogDepthMax;
 };
 
 
@@ -123,29 +126,33 @@ float4 LightCalc(float4 nrm, float4 pos)
 //                  : 뷰 공간 View Space 기준 처리.
 float4 SpecLight(float4 pos, float4 nrm)
 {
-	float4 N = nrm;
-	float4 L;
-	float4 E;
-	float4 H;
-	float4 spec = 0;
+    float4 N = nrm;
+    float4 L;
+    float4 E;
+    float4 H;
+    float4 spec = 0;
 
-	for (int i = 0; i < LIGHT_SIZE; i++)
-	{
-		L = float4(light[i].direction, 0);
+    for (int i = 0; i < LIGHT_SIZE; i++)
+    {
+        if (light[i].lightType != 0)
+            continue;
+
+        L = float4(light[i].direction, 0);
+        L = mul(L, mView);
 
 		// 시선백터 계산.
-		E = normalize(-pos);
+        E = normalize(-pos);
 
 		// 하프벡터 계산.
-		H = normalize(L + E);
+        H = normalize(L + E);
 
 		// 조명 계산 
-		spec += pow(max(dot(N, H), 0), mtrlPower) * light[i].specular * mtrlSpecular;
-	}
+        spec += pow(max(dot(N, H), 0), mtrlPower) * light[i].specular * mtrlSpecular;
+    }
 
-	spec.w = 1;
+    spec.w = 1;
 
-	return spec;
+    return spec;
 }
 
 
@@ -153,6 +160,26 @@ float4 Mask(float4 a, float4 b, float4 mask)
 {
     return (a * (1 - mask)) + (b * mask);
 }
+
+
+
+////////////////////////////////////////////////////////////////////////////// 
+//
+// 정반사광 조명 계산 : 블린퐁 모델 적용. Blinn-Phong Lighting Model
+//                   : 뷰 공간 View Space 기준 처리.
+float4 FogCalc(float depth)
+{
+    float fogWidth = fogDepthMax - fogDepthMin;
+    float fog = (fogWidth - (depth - fogDepthMin)) / fogWidth;
+
+    if (fog < 0)
+        return 0;
+    else if (fog > 1)
+        return 1;
+	
+    return fog;
+}
+
 
 
 
@@ -244,10 +271,12 @@ float4 PS_Main(v2p i) : SV_TARGET               //[출력] 색상.(필수), "렌더타겟"
     }
     
 
-    //diff *= i.col * LightCalc(i.nrm3d, i.pos3d);
-    //diff += SpecLight(i.pos3d, i.nrm3d);
+    diff *= i.col * LightCalc(i.nrm3d, i.pos3d);
+    diff += SpecLight(i.pos3d, i.nrm3d);
 
-	//clip(diff.a < 0.5f ? -1 : 1);
+	clip(diff.a < 0.5f ? -1 : 1);
 
-	return diff;
+    float f = FogCalc(distance(0, i.pos3d));
+
+    return (f * diff) + ((1 - f) * fogColor);
 }

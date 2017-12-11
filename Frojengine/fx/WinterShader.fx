@@ -133,7 +133,11 @@ float4 SpecLight(float4 pos, float4 nrm)
 
     for (int i = 0; i < LIGHT_SIZE; i++)
     {
+        if (light[i].lightType != 0)
+            continue;
+
         L = float4(light[i].direction, 0);
+        L = mul(L, mView);
 
 		// 시선백터 계산.
         E = normalize(-pos);

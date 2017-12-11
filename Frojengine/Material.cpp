@@ -42,7 +42,8 @@ void CMaterial::UpdateLightData()
 
 	for (UINT i = 0; iter != Light::_lightList.end() && i < LIGHT_SIZE; iter++)
 	{
-		while (!(*iter)->GetEnable()) continue;
+		if (!(*iter)->GetEnable())
+			continue;
 
 		_LightData[i].diffuse = XMLoadFloat4(&(*iter)->m_diffuse);
 		_LightData[i].ambient = XMLoadFloat4(&(*iter)->m_ambient);
