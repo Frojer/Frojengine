@@ -30,8 +30,10 @@ cbuffer ConstBuffer : register(b2)
 {
 	float4 mtrlDiffuse;
 	float4 mtrlAmbient;
-	float4 mtrlSpecular;
+    float4 mtrlSpecular;
+    float4 autumnColor;
 	float mtrlPower;
+    int seasonIndex;
 };
 
 
@@ -41,7 +43,9 @@ cbuffer ConstBuffer : register(b2)
 //Texture2D texDiffuse2;
 
 //레지스터 직접 지정. (기본값은 t0)
-Texture2D texDiffuse : register(t0);
+Texture2D texDiffuse[2] : register(t0);
+Texture2D texMossMask : register(t2);
+Texture2D texWinterMask : register(t3);
 
 //텍스처 셈플러. (엔진지정)
 SamplerState smpLinear;
@@ -145,6 +149,12 @@ float4 SpecLight(float4 pos, float4 nrm)
 }
 
 
+float4 Mask(float4 a, float4 b, float4 mask)
+{
+    return (a * (1 - mask)) + (b * mask);
+}
+
+
 
 
 ////////////////////////////////////////////////////////////////////////////// 
@@ -211,16 +221,33 @@ v2p VS_Main(
 
 float4 PS_Main(v2p i) : SV_TARGET               //[출력] 색상.(필수), "렌더타겟" 으로 출력합니다.
 {
-	float4 tex = texDiffuse.Sample(smpLinear, i.uv);
+    float4 tex1 = texDiffuse[0].Sample(smpLinear, i.uv);
+    float4 tex2 = texDiffuse[1].Sample(smpLinear, i.uv);
+    float4 mossMask = texMossMask.Sample(smpLinear, i.uv);
+    float4 diff;
+    
+    switch (seasonIndex)
+    {
+        case 0:
+            diff = Mask(tex1, tex2, mossMask);
+            break;
 
-	float4 diff = tex * i.col;
+        case 1:
+            diff = Mask(tex1, tex2 * autumnColor, mossMask);
+            break;
 
-	diff = LightCalc(i.nrm3d, i.pos3d);
+        case 2:
+            float4 WinterMask = texWinterMask.Sample(smpLinear, i.uv);
+            diff = Mask(tex1, tex2 * autumnColor, mossMask);
+            diff = Mask(diff, 1, WinterMask);
+            break;
+    }
+    
 
-	diff += SpecLight(i.pos3d, i.nrm3d);
-	diff *= tex;
+    //diff *= i.col * LightCalc(i.nrm3d, i.pos3d);
+    //diff += SpecLight(i.pos3d, i.nrm3d);
 
-	clip(diff.a < 0.5f ? -1 : 1);
+	//clip(diff.a < 0.5f ? -1 : 1);
 
 	return diff;
 }

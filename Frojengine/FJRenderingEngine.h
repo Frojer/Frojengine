@@ -126,7 +126,7 @@ public:
 	static bool		GetDepthTest();
 	static void		SetDepthWrite(bool i_bSet);
 	static bool		GetDepthWrite();
-	static void		SetClearColor(COLOR i_col);
+	static void		SetClearColor(COLOR& i_col);
 	static COLOR	GetClearColor();
 
 	friend class FJSystemEngine;

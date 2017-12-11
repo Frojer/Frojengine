@@ -163,7 +163,9 @@ float4 FogCalc(float depth)
 	float fog = (fogWidth - (depth - fogDepthMin)) / fogWidth;
 
 	if (fog < 0)
-		return 0;
+        return 0;
+    else if (fog > 1)
+        return 1;
 	
 	return fog;
 }

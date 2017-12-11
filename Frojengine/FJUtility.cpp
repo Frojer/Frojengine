@@ -15,3 +15,13 @@ wchar_t* FileNameExtension(const wchar_t* i_fileName, wchar_t* o_extension, int 
 
 	return o_extension;
 }
+
+std::wstring GetFilePath(std::wstring _fileName)
+{
+	return _fileName.substr(0, _fileName.rfind(L"/", _fileName.length() - 1) + 1);
+}
+
+std::wstring GetFileName(std::wstring _fileName)
+{
+	return _fileName.substr((_fileName.rfind(L"/", _fileName.length() - 1) + 1), _fileName.size());
+}

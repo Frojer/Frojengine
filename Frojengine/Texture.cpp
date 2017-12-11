@@ -23,10 +23,12 @@ CTexture2D::~CTexture2D()
 }
 
 
-bool CTexture2D::CreateTexture2D(LPCWSTR i_fileName)
+CTexture2D* CTexture2D::CreateTexture2D(LPCWSTR i_fileName)
 {
 	HRESULT hr;
 	WCHAR extention[16];
+	CTexture2D* pTex;
+	ID3D11ShaderResourceView* pRV;
 	
 	FileNameExtension(i_fileName, extention, ARRAYSIZE(extention));
 
@@ -35,16 +37,16 @@ bool CTexture2D::CreateTexture2D(LPCWSTR i_fileName)
 		hr = DirectX::CreateDDSTextureFromFileEx(_pDevice, _pDXDC, i_fileName, 0,
 			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
 			0, D3D11_RESOURCE_MISC_GENERATE_MIPS, false,
-			nullptr, &_pResourceView);
+			nullptr, &pRV);
 		
 		if (FAILED(hr))
 		{
-			hr = DirectX::CreateDDSTextureFromFile(_pDevice, i_fileName, nullptr, &_pResourceView);
+			hr = DirectX::CreateDDSTextureFromFile(_pDevice, i_fileName, nullptr, &pRV);
 
 			if (FAILED(hr))
 			{
 				//FJError(hr, L"텍스처 로드 실패 \nFile=%s", fileName);
-				return false;
+				return nullptr;
 			}
 		}
 	}
@@ -58,21 +60,24 @@ bool CTexture2D::CreateTexture2D(LPCWSTR i_fileName)
 		hr = DirectX::CreateWICTextureFromFileEx(_pDevice, _pDXDC, i_fileName, 0,
 			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
 			0, D3D11_RESOURCE_MISC_GENERATE_MIPS, WIC_LOADER_DEFAULT,
-			nullptr, &_pResourceView);
+			nullptr, &pRV);
 		
 		if (FAILED(hr))
 		{
-			hr = DirectX::CreateWICTextureFromFile(_pDevice, i_fileName, nullptr, &_pResourceView);
+			hr = DirectX::CreateWICTextureFromFile(_pDevice, i_fileName, nullptr, &pRV);
 
 			if (FAILED(hr))
 			{
 				//FJError(hr, L"텍스처 로드 실패 \nFile=%s", fileName);
-				return false;
+				return nullptr;
 			}
 		}
 	}
 
-	return true;
+	pTex = new CTexture2D(GetFileName(i_fileName).c_str());
+	pTex->_pResourceView = pRV;
+
+	return pTex;
 }
 
 
@@ -205,4 +210,10 @@ CTexture2D* CTexture2D::Find(LPCWSTR name)
 ID3D11SamplerState* CTexture2D::GetSampler(UINT addressFilter)
 {
 	return _pSampler[addressFilter];
+}
+
+
+const LPRESOURCEVIEW * const CTexture2D::GetResourceView()
+{
+	return &_pResourceView;
 }

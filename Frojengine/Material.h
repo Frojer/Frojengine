@@ -64,9 +64,12 @@ public:
 	void SetShader(CShader* shader);
 	CShader* GetShader();
 
-	void SetScalar(UINT id, float scalar);
-	void SetVector(UINT id, VECTOR4& vector);
-	void SetMatrix(UINT id, MATRIX& matrix);
+	void SetScalar(UINT id, const float scalar);
+	void SetScalar(UINT id, const int scalar);
+	void SetScalar(UINT id, const UINT scalar);
+	void SetScalar(UINT id, const bool scalar);
+	void SetVector(UINT id, const VECTOR4& vector);
+	void SetMatrix(UINT id, const MATRIX& matrix);
 
 	static CMaterial* Find(UINT id);
 	static CMaterial* Find(LPCWSTR name);

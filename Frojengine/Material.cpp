@@ -73,6 +73,13 @@ void CMaterial::UpdateConstantBuffer(MATRIXA& mWorld)
 		if (_vecScalarA.size() > 0)
 			memcpy_s(&_constData[(_vecMatrix.size() * 4) + _vecVector.size()], sizeof(VECTOR) * _vecScalarA.size(), &_vecScalarA[0], sizeof(VECTOR) * _vecScalarA.size());
 
+		/*if (_vecScalarA.size() > 0)
+			memcpy_s(&_constData[0], sizeof(VECTOR) * _vecScalarA.size(), &_vecScalarA[0], sizeof(VECTOR) * _vecScalarA.size());
+		if (_vecVector.size() > 0)
+			memcpy_s(&_constData[_vecScalarA.size()], sizeof(VECTOR) * _vecVector.size(), &_vecVector[0], sizeof(VECTOR) * _vecVector.size());
+		if (_vecMatrix.size() > 0)
+			memcpy_s(&_constData[_vecScalarA.size() + _vecVector.size()], sizeof(MATRIXA) * _vecMatrix.size(), &_vecMatrix[0], sizeof(MATRIXA) * _vecMatrix.size());*/
+
 		_pShader->UpdateConstantBuffer(&_constData[0], _constData.size() * sizeof(VECTOR));
 	}
 
@@ -95,9 +102,9 @@ void CMaterial::Render()
 	{
 		// 셰이더 리소스 설정.
 		if (m_pTexture[i] == nullptr)
-			_pShader->_pDXDC->PSSetShaderResources(i, 1, &_pDefaultTex->_pResourceView);
+			_pShader->_pDXDC->PSSetShaderResources(i, 1, _pDefaultTex->GetResourceView());
 		else
-			_pShader->_pDXDC->PSSetShaderResources(i, 1, &m_pTexture[i]->_pResourceView);
+			_pShader->_pDXDC->PSSetShaderResources(i, 1, m_pTexture[i]->GetResourceView());
 	}
 
 	_pShader->Render();
@@ -164,11 +171,8 @@ CShader* CMaterial::GetShader()
 
 
 
-void CMaterial::SetScalar(UINT id, float scalar)
+void CMaterial::SetScalar(UINT id, const float scalar)
 {
-	/*VECTOR vec;
-	memcpy(&vec, &scala, sizeof(VECTOR));
-	_vecScala[id] = vec;*/
 	*((float*)&_vecScalar[id / 4] + (id % 4)) = scalar;
 
 	for (UINT i = 0; i < _vecScalarA.size(); i++)
@@ -179,14 +183,50 @@ void CMaterial::SetScalar(UINT id, float scalar)
 
 
 
-void CMaterial::SetVector(UINT id, VECTOR4& vector)
+void CMaterial::SetScalar(UINT id, const int scalar)
+{
+	*((int*)&_vecScalar[id / 4] + (id % 4)) = scalar;
+
+	for (UINT i = 0; i < _vecScalarA.size(); i++)
+	{
+		_vecScalarA[i] = XMLoadFloat4(&_vecScalar[i]);
+	}
+}
+
+
+
+void CMaterial::SetScalar(UINT id, const UINT scalar)
+{
+	*((UINT*)&_vecScalar[id / 4] + (id % 4)) = scalar;
+
+	for (UINT i = 0; i < _vecScalarA.size(); i++)
+	{
+		_vecScalarA[i] = XMLoadFloat4(&_vecScalar[i]);
+	}
+}
+
+
+
+void CMaterial::SetScalar(UINT id, const bool scalar)
+{
+	*((bool*)&_vecScalar[id / 4] + (id % 4)) = scalar;
+
+	for (UINT i = 0; i < _vecScalarA.size(); i++)
+	{
+		_vecScalarA[i] = XMLoadFloat4(&_vecScalar[i]);
+	}
+}
+
+
+
+void CMaterial::SetVector(UINT id, const VECTOR4& vector)
 {
 	_vecVector[id] = XMLoadFloat4(&vector);
 }
 
 
 
-void CMaterial::SetMatrix(UINT id, MATRIX& matrix)
+void CMaterial::SetMatrix(UINT id, const MATRIX& matrix)
 {
 	_vecMatrix[id] = XMLoadFloat4x4(&matrix);
 }

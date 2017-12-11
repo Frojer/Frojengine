@@ -277,8 +277,23 @@ void FJSystemEngine::LoadData()
 	SceneManager* pSM = SceneManager::GetInstance();
 	CScene* pScene = nullptr;
 
-	CMaterial::_pDefaultTex = new CTexture2D(L"default");
-	CMaterial::_pDefaultTex->CreateTexture2D(L"./Data/Default/default.png");
+	CMaterial::_pDefaultTex = CTexture2D::CreateTexture2D(L"./Data/Default/default.png");
+
+	//////////////////////////////////////////////////////////////////////////////
+
+	// 상자
+	CTexture2D::CreateTexture2D(L"./Data/Box/Grass.jpg");
+	CTexture2D::CreateTexture2D(L"./Data/Box/Mask2.bmp");
+	CTexture2D::CreateTexture2D(L"./Data/Box/snow_mask2.png");
+
+	// 지형
+	CTexture2D::CreateTexture2D(L"./Data/Terrain/mask3.png");
+
+	// 나무
+	CTexture2D::CreateTexture2D(L"./Data/Tree/tree_mask3.png");
+
+	// 풍차
+	CTexture2D::CreateTexture2D(L"./Data/Windmill/windmill_mask3.png");
 
 	//==============
 	// 셰이더 로딩
@@ -324,6 +339,28 @@ void FJSystemEngine::LoadData()
 	pShader->m_name = L"Line";
 	pShader->_countVector = 1;
 	CreateShaderBuffer(pShader);
+
+
+	///////////////////////////////////////////////////////////////////////////////
+
+
+	pShader = CShader::CreateShader(L"./fx/Box.fx");
+	pShader->m_name = L"Box";
+	pShader->_countTexture = 4;
+	pShader->_countVector = 4;
+	pShader->_countScalar = 2;
+	pShader->_useLight = true;
+	CreateShaderBuffer(pShader);
+
+
+	pShader = CShader::CreateShader(L"./fx/WinterShader.fx");
+	pShader->m_name = L"Winter";
+	pShader->_countTexture = 2;
+	pShader->_countVector = 5;
+	pShader->_countScalar = 4;
+	pShader->_useLight = true;
+	CreateShaderBuffer(pShader);
+
 
 	//FileLoader::ObjectFileLoad(L"./Data/Terrain/terrain.x");
 	//FileLoader::ObjectFileLoad(L"./Data/Windmill/Windmill.x");

@@ -46,15 +46,6 @@
     <Filter Include="Frojengine\Resource Manager\Source File">
       <UniqueIdentifier>{8da77925-4492-4c67-936d-b28d037a9084}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Frojengine\Default">
-      <UniqueIdentifier>{7f9c02b3-bce8-4578-88b0-c004f8a5a441}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Frojengine\Default\Source File">
-      <UniqueIdentifier>{9b4aa6d5-17da-4181-80f8-43f3eda45949}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Frojengine\Default\Header File">
-      <UniqueIdentifier>{0c9f7156-ce06-41ff-b21f-c8b062798a94}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Frojengine\Component">
       <UniqueIdentifier>{86fe3fdf-5ca3-456d-8ff0-6bca816f43ff}</UniqueIdentifier>
     </Filter>
@@ -107,9 +98,6 @@
     </ClCompile>
     <ClCompile Include="FileLoader.cpp">
       <Filter>Frojengine\System\Source File</Filter>
-    </ClCompile>
-    <ClCompile Include="DefaultShader.cpp">
-      <Filter>Frojengine\Default\Source File</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Frojengine</Filter>
@@ -210,9 +198,6 @@
     <ClInclude Include="FileLoader.h">
       <Filter>Frojengine\System\Header File</Filter>
     </ClInclude>
-    <ClInclude Include="DefaultShader.h">
-      <Filter>Frojengine\Default\Header File</Filter>
-    </ClInclude>
     <ClInclude Include="Time.h">
       <Filter>Frojengine\System\Header File</Filter>
     </ClInclude>
@@ -279,7 +264,22 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="fx\Box.fx">
+      <Filter>리소스 파일</Filter>
+    </FxCompile>
+    <FxCompile Include="fx\Fog.fx">
+      <Filter>리소스 파일</Filter>
+    </FxCompile>
     <FxCompile Include="fx\Standard.fx">
+      <Filter>Frojengine\fx</Filter>
+    </FxCompile>
+    <FxCompile Include="fx\Line.fx">
+      <Filter>Frojengine\fx</Filter>
+    </FxCompile>
+    <FxCompile Include="fx\Error.fx">
+      <Filter>Frojengine\fx</Filter>
+    </FxCompile>
+    <FxCompile Include="fx\WinterShader.fx">
       <Filter>리소스 파일</Filter>
     </FxCompile>
   </ItemGroup>

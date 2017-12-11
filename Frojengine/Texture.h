@@ -17,9 +17,10 @@ private:
 	};
 	// 텍스처 셈플러
 	static ID3D11SamplerState*	_pSampler[ADDRESS_MAX];
+	LPRESOURCEVIEW _pResourceView;
+
 public:
 	VECTOR4 m_vBorderColor;
-	LPRESOURCEVIEW _pResourceView;
 	UINT m_AddressFilter;
 private:
 	static void SamplerCreate();
@@ -29,12 +30,13 @@ public:
 	CTexture2D(LPCWSTR name);
 	~CTexture2D();
 
-	bool CreateTexture2D(LPCWSTR i_fileName);
+	static CTexture2D* CreateTexture2D(LPCWSTR i_fileName);
 
 	static CTexture2D* Find(UINT id);
 	static CTexture2D* Find(LPCWSTR name);
 
 	static ID3D11SamplerState* GetSampler(UINT addressFilter);
+	const LPRESOURCEVIEW * const GetResourceView();
 
 	friend class FJRenderingEngine;
 };

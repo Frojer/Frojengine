@@ -21,6 +21,10 @@ MainScene::~MainScene()
 bool MainScene::Load()
 {
 #define TREE_MAX_  100
+#define AUTUMN_COLOR VECTOR4(1.0f, 0.5f, 0.0f, 1.0f)
+#define FOG_MIN 20.0f
+#define FOG_MAX 40.0f
+
 	// 카메라 생성
 	CObject* pCam = new CObject();
 	pCam->m_name = L"Camera";
@@ -38,30 +42,37 @@ bool MainScene::Load()
 	// 시스템 오브젝트
 	CObject* pSystem = new CObject();
 	pSystem->m_name = L"System";
-	pSystem->AddComponent<System>();
+	System* system = pSystem->AddComponent<System>();
 
 
-	// 터레인 생성
+#pragma region 터레인 생성
 	CObject* pTerrain = FileLoader::ObjectFileLoad(L"./Data/Terrain/terrain.x");
 	pTerrain->m_name = L"Terrain";
 	pTerrain->m_pTransform->m_vPos = VECTOR3(0, -0.0005f, 0);
 	pTerrain->m_pTransform->m_vScale = VECTOR3(128.0f, 0, 128.0f);
 
-	list<CObject*> list;
 	CObject* temp;
 	temp = pTerrain->GetChildren().back()->GetChildren().back();
-	temp->m_pRenderer->m_pMaterial->SetShader(CShader::Find(L"Fog"));
-	temp->m_pRenderer->m_pMaterial->SetScalar(1, 10.0f);
-	temp->m_pRenderer->m_pMaterial->SetScalar(2, 40.0f);
-	temp->m_pRenderer->m_pMaterial->SetVector(3, VECTOR4(0.8f, 0.8f, 0.8f, 1.0f));
+	temp->m_pRenderer->m_pMaterial->SetShader(CShader::Find(L"Winter"));
+	temp->m_pRenderer->m_pMaterial->m_pTexture[1] = CTexture2D::Find(L"mask3.png");
+	temp->m_pRenderer->m_pMaterial->SetScalar(1, system->seasonCount);
+	temp->m_pRenderer->m_pMaterial->SetScalar(2, FOG_MIN);
+	temp->m_pRenderer->m_pMaterial->SetScalar(3, FOG_MAX);
+	temp->m_pRenderer->m_pMaterial->SetVector(3, AUTUMN_COLOR);
+	system->pTerrainMtrl = temp->m_pRenderer->m_pMaterial;
+#pragma endregion
 
 
-	// 나무 생성
+#pragma region 나무 생성
 	CObject* pTree = FileLoader::ObjectFileLoad(L"./Data/Tree/tree.x");
-	pTree->GetChildren().back()->GetChildren().back()->m_pRenderer->m_pMaterial->SetShader(CShader::Find(L"Fog"));
-	pTree->GetChildren().back()->GetChildren().back()->m_pRenderer->m_pMaterial->SetScalar(1, 10.0f);
-	pTree->GetChildren().back()->GetChildren().back()->m_pRenderer->m_pMaterial->SetScalar(2, 40.0f);
-	pTree->GetChildren().back()->GetChildren().back()->m_pRenderer->m_pMaterial->SetVector(3, VECTOR4(0.8f, 0.8f, 0.8f, 1.0f));
+	temp = pTree->GetChildren().back()->GetChildren().back();
+	temp->m_pRenderer->m_pMaterial->SetShader(CShader::Find(L"Winter"));
+	temp->m_pRenderer->m_pMaterial->m_pTexture[1] = CTexture2D::Find(L"tree_mask3.png");
+	temp->m_pRenderer->m_pMaterial->SetScalar(1, system->seasonCount);
+	temp->m_pRenderer->m_pMaterial->SetScalar(2, FOG_MIN);
+	temp->m_pRenderer->m_pMaterial->SetScalar(3, FOG_MAX);
+	temp->m_pRenderer->m_pMaterial->SetVector(3, AUTUMN_COLOR);
+	system->pTreeMtrl = temp->m_pRenderer->m_pMaterial;
 
 	srand(::GetTickCount());
 
@@ -77,8 +88,10 @@ bool MainScene::Load()
 
 		CObject::CopyObject(pTree, pos);
 	}
+#pragma endregion
 
-	// 풍차 생성
+
+#pragma region 풍차 생성
 	CObject* pWindmill = new CObject;
 	Windmill* wind = pWindmill->AddComponent<Windmill>();
 	pWindmill->m_pTransform->SetPositionLocal(VECTOR3(5.0f, -0.0002f, -10.0f));
@@ -89,9 +102,11 @@ bool MainScene::Load()
 	pWindmillWing->SetParent(pWindmill);
 	wind->body = pWindmillBody;
 	wind->wing = pWindmillWing;
+	wind->system = system;
+#pragma endregion
 
 
-	// 삼단풍차1 생성
+#pragma region 삼단풍차1 생성
 	CObject* pTripleWindmill = new CObject;
 	TripleWindmill* tripWind = pTripleWindmill->AddComponent<TripleWindmill>();
 	pTripleWindmill->m_pTransform->SetPositionLocal(VECTOR3(-5.0f, -0.0001f, -10.0f));
@@ -104,9 +119,11 @@ bool MainScene::Load()
 	tripWind->wing[1] = pWindmillWing;
 	pWindmillWing = CObject::CopyObject(pWindmillWing);
 	tripWind->wing[2] = pWindmillWing;
+	tripWind->system = system;
+#pragma endregion
 
 
-	// 삼단풍차2 생성
+#pragma region 삼단풍차2 생성
 	CObject* pTripleWindmill2 = new CObject;
 	TripleWindmill2* tripWind2 = pTripleWindmill2->AddComponent<TripleWindmill2>();
 	pTripleWindmill2->m_pTransform->SetPositionLocal(VECTOR3(0.0f, 0.0f, -10.0f));
@@ -119,15 +136,18 @@ bool MainScene::Load()
 	tripWind2->wing[1] = pWindmillWing;
 	pWindmillWing = CObject::CopyObject(pWindmillWing);
 	tripWind2->wing[2] = pWindmillWing;
+	tripWind2->system = system;
+#pragma endregion
 
 
 	// 드워프 생성
+#pragma region a
 	CObject* pDwarf = FileLoader::ObjectFileLoad(L"./Data/Dwarf/Dwarf.x");
 	pDwarf->m_name = L"Dwarf";
 	pDwarf->m_pTransform->m_vScale = VECTOR3(3, 3, 3);
 	pDwarf->AddComponent<Hero>()->state = 0;
 	cc->_pHeroTr = pDwarf->m_pTransform;
-
+#pragma endregion a
 
 	// 비행기 생성
 	CObject* pPlaneModel = FileLoader::ObjectFileLoad(L"./Data/JN-4/airplane02.x");
@@ -135,18 +155,6 @@ bool MainScene::Load()
 	CObject* pPlane = new CObject();
 	pPlane->AddComponent<Plane>();
 	pPlaneModel->SetParent(pPlane);
-
-	// 상자 생성
-	CObject* pBox = FileLoader::ObjectFileLoad(L"./Data/Box/Box.x");
-	pBox->m_name = L"Box";
-	pBox->m_pTransform->m_vPos = VECTOR3(-3.0f, 1.0f, -25.0f);
-	pBox->m_pTransform->m_vScale = VECTOR3(0.2f, 0.2f, 0.2f);
-
-	temp = pBox->GetChildren().back();
-	temp->m_pRenderer->m_pMaterial->SetShader(CShader::Find(L"Fog"));
-	temp->m_pRenderer->m_pMaterial->SetScalar(1, 10.0f);
-	temp->m_pRenderer->m_pMaterial->SetScalar(2, 40.0f);
-	temp->m_pRenderer->m_pMaterial->SetVector(3, VECTOR4(0.8f, 0.8f, 0.8f, 1.0f));
 
 	
 	CObject* pLight = new CObject;
@@ -159,6 +167,8 @@ bool MainScene::Load()
 	light->m_diffuse = COLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	light->m_ambient = COLOR(0.2f, 0.2f, 0.2f, 1.0f);
 	light->m_lightType = LIGHT_TYPE_DIRECTION;
+
+	system->pDirectionalLight = light;
 
 
 	CObject* pointLit = new CObject;
@@ -188,6 +198,24 @@ bool MainScene::Load()
 
 
 	((Hero*)CObject::CopyObject(pDwarf)->GetComponent(typeid(Hero)))->state = 1;
+
+
+
+
+	// 상자 생성
+	CObject* pBox = FileLoader::ObjectFileLoad(L"./Data/Box/Box.x");
+	pBox->m_name = L"Box";
+	pBox->m_pTransform->m_vPos = VECTOR3(-3.0f, 1.0f, -25.0f);
+	pBox->m_pTransform->m_vScale = VECTOR3(0.2f, 0.2f, 0.2f);
+
+	temp = pBox->GetChildren().back();
+	temp->m_pRenderer->m_pMaterial->SetShader(CShader::Find(L"Box"));
+	temp->m_pRenderer->m_pMaterial->SetScalar(1, system->seasonCount);
+	temp->m_pRenderer->m_pMaterial->SetVector(3, AUTUMN_COLOR);
+	temp->m_pRenderer->m_pMaterial->m_pTexture[1] = CTexture2D::Find(L"Grass.jpg");
+	temp->m_pRenderer->m_pMaterial->m_pTexture[2] = CTexture2D::Find(L"Mask2.bmp");
+	temp->m_pRenderer->m_pMaterial->m_pTexture[3] = CTexture2D::Find(L"snow_mask2.png");
+	system->pBoxMaterial = temp->m_pRenderer->m_pMaterial;
 
 	// Clear할 색 설정
 	//FJRenderingEngine::SetClearColor(COLOR(0.0f, 0.125f, 0.3f, 1.0f));

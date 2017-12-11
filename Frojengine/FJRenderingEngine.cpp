@@ -797,7 +797,7 @@ bool FJRenderingEngine::GetDepthWrite()
 	return (_rsData & 0x02) == DM_WRITE_ON ? true : false;
 }
 
-void FJRenderingEngine::SetClearColor(COLOR i_col)
+void FJRenderingEngine::SetClearColor(COLOR& i_col)
 {
 	_clearCol = i_col;
 }
