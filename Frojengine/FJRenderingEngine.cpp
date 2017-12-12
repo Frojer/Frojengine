@@ -392,10 +392,22 @@ void FJRenderingEngine::RasterStateLoad()
 	// 레스터라이져 객체 생성.
 	_pDevice->CreateRasterizerState(&rd, &_pRState[RS_SOLID]);
 
+	rd.CullMode = D3D11_CULL_BACK;
+	_pDevice->CreateRasterizerState(&rd, &_pRState[RS_SOLID_CULL_BACK]);
+
+	rd.CullMode = D3D11_CULL_FRONT;
+	_pDevice->CreateRasterizerState(&rd, &_pRState[RS_SOLID_CULL_FRONT]);
+
 	// 와이어 프레임 그리기. 
 	rd.FillMode = D3D11_FILL_WIREFRAME;
-	// 레스터라이져 객체 생성.
+	rd.CullMode = D3D11_CULL_NONE;
 	_pDevice->CreateRasterizerState(&rd, &_pRState[RS_WIRE]);
+
+	rd.CullMode = D3D11_CULL_BACK;
+	_pDevice->CreateRasterizerState(&rd, &_pRState[RS_WIRE_CULL_BACK]);
+
+	rd.CullMode = D3D11_CULL_FRONT;
+	_pDevice->CreateRasterizerState(&rd, &_pRState[RS_WIRE_CULL_FRONT]);
 }
 
 
@@ -404,12 +416,28 @@ void FJRenderingEngine::RasterStateUpdate()
 {
 	switch (_rsData)
 	{
-	case RM_SOLID:
+	case RM_SOLID | RM_CULLNONE:
 		_pDXDC->RSSetState(_pRState[RS_SOLID]);
 		break;
 
-	case RM_WIRE:
+	case RM_WIRE | RM_CULLNONE:
 		_pDXDC->RSSetState(_pRState[RS_WIRE]);
+		break;
+
+	case RM_SOLID | RM_CULLBACK:
+		_pDXDC->RSSetState(_pRState[RS_SOLID_CULL_BACK]);
+		break;
+
+	case RM_WIRE | RM_CULLBACK:
+		_pDXDC->RSSetState(_pRState[RS_WIRE_CULL_BACK]);
+		break;
+
+	case RM_SOLID | RM_CULLFRONT:
+		_pDXDC->RSSetState(_pRState[RS_SOLID_CULL_FRONT]);
+		break;
+
+	case RM_WIRE | RM_CULLFRONT:
+		_pDXDC->RSSetState(_pRState[RS_WIRE_CULL_BACK]);
 		break;
 	}
 }
@@ -770,6 +798,16 @@ void FJRenderingEngine::SetSolidFrame(bool i_bSet)
 bool FJRenderingEngine::GetSolidFrame()
 {
 	return !GetWireFrame();
+}
+
+void FJRenderingEngine::SetCullMode(CULLMODE mode)
+{
+	_rsData = (0xF9 & _rsData) | mode;
+}
+
+CULLMODE FJRenderingEngine::GetCullMode()
+{
+	return (CULLMODE)(_rsData & 0x06);
 }
 
 void FJRenderingEngine::SetRasterMode(byte i_rm)

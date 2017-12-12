@@ -9,7 +9,7 @@ public:
 	VECTOR3 m_vRot;
 	VECTOR3 m_vScale;
 
-private:
+public:
 	MATRIXA GetWorldMatrix();
 	MATRIXA GetPositionMatrix();
 	MATRIXA GetRotationMatrix();

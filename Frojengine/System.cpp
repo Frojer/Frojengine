@@ -1,9 +1,5 @@
 #include "System.h"
 
-#define GRAY_COLOR COLOR(0.20f, 0.20f, 0.20f, 1)
-#define DARKGRAY_COLOR COLOR(0.12f, 0.12f, 0.12f, 1)
-#define WINTER_COLOR COLOR(0.96032f, 0.96032f, 0.96032f, 1.0f)
-
 void System::Initialize()
 {
 	clearColor = COLOR(0.0f, 0.0f, 0.0f, 0.0f);
@@ -15,7 +11,7 @@ void System::Initialize()
 
 void System::Update()
 {
-	/*
+	///*
 #define GRID_SIZE 50
 #define GRID_WIDTH 1
 	for (int i = 0; i <= GRID_SIZE; i++)
@@ -35,6 +31,7 @@ void System::Update()
 	//*/
 
 	if (IsKeyUp(VK_SPACE))	FJRenderingEngine::SetWireFrame(!FJRenderingEngine::GetWireFrame());
+	if (IsKeyUp(VK_F4))		FJRenderingEngine::GetCullMode() == CULLMODE::CULL_NONE ? FJRenderingEngine::SetCullMode(CULLMODE::CULL_FRONT) : FJRenderingEngine::SetCullMode(CULLMODE::CULL_NONE);
 	if (IsKeyUp(VK_F6))		if (++timeCount == 4) timeCount = 0;
 	if (IsKeyUp(VK_F7))		if (++seasonCount == 3) seasonCount = 0;
 
@@ -107,4 +104,10 @@ void System::Update()
 	pWindmillMtrl->SetScalar(1, seasonCount);
 
 	pDirectionalLight->m_diffuse = dirLightColArr[timeCount];
+	
+	// È¸Àü
+	if (IsKeyDown('T')) pDirectionalLight->GetMyObject()->m_pTransform->m_vRot.x += XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+	if (IsKeyDown('G')) pDirectionalLight->GetMyObject()->m_pTransform->m_vRot.x -= XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+	if (IsKeyDown('F')) pDirectionalLight->GetMyObject()->m_pTransform->m_vRot.y += XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+	if (IsKeyDown('H')) pDirectionalLight->GetMyObject()->m_pTransform->m_vRot.y -= XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
 }

@@ -4,10 +4,20 @@
 
 class FJFontEngine;
 
+enum CULLMODE
+{
+	CULL_NONE = 0x00,
+	CULL_BACK = 0x02,
+	CULL_FRONT = 0x04
+};
+
 enum
 {
-	RM_SOLID = 0x00,
-	RM_WIRE = 0x01,
+	RM_SOLID = 0x00,		// 00000000
+	RM_WIRE = 0x01,			// 00000001
+	RM_CULLNONE = 0x00,		// 00000000
+	RM_CULLBACK = 0x02,		// 00000010
+	RM_CULLFRONT = 0x04,	// 00000100
 };
 
 enum
@@ -41,13 +51,17 @@ private:
 	enum {
 		RS_SOLID,				// 기본 렌더링 : 솔리드 Soild
 		RS_WIRE,				// 와이어프레임 렌더링.
+		RS_SOLID_CULL_BACK,
+		RS_WIRE_CULL_BACK,
+		RS_SOLID_CULL_FRONT,
+		RS_WIRE_CULL_FRONT,
 
 		RS_MAX_
 	};
 	//상태 객체 배열 : "기능별" 그룹으로 관리합니다.
 	ID3D11RasterizerState*	_pRState[RS_MAX_];
-	//               Wire
-	// Bit : 0000000 0
+	//             CullMode   Wire
+	// Bit : 00000 00         0
 	static byte _rsData;
 
 
@@ -121,6 +135,8 @@ public:
 	static bool		GetWireFrame();
 	static void		SetSolidFrame(bool i_bSet);
 	static bool		GetSolidFrame();
+	static void		SetCullMode(CULLMODE mode);
+	static CULLMODE	GetCullMode();
 	static void		SetRasterMode(byte i_rm);
 	static void		SetDepthTest(bool i_bSet);
 	static bool		GetDepthTest();

@@ -22,8 +22,6 @@ bool MainScene::Load()
 {
 #define TREE_MAX_  100
 #define AUTUMN_COLOR VECTOR4(1.0f, 0.5f, 0.0f, 1.0f)
-#define FOG_MIN 20.0f
-#define FOG_MAX 40.0f
 
 	// 카메라 생성
 	CObject* pCam = new CObject();
@@ -39,6 +37,10 @@ bool MainScene::Load()
 	//pCam->m_pTransform->SetPositionLocal(VECTOR3(0.0f, 50.0f, 0.0f));
 	//pCam->m_pTransform->SetRotationDegree(VECTOR3(90.0f, 0.0f, 0.0f));
 	
+
+	/*
+
+
 	// 시스템 오브젝트
 	CObject* pSystem = new CObject();
 	pSystem->m_name = L"System";
@@ -149,18 +151,10 @@ bool MainScene::Load()
 	CObject* pDwarf = FileLoader::ObjectFileLoad(L"./Data/Dwarf/Dwarf.x");
 	pDwarf->m_name = L"Dwarf";
 	pDwarf->m_pTransform->m_vScale = VECTOR3(3, 3, 3);
-	pDwarf->AddComponent<Hero>()->state = 0;
+	Hero* hero = pDwarf->AddComponent<Hero>();
+	hero->state = 0;
+	hero->pSystem = system;
 	cc->_pHeroTr = pDwarf->m_pTransform;
-#pragma endregion
-
-	
-
-#pragma region 비행기 생성
-	CObject* pPlaneModel = FileLoader::ObjectFileLoad(L"./Data/JN-4/airplane02.x");
-	pPlaneModel->m_name = L"Plane";
-	CObject* pPlane = new CObject();
-	pPlane->AddComponent<Plane>();
-	pPlaneModel->SetParent(pPlane);
 #pragma endregion
 
 
@@ -187,7 +181,8 @@ bool MainScene::Load()
 	pLight->m_name = L"Direction Light";
 
 	//pLight->m_pTransform->m_vRot = VECTOR3(-XM_PI / 2, 0.0f, 0.0f);
-	pLight->m_pTransform->m_vRot = VECTOR3(XM_PI, 0.0f, 0.0f);
+	pLight->m_pTransform->SetRotationDegree(VECTOR3(50.0f, -30.0f, 0.0f));
+	//pLight->m_pTransform->SetRotationDegree(VECTOR3(0.0f, 0.0f, 0.0f));
 
 	Light* light = (Light*)pLight->AddComponent<Light>();
 	light->m_diffuse = COLOR(1.0f, 1.0f, 1.0f, 1.0f);
@@ -211,19 +206,25 @@ bool MainScene::Load()
 	plight->m_lightType = LIGHT_TYPE_POINT;
 
 	CMaterial* pMtrl = new CMaterial(CShader::Find(L"Standard"));
-	pMtrl->SetScalar(0, 30.0f);
-	pMtrl->SetScalar(1, 10.0f);
-	pMtrl->SetScalar(2, 40.0f);
-	pMtrl->SetVector(0, pMtrl->m_diffuse);
-	pMtrl->SetVector(1, XMFLOAT4(pMtrl->m_ambient.x, pMtrl->m_ambient.y, pMtrl->m_ambient.y, 1.0f));
-	pMtrl->SetVector(2, XMFLOAT4(pMtrl->m_specular.x, pMtrl->m_specular.y, pMtrl->m_specular.y, 1.0f));
-	pMtrl->SetVector(3, VECTOR4(0.8f, 0.8f, 0.8f, 1.0f));
 	pMtrl->m_pTexture[0] = CTexture2D::Find(L"woodbox.bmp");
 	pointLit->m_pRenderer->ChangeMaterial(pMtrl);
 	pointLit->m_pRenderer->ChangeMesh(CMesh::Find(L"Box001"));
 
 
 	((Hero*)CObject::CopyObject(pDwarf)->GetComponent(typeid(Hero)))->state = 1;
+
+	*/
+
+	
+
+#pragma region 비행기 생성
+	CObject* pPlaneModel = FileLoader::ObjectFileLoad(L"./Data/JN-4/airplane02.x");
+	pPlaneModel->m_name = L"Plane";
+	CObject* pPlane = new CObject();
+	pPlane->AddComponent<Plane>();
+	//((Plane*)pPlane->GetComponent(typeid(Plane)))->pSystem = system;
+	pPlaneModel->SetParent(pPlane);
+#pragma endregion
 
 
 	// Clear할 색 설정

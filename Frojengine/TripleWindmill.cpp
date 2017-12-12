@@ -1,9 +1,8 @@
 #include "TripleWindmill.h"
+#include "System.h"
 
 void TripleWindmill::Initialize()
 {
-#define FOG_MIN 20.0f
-#define FOG_MAX 40.0f
 #define AUTUMN_COLOR VECTOR4(0.666666f, 0.666666f, 0.666666f, 0.666666f)
 	CObject* temp = wing[0]->GetChildren().back()->GetChildren().back();
 	temp->m_pRenderer->m_pMaterial->SetShader(CShader::Find(L"Winter"));
@@ -37,4 +36,9 @@ void TripleWindmill::Update()
 	wing[0]->m_pTransform->m_vRot.z += -XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold;
 	wing[1]->m_pTransform->m_vRot.z += XM_PI * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold;
 	wing[2]->m_pTransform->m_vRot.z += -XM_PI * 2.0f * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold;
+
+	Debug::DrawNormal(wing[0]->GetChildren().front()->GetChildren().front(), COLOR(0.0f, 1.0f, 0.0f, 1.0f));
+	Debug::DrawNormal(wing[1]->GetChildren().front()->GetChildren().front(), COLOR(0.0f, 1.0f, 0.0f, 1.0f));
+	Debug::DrawNormal(wing[2]->GetChildren().front()->GetChildren().front(), COLOR(0.0f, 1.0f, 0.0f, 1.0f));
+	Debug::DrawNormal(body->GetChildren().back()->GetChildren().back(), COLOR(0.0f, 1.0f, 0.0f, 1.0f));
 }

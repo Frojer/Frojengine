@@ -2,9 +2,15 @@
 
 #include "Frojengine.h"
 
+#define GRAY_COLOR COLOR(0.20f, 0.20f, 0.20f, 1)
+#define DARKGRAY_COLOR COLOR(0.12f, 0.12f, 0.12f, 1)
+#define WINTER_COLOR COLOR(0.96032f, 0.96032f, 0.96032f, 1.0f)
+#define FOG_MIN 30.0f
+#define FOG_MAX 100.0f
+
 class System : public Behaviour
 {
-private:
+public:
 	COLOR clearColor;
 	const COLOR clearColArr[4] =
 	{
@@ -22,7 +28,6 @@ private:
 		{ 0.55686f, 0.55686f, 0.82353f, 1.0f },
 	};
 
-public:
 	UINT seasonCount;
 	UINT timeCount;
 	float cold;
