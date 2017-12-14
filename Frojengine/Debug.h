@@ -3,6 +3,7 @@
 #include "Frojengine.h"
 
 class CMaterial;
+class CObject;
 
 class Debug : protected Device
 {

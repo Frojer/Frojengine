@@ -22,10 +22,10 @@ enum
 
 enum
 {
-	DM_TEST_ON = 0x00,
-	DM_TEST_OFF = 0x01,
-	DM_WRITE_ON = 0x00,
-	DM_WRITE_OFF = 0x02,
+	DS_TEST_ON = 0x00,
+	DS_TEST_OFF = 0x01,
+	DS_WRITE_ON = 0x00,
+	DS_WRITE_OFF = 0x02,
 };
 
 class FJRenderingEngine
@@ -68,16 +68,16 @@ private:
 
 	// 깊이/스텐실 버퍼 상태객체.
 	enum {
-		DS_DEFAULT,			//깊이버퍼 ON! (기본값)
-		DS_DEPTH_TEST_OFF,	//깊이버퍼 OFF!
-		DS_DEPTH_WRITE_OFF,	//깊이버퍼 쓰기 끄기.
-		DS_DT_OFF_DW_OFF,	//깊이테스트 끄기.
+		DS_DT_ON_DW_ON_ST_OFF,			// 깊이버퍼 ON! (기본값)
+		DS_DT_OFF_DW_ON_ST_OFF,			// 깊이버퍼 OFF!
+		DS_DT_ON_DW_OFF_ST_OFF,			// 깊이버퍼 쓰기 끄기.
+		DS_DT_OFF_DW_OFF_ST_OFF,			// 깊이테스트 끄기.
 
 		DS_MAX_,
 	};
 	ID3D11DepthStencilState* _pDSState[DS_MAX_];
-	//       DepthTest DepthWrite
-	// Bit : 0         0          000000
+	//              DepthTest DepthWrite
+	// Bit : 000000 0         0
 	static byte _dsData;
 
 

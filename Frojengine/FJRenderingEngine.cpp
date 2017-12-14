@@ -245,10 +245,12 @@ bool FJRenderingEngine::CreateDepthStencil()
 	td.Height = g_setting.displayMode.Height;
 	td.MipLevels = 1;
 	td.ArraySize = 1;
-	td.Format = DXGI_FORMAT_D32_FLOAT;			// 32BIT. 깊이 버퍼.
-	td.SampleDesc = g_setting.sampleDesc;		// AA 설정 - RT 과 동일 규격 준수.
+	//td.Format = DXGI_FORMAT_D32_FLOAT;				// 32BIT. 깊이 버퍼
+	//td.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;		// 깊이 버퍼 (24bit) + 스텐실 (8bit) / 구형 하드웨어 (DX9)
+	td.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;		// 깊이 버퍼 (32bit) + 스텐실 (8bit) / 신형 하드웨어 (DX11)
+	td.SampleDesc = g_setting.sampleDesc;				// AA 설정 - RT 과 동일 규격 준수.
 	td.Usage = D3D11_USAGE_DEFAULT;
-	td.BindFlags = D3D11_BIND_DEPTH_STENCIL;	// 깊이-스텐실 버퍼용으로 설정.
+	td.BindFlags = D3D11_BIND_DEPTH_STENCIL;			// 깊이-스텐실 버퍼용으로 설정.
 	td.CPUAccessFlags = 0;
 	td.MiscFlags = 0;
 
@@ -469,29 +471,111 @@ void FJRenderingEngine::DSStateLoad()
 	ds.DepthEnable = TRUE;
 	ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	ds.DepthFunc = D3D11_COMPARISON_LESS;
-	ds.StencilEnable = FALSE;
-	//ds.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
-	//ds.StnecilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
-	//...이하 기본값, 생략... 
+	// 스텐실 버퍼 설정 (기본값)
+	ds.StencilEnable = FALSE;									// 스텐실 버퍼 OFF.
+	ds.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;		// 스텐실 읽기 마스크 (8bit: 0xff)
+	ds.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;		// 스텐실 쓰기 마스크 (8bit: 0xff)
+	ds.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;			// [앞면] 스텐실 비교 함수 : "Always" 즉, 항상 성공 (통과, pass)
+	ds.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;			// [앞면] 스텐실 비교 성공시 동작 : 기존값 유지.
+	ds.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;			// [앞면] 스텐실 비교 실패시 동작 : 기존값 유지.	
+	ds.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;	// [앞면] 스텐실/깊이 비교 실패시 동작 : 기존값 유지.
+	ds.BackFace = ds.FrontFace;									// [뒷면] 설정 동일. 필요시 개별 설정이 가능.
 	//...
-	//첫번째 상태 객체 : Z-Test ON! (기본값)
-	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEFAULT]);
+	// 첫번째 상태 객체 : Z-Test ON! (기본값)
+	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DT_ON_DW_ON_ST_OFF]);
 
-	//두번째 상태 객체 : Z-Test OFF 상태.
+	// 두번째 상태 객체 : Z-Test OFF 상태.
 	ds.DepthEnable = FALSE;
-	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_TEST_OFF]);
+	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DT_OFF_DW_ON_ST_OFF]);
 
-	//세번째 상태 객체 : Z-Test On + Z-Write OFF.
+	// 세번째 상태 객체 : Z-Test On + Z-Write OFF.
 	// Z-Test (ZEnable, DepthEnable) 이 꺼지면, Z-Write 역시 비활성화 됩니다.
 	ds.DepthEnable = TRUE;
-	ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;		//깊이값 쓰기 끔.
-	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_WRITE_OFF]);
+	ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;		// 깊이값 쓰기 끔.
+	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DT_ON_DW_OFF_ST_OFF]);
 
-	//네번째 상태 객체 : Z-Test Off + Z-Write OFF.
+	// 네번째 상태 객체 : Z-Test Off + Z-Write OFF.
 	// Z-Test (ZEnable, DepthEnable) 이 꺼지면, Z-Write 역시 비활성화 됩니다.
 	ds.DepthEnable = FALSE;
-	ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;		//깊이값 쓰기 끔.
-	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DT_OFF_DW_OFF]);
+	ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;		// 깊이값 쓰기 끔.
+	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DT_OFF_DW_OFF_ST_OFF]);
+
+
+	
+
+
+	////----------------------------------------------------------------------
+	//// 스텐실 버퍼 연산 객체들 생성.★
+	////----------------------------------------------------------------------
+	//// 스텐실 버퍼 비트 연산 공식.
+	//// (Stencil.Ref & Stencil.Mask) Comparison-Func ( StencilBuffer.Value & Stencil.Mask)
+	////
+	//// *StencilBufferValue : 현재 검사할 픽셀의 스텐실값.
+	//// *ComFunc : 비교 함수. ( > < >= <= ==  Always Never)
+	////----------------------------------------------------------------------
+	//// DS 상태객체 #4 :  깊이버퍼 On, 스텐실버퍼 ON (항상, 참조값 쓰기) : "깊이/스텐실 기록" ★
+	//ds.DepthEnable	  = TRUE;										//깊이버퍼 ON! (기본값)
+	//ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	//ds.DepthFunc	  = D3D11_COMPARISON_LESS;
+	//ds.StencilEnable = TRUE;										//스텐실 버퍼 ON! ★
+	//ds.FrontFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;		//비교함수 : "항상 통과" (성공)
+	//ds.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_REPLACE;		//성공시 : 참조값(Stencil Reference Value) 로 교체.
+	////ds.FrontFace.StencilFailOp	  = D3D11_STENCIL_OP_KEEP;		//실패시 : 유지.(기본값, 생략)
+	////ds.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;		//실패시 : 유지.(기본값, 생략)
+	//ds.BackFace = ds.FrontFace;										//뒷면 설정 동일.
+	//_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_ON_STENCIL_ON]);
+	//
+
+	//// DS 상태객체 #5 : 깊이버퍼 On, 스텐실버퍼 ON (동일비교, 성공시 유지) : "지정 위치에만 그리기" ★
+	////ds.DepthEnable	= TRUE;										//깊이버퍼 ON! (기본값)(생략)
+	//ds.StencilEnable = TRUE;										//스텐실 버퍼 ON! 
+	//ds.FrontFace.StencilFunc		= D3D11_COMPARISON_EQUAL;		//비교함수 : "동일한가?" 
+	//ds.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;		//성공시 : 유지.
+	//ds.BackFace = ds.FrontFace;										//뒷면 설정 동일.
+	//_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_ON_STENCIL_EQUAL_KEEP]);
+
+
+	//// DS 상태객체 #6 : 깊이버퍼 On, 스텐실버퍼 ON (다름비교, 성공시 유지) : "지정 위치 이외에 그리기" ★
+	////ds.DepthEnable	= TRUE;										//깊이버퍼 ON! (기본값)(생략)
+	//ds.StencilEnable = TRUE;										//스텐실 버퍼 ON!
+	//ds.FrontFace.StencilFunc		= D3D11_COMPARISON_NOT_EQUAL;	//비교함수 : "같이 않은가?" 
+	//ds.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;		//성공시 : 유지.
+	//ds.BackFace = ds.FrontFace;										//뒷면 설정 동일.
+	//_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_ON_STENCIL_NOTEQUAL_KEEP]);
+
+
+	/*// DS 상태객체 #7 : 깊이버퍼 Off, 스텐실버퍼 ON (참조값 쓰기) : "스텐실만 기록" 
+	ds.DepthEnable	  = FALSE;										//깊이버퍼 OFF!
+	ds.StencilEnable = TRUE;										//스텐실 버퍼 ON! 
+	ds.FrontFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;		//비교함수 : "항상 통과" (성공)
+	ds.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_REPLACE;		//성공시 : 참조값(Stencil Reference Value) 로 교체.
+	ds.BackFace = ds.FrontFace;										//뒷면 설정 동일.
+	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_OFF_STENCIL_ON]);
+	*/
+	
+	/*// DS 상태객체 #8 : 깊이버퍼 On, 스텐실버퍼 ON (동일비교, 성시 증가) : "이중그리기 방지용" 
+	//ds.DepthEnable	= TRUE;										//깊이버퍼 ON! (기본값)(생략)
+	//ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	//ds.DepthFunc		= D3D11_COMPARISON_LESS;
+	ds.StencilEnable = TRUE;										//스텐실 버퍼 ON! 
+	ds.FrontFace.StencilFunc		= D3D11_COMPARISON_EQUAL;		//비교함수 : "동일한가?" 
+	ds.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_INCR;		//성공시 : 증가 (+1) 
+	ds.FrontFace.StencilFailOp		= D3D11_STENCIL_OP_KEEP;		//실패시 : 유지.
+	ds.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;		//실패시 : 유지.
+	ds.BackFace = ds.FrontFace;										//뒷면 설정 동일.
+	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_ON_STENCIL_EQUAL_INCR]);
+	*/
+
+	/*// DS 상태객체 #9 : 깊이버퍼 On, 스텐실버퍼 ON (항상, 성공시 증가) : "스텐실만 기록" 
+	ds.DepthEnable	  = TRUE;										//깊이버퍼 ON! (기본값)
+	ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;				//깊이버퍼 쓰기 OFF.
+	ds.DepthFunc	  = D3D11_COMPARISON_LESS;						//깊이연산 ON. (기본값)
+	ds.StencilEnable  = TRUE;										//스텐실 버퍼 ON! 
+	ds.FrontFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;		//비교함수 : "항상 통과" (성공)
+	ds.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_REPLACE;		//성공시 : 참조값(Stencil Reference Value) 로 교체.
+	ds.BackFace = ds.FrontFace;										//뒷면 설정 동일.
+	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_WRITE_OFF_STENCIL_ON]);
+	*/
 }
 
 
@@ -500,20 +584,20 @@ void FJRenderingEngine::DSStateUpdate()
 {
 	switch (_dsData)
 	{
-	case DM_TEST_ON | DM_WRITE_ON:
-		_pDXDC->OMSetDepthStencilState(_pDSState[DS_DEFAULT], 0);
+	case DS_TEST_ON | DS_WRITE_ON:
+		_pDXDC->OMSetDepthStencilState(_pDSState[DS_DT_ON_DW_ON_ST_OFF], 0);
 		break;
 
-	case DM_TEST_OFF | DM_WRITE_ON:
-		_pDXDC->OMSetDepthStencilState(_pDSState[DS_DEPTH_TEST_OFF], 0);
+	case DS_TEST_OFF | DS_WRITE_ON:
+		_pDXDC->OMSetDepthStencilState(_pDSState[DS_DT_OFF_DW_ON_ST_OFF], 0);
 		break;
 
-	case DM_TEST_ON | DM_WRITE_OFF:
-		_pDXDC->OMSetDepthStencilState(_pDSState[DS_DEPTH_WRITE_OFF], 0);
+	case DS_TEST_ON | DS_WRITE_OFF:
+		_pDXDC->OMSetDepthStencilState(_pDSState[DS_DT_ON_DW_OFF_ST_OFF], 0);
 		break;
 
-	case DM_TEST_OFF | DM_WRITE_OFF:
-		_pDXDC->OMSetDepthStencilState(_pDSState[DS_DT_OFF_DW_OFF], 0);
+	case DS_TEST_OFF | DS_WRITE_OFF:
+		_pDXDC->OMSetDepthStencilState(_pDSState[DS_DT_OFF_DW_OFF_ST_OFF], 0);
 		break;
 	}
 }
@@ -817,22 +901,22 @@ void FJRenderingEngine::SetRasterMode(byte i_rm)
 
 void FJRenderingEngine::SetDepthTest(bool i_bSet)
 {
-	_dsData = i_bSet ? (0xfe & _rsData) | DM_TEST_ON : (0xfe & _rsData) | DM_TEST_OFF;
+	_dsData = i_bSet ? (0xfe & _rsData) | DS_TEST_ON : (0xfe & _rsData) | DS_TEST_OFF;
 }
 
 bool FJRenderingEngine::GetDepthTest()
 {
-	return (_rsData & 0x01) == DM_TEST_ON ? true : false;
+	return (_rsData & 0x01) == DS_TEST_ON ? true : false;
 }
 
 void FJRenderingEngine::SetDepthWrite(bool i_bSet)
 {
-	_dsData = i_bSet ? (0xfd & _rsData) | DM_WRITE_ON : (0xfd & _rsData) | DM_WRITE_OFF;
+	_dsData = i_bSet ? (0xfd & _rsData) | DS_WRITE_ON : (0xfd & _rsData) | DS_WRITE_OFF;
 }
 
 bool FJRenderingEngine::GetDepthWrite()
 {
-	return (_rsData & 0x02) == DM_WRITE_ON ? true : false;
+	return (_rsData & 0x02) == DS_WRITE_ON ? true : false;
 }
 
 void FJRenderingEngine::SetClearColor(COLOR& i_col)

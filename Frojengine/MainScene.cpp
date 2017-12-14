@@ -36,9 +36,6 @@ bool MainScene::Load()
 
 	//pCam->m_pTransform->SetPositionLocal(VECTOR3(0.0f, 50.0f, 0.0f));
 	//pCam->m_pTransform->SetRotationDegree(VECTOR3(90.0f, 0.0f, 0.0f));
-	
-
-	/*
 
 
 	// 시스템 오브젝트
@@ -213,8 +210,6 @@ bool MainScene::Load()
 
 	((Hero*)CObject::CopyObject(pDwarf)->GetComponent(typeid(Hero)))->state = 1;
 
-	*/
-
 	
 
 #pragma region 비행기 생성
@@ -222,7 +217,7 @@ bool MainScene::Load()
 	pPlaneModel->m_name = L"Plane";
 	CObject* pPlane = new CObject();
 	pPlane->AddComponent<Plane>();
-	//((Plane*)pPlane->GetComponent(typeid(Plane)))->pSystem = system;
+	((Plane*)pPlane->GetComponent(typeid(Plane)))->pSystem = system;
 	pPlaneModel->SetParent(pPlane);
 #pragma endregion
 

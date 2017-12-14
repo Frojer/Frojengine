@@ -3,10 +3,8 @@
 void Plane::Initialize()
 {
 	plane = GetMyObject()->GetChildren().back();
-	//plane->m_pTransform->m_vRot = VECTOR3(0.0f, -XM_PI / 2.0f, XM_PI / 8);
-	//plane->m_pTransform->m_vPos = VECTOR3(0.0f, 10.0f, 10.0f);
-	plane->m_pTransform->m_vRot = VECTOR3(0.0f, 0.0f, 0.0f);
-	plane->m_pTransform->m_vPos = VECTOR3(0.0f, 0.0f, 0.0f);
+	plane->m_pTransform->m_vRot = VECTOR3(0.0f, -XM_PI / 2.0f, XM_PI / 8);
+	plane->m_pTransform->m_vPos = VECTOR3(0.0f, 10.0f, 10.0f);
 	
 	list<CObject*> list = plane->GetChildren();
 
@@ -16,12 +14,12 @@ void Plane::Initialize()
 		{
 			proParent = new CObject;
 			propeller = (*iter);
-			propeller->m_pTransform->SetRotationDegree(VECTOR3(-17.345f, 0.0f, 0.0f));
-			propeller->m_pTransform->SetPositionWorld(VECTOR3(0.0f, 0.7f, 3.62f));
+			propeller->m_pTransform->SetRotationDegree(VECTOR3(-17.334f, 0.0f, 0.0f));
+			propeller->m_pTransform->SetPositionLocal(VECTOR3(-0.031f, 0.7031153f, 3.663438f));
 			propeller->SetParent(proParent);
 			proParent->SetParent(plane);
-			propeller->m_pTransform->SetRotationDegree(VECTOR3(17.345f, 0.0f, 0.0f));
-			proParent->m_pTransform->SetPositionLocal(VECTOR3(0.0f, 0.45f, -3.69f));
+			proParent->m_pTransform->SetRotationDegree(VECTOR3(17.334f, 0.0f, 0.0f));
+			proParent->m_pTransform->SetPositionLocal(VECTOR3(-0.031f, 0.419f, -3.709f));
 		}
 
 		if ((*iter)->m_pRenderer != nullptr)
@@ -39,28 +37,8 @@ void Plane::Initialize()
 
 void Plane::Update()
 {
-
-	///*
-#define GRID_SIZE 50
-#define GRID_WIDTH 1
-	for (int i = 0; i <= GRID_SIZE; i++)
-	{
-		// x축 그리드
-		Debug::DrawLine(VECTOR3(0, -(GRID_SIZE * GRID_WIDTH / 2), -(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH)), VECTOR3(0, GRID_SIZE * GRID_WIDTH / 2, -(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH)), COLOR(0.3f, 0.3f, 0.3f, 1));
-		Debug::DrawLine(VECTOR3(0, -(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH), -(GRID_SIZE * GRID_WIDTH / 2)), VECTOR3(0, -(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH), (GRID_SIZE * GRID_WIDTH / 2)), COLOR(0.3f, 0.3f, 0.3f, 1));
-
-		// y축 그리드
-		Debug::DrawLine(VECTOR3(-(GRID_SIZE * GRID_WIDTH / 2), 0, -(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH)), VECTOR3(GRID_SIZE * GRID_WIDTH / 2, 0, -(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH)), COLOR(0.3f, 0.3f, 0.3f, 1));
-		Debug::DrawLine(VECTOR3(-(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH), 0, -(GRID_SIZE * GRID_WIDTH / 2)), VECTOR3(-(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH), 0, (GRID_SIZE * GRID_WIDTH / 2)), COLOR(0.3f, 0.3f, 0.3f, 1));
-
-		// z축 그리드
-		Debug::DrawLine(VECTOR3(-(GRID_SIZE * GRID_WIDTH / 2), -(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH), 0), VECTOR3(GRID_SIZE * GRID_WIDTH / 2, -(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH), 0), COLOR(0.3f, 0.3f, 0.3f, 1));
-		Debug::DrawLine(VECTOR3(-(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH), -(GRID_SIZE * GRID_WIDTH / 2), 0), VECTOR3(-(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH), (GRID_SIZE * GRID_WIDTH / 2), 0), COLOR(0.3f, 0.3f, 0.3f, 1));
-	}
-	//*/
-
-
-	//GetMyObject()->m_pTransform->m_vRot.y += XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+	GetMyObject()->m_pTransform->m_vRot.y += XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+	proParent->m_pTransform->m_vRot.z += XM_PI * 1.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
 	
 	
 	//if (IsKeyDown('W')) propeller->m_pTransform->m_vRot.x += XM_PI * 0.1f * FJSystemEngine::GetInstance()->m_fDeltaTime;
@@ -70,11 +48,10 @@ void Plane::Update()
 	//
 	////if (IsKeyDown('Q')) proParent->m_pTransform->m_vRot.y += XM_PI * 1.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;;
 	////if (IsKeyDown('E')) proParent->m_pTransform->m_vRot.y -= XM_PI * 1.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;;
-	////proParent->m_pTransform->m_vRot.z += XM_PI * 1.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
 
 
 
-	/*list<CObject*> list = plane->GetChildren();
+	list<CObject*> list = plane->GetChildren();
 	if (pSystem->timeCount == 0 && pSystem->seasonCount == 2)
 	{
 		FOR_STL(list)
@@ -95,5 +72,5 @@ void Plane::Update()
 				(*iter)->m_pRenderer->m_pMaterial->SetVector(3, pSystem->clearColArr[pSystem->timeCount]);
 			}
 		}
-	}*/
+	}
 }
