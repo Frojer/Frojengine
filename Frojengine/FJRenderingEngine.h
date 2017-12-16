@@ -71,13 +71,17 @@ private:
 		DS_DT_ON_DW_ON_ST_OFF,			// 깊이버퍼 ON! (기본값)
 		DS_DT_OFF_DW_ON_ST_OFF,			// 깊이버퍼 OFF!
 		DS_DT_ON_DW_OFF_ST_OFF,			// 깊이버퍼 쓰기 끄기.
+		DS_DT_OFF_DW_OFF_ST_OFF,		// 깊이테스트 끄기.
+		DS_DT_ON_DW_ON_ST_ON,			// 깊이버퍼 ON! (기본값)
+		DS_DT_OFF_DW_ON_ST_OFF,			// 깊이버퍼 OFF!
+		DS_DT_ON_DW_OFF_ST_OFF,			// 깊이버퍼 쓰기 끄기.
 		DS_DT_OFF_DW_OFF_ST_OFF,			// 깊이테스트 끄기.
 
 		DS_MAX_,
 	};
 	ID3D11DepthStencilState* _pDSState[DS_MAX_];
-	//              DepthTest DepthWrite
-	// Bit : 000000 0         0
+	//                    DepthComp  DepthTest  DepthWrite
+	// Bit : 00000000000000          0          0
 	static byte _dsData;
 
 

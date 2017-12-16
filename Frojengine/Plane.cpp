@@ -38,7 +38,7 @@ void Plane::Initialize()
 void Plane::Update()
 {
 	GetMyObject()->m_pTransform->m_vRot.y += XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
-	proParent->m_pTransform->m_vRot.z += XM_PI * 1.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+	proParent->m_pTransform->m_vRot.z += XM_PI * 15.0f * FJSystemEngine::GetInstance()->m_fDeltaTime;
 	
 	
 	//if (IsKeyDown('W')) propeller->m_pTransform->m_vRot.x += XM_PI * 0.1f * FJSystemEngine::GetInstance()->m_fDeltaTime;

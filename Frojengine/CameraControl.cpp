@@ -18,12 +18,12 @@ void CameraControl::Update()
 	if (IsKeyDown(VK_RIGHT))	pObj->m_pTransform->SetPositionLocal(pObj->m_pTransform->GetPositionLocal() + (pObj->m_pTransform->GetRightVector() * 10.0f * FJSystemEngine::GetInstance()->m_fDeltaTime));
 	
 	// È¸Àü
-	//if (IsKeyDown(VK_NUMPAD8)) pObj->m_pTransform->m_vRot.x -= XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
-	//if (IsKeyDown(VK_NUMPAD5)) pObj->m_pTransform->m_vRot.x += XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
-	//if (IsKeyDown(VK_NUMPAD4)) pObj->m_pTransform->m_vRot.y -= XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
-	//if (IsKeyDown(VK_NUMPAD6)) pObj->m_pTransform->m_vRot.y += XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
-	if (IsKeyDown('W')) pObj->m_pTransform->m_vRot.x -= XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
-	if (IsKeyDown('S')) pObj->m_pTransform->m_vRot.x += XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
-	if (IsKeyDown('A')) pObj->m_pTransform->m_vRot.y -= XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
-	if (IsKeyDown('D')) pObj->m_pTransform->m_vRot.y += XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+	if (IsKeyDown(VK_NUMPAD8)) pObj->m_pTransform->m_vRot.x -= XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+	if (IsKeyDown(VK_NUMPAD5)) pObj->m_pTransform->m_vRot.x += XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+	if (IsKeyDown(VK_NUMPAD4)) pObj->m_pTransform->m_vRot.y -= XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+	if (IsKeyDown(VK_NUMPAD6)) pObj->m_pTransform->m_vRot.y += XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+	//if (IsKeyDown('W')) pObj->m_pTransform->m_vRot.x -= XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+	//if (IsKeyDown('S')) pObj->m_pTransform->m_vRot.x += XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+	//if (IsKeyDown('A')) pObj->m_pTransform->m_vRot.y -= XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+	//if (IsKeyDown('D')) pObj->m_pTransform->m_vRot.y += XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
 }

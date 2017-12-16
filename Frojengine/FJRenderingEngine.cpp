@@ -504,44 +504,44 @@ void FJRenderingEngine::DSStateLoad()
 	
 
 
-	////----------------------------------------------------------------------
-	//// 스텐실 버퍼 연산 객체들 생성.★
-	////----------------------------------------------------------------------
-	//// 스텐실 버퍼 비트 연산 공식.
-	//// (Stencil.Ref & Stencil.Mask) Comparison-Func ( StencilBuffer.Value & Stencil.Mask)
-	////
-	//// *StencilBufferValue : 현재 검사할 픽셀의 스텐실값.
-	//// *ComFunc : 비교 함수. ( > < >= <= ==  Always Never)
-	////----------------------------------------------------------------------
-	//// DS 상태객체 #4 :  깊이버퍼 On, 스텐실버퍼 ON (항상, 참조값 쓰기) : "깊이/스텐실 기록" ★
-	//ds.DepthEnable	  = TRUE;										//깊이버퍼 ON! (기본값)
-	//ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	//ds.DepthFunc	  = D3D11_COMPARISON_LESS;
-	//ds.StencilEnable = TRUE;										//스텐실 버퍼 ON! ★
-	//ds.FrontFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;		//비교함수 : "항상 통과" (성공)
-	//ds.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_REPLACE;		//성공시 : 참조값(Stencil Reference Value) 로 교체.
-	////ds.FrontFace.StencilFailOp	  = D3D11_STENCIL_OP_KEEP;		//실패시 : 유지.(기본값, 생략)
-	////ds.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;		//실패시 : 유지.(기본값, 생략)
-	//ds.BackFace = ds.FrontFace;										//뒷면 설정 동일.
-	//_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_ON_STENCIL_ON]);
+	//----------------------------------------------------------------------
+	// 스텐실 버퍼 연산 객체들 생성.★
+	//----------------------------------------------------------------------
+	// 스텐실 버퍼 비트 연산 공식.
+	// (Stencil.Ref & Stencil.Mask) Comparison-Func ( StencilBuffer.Value & Stencil.Mask)
 	//
+	// *StencilBufferValue : 현재 검사할 픽셀의 스텐실값.
+	// *ComFunc : 비교 함수. ( > < >= <= ==  Always Never)
+	//----------------------------------------------------------------------
+	// DS 상태객체 #4 :  깊이버퍼 On, 스텐실버퍼 ON (항상, 참조값 쓰기) : "깊이/스텐실 기록" ★
+	ds.DepthEnable	  = TRUE;										//깊이버퍼 ON! (기본값)
+	ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	ds.DepthFunc	  = D3D11_COMPARISON_LESS;
+	ds.StencilEnable = TRUE;										//스텐실 버퍼 ON! ★
+	ds.FrontFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;		//비교함수 : "항상 통과" (성공)
+	ds.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_REPLACE;		//성공시 : 참조값(Stencil Reference Value) 로 교체.
+	//ds.FrontFace.StencilFailOp	  = D3D11_STENCIL_OP_KEEP;		//실패시 : 유지.(기본값, 생략)
+	//ds.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;		//실패시 : 유지.(기본값, 생략)
+	ds.BackFace = ds.FrontFace;										//뒷면 설정 동일.
+	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_ON_STENCIL_ON]);
+	
 
-	//// DS 상태객체 #5 : 깊이버퍼 On, 스텐실버퍼 ON (동일비교, 성공시 유지) : "지정 위치에만 그리기" ★
-	////ds.DepthEnable	= TRUE;										//깊이버퍼 ON! (기본값)(생략)
-	//ds.StencilEnable = TRUE;										//스텐실 버퍼 ON! 
-	//ds.FrontFace.StencilFunc		= D3D11_COMPARISON_EQUAL;		//비교함수 : "동일한가?" 
-	//ds.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;		//성공시 : 유지.
-	//ds.BackFace = ds.FrontFace;										//뒷면 설정 동일.
-	//_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_ON_STENCIL_EQUAL_KEEP]);
+	// DS 상태객체 #5 : 깊이버퍼 On, 스텐실버퍼 ON (동일비교, 성공시 유지) : "지정 위치에만 그리기" ★
+	//ds.DepthEnable	= TRUE;										//깊이버퍼 ON! (기본값)(생략)
+	ds.StencilEnable = TRUE;										//스텐실 버퍼 ON! 
+	ds.FrontFace.StencilFunc		= D3D11_COMPARISON_EQUAL;		//비교함수 : "동일한가?" 
+	ds.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;		//성공시 : 유지.
+	ds.BackFace = ds.FrontFace;										//뒷면 설정 동일.
+	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_ON_STENCIL_EQUAL_KEEP]);
 
 
-	//// DS 상태객체 #6 : 깊이버퍼 On, 스텐실버퍼 ON (다름비교, 성공시 유지) : "지정 위치 이외에 그리기" ★
-	////ds.DepthEnable	= TRUE;										//깊이버퍼 ON! (기본값)(생략)
-	//ds.StencilEnable = TRUE;										//스텐실 버퍼 ON!
-	//ds.FrontFace.StencilFunc		= D3D11_COMPARISON_NOT_EQUAL;	//비교함수 : "같이 않은가?" 
-	//ds.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;		//성공시 : 유지.
-	//ds.BackFace = ds.FrontFace;										//뒷면 설정 동일.
-	//_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_ON_STENCIL_NOTEQUAL_KEEP]);
+	// DS 상태객체 #6 : 깊이버퍼 On, 스텐실버퍼 ON (다름비교, 성공시 유지) : "지정 위치 이외에 그리기" ★
+	//ds.DepthEnable	= TRUE;										//깊이버퍼 ON! (기본값)(생략)
+	ds.StencilEnable = TRUE;										//스텐실 버퍼 ON!
+	ds.FrontFace.StencilFunc		= D3D11_COMPARISON_NOT_EQUAL;	//비교함수 : "같이 않은가?" 
+	ds.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;		//성공시 : 유지.
+	ds.BackFace = ds.FrontFace;										//뒷면 설정 동일.
+	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_ON_STENCIL_NOTEQUAL_KEEP]);
 
 
 	/*// DS 상태객체 #7 : 깊이버퍼 Off, 스텐실버퍼 ON (참조값 쓰기) : "스텐실만 기록" 

@@ -155,6 +155,7 @@ bool MainScene::Load()
 #pragma endregion
 
 
+
 #pragma region 상자 생성
 	CObject* pBox = FileLoader::ObjectFileLoad(L"./Data/Box/Box.x");
 	pBox->m_name = L"Box";
@@ -173,7 +174,9 @@ bool MainScene::Load()
 	system->pBoxMaterial = temp->m_pRenderer->m_pMaterial;
 #pragma endregion
 
+
 	
+#pragma region 라이트 생성
 	CObject* pLight = new CObject;
 	pLight->m_name = L"Direction Light";
 
@@ -206,9 +209,10 @@ bool MainScene::Load()
 	pMtrl->m_pTexture[0] = CTexture2D::Find(L"woodbox.bmp");
 	pointLit->m_pRenderer->ChangeMaterial(pMtrl);
 	pointLit->m_pRenderer->ChangeMesh(CMesh::Find(L"Box001"));
-
+#pragma endregion
 
 	((Hero*)CObject::CopyObject(pDwarf)->GetComponent(typeid(Hero)))->state = 1;
+	
 
 	
 
