@@ -62,7 +62,7 @@ bool FJSystemEngine::CreateEngine()
 	//----------------------------
 	// 렌더링 엔진 생성 및 초기화
 	//----------------------------
-	_pRenderer = new FJRenderingEngine();
+	_pRenderer = FJRenderingEngine::GetInstance();
 
 	result = _pRenderer->CreateRenderingEngine(_hWnd);
 
@@ -401,7 +401,6 @@ void FJSystemEngine::Run()
 		//렌더타겟(백버퍼) 지우기.. 
 		_pRenderer->ClearBackBuffer();
 		_pRenderer->RasterStateUpdate();
-		_pRenderer->DSStateUpdate();
 
 		SceneManager::pCurrentScene->Update();
 		SceneManager::pCurrentScene->Render();

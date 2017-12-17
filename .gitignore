@@ -3,3 +3,4 @@ Release/
 Frojengine/Debug/
 Frojengine/Release/
 .vs/
+!*.lib

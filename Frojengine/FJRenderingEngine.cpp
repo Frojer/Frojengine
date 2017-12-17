@@ -1,8 +1,8 @@
 #include "FJRenderingEngine.h"
 
+FJRenderingEngine* FJRenderingEngine::_pInstance = nullptr;
 COLOR FJRenderingEngine::_clearCol = COLOR(0.0f, 0.0f, 0.8f, 1.0f);
 byte FJRenderingEngine::_rsData = 0;
-byte FJRenderingEngine::_dsData = 0;
 LPDEVICE Device::_pDevice;
 LPDXDC Device::_pDXDC;
 
@@ -466,83 +466,14 @@ void FJRenderingEngine::DSStateLoad()
 	//----------------------------
 	// 깊이/스텐실 상태 개체 생성.: "출력병합기 Output Merger" 상태 조절. 
 	//----------------------------
-	//...	 
-	D3D11_DEPTH_STENCIL_DESC  ds;
-	ds.DepthEnable = TRUE;
-	ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	ds.DepthFunc = D3D11_COMPARISON_LESS;
-	// 스텐실 버퍼 설정 (기본값)
-	ds.StencilEnable = FALSE;									// 스텐실 버퍼 OFF.
-	ds.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;		// 스텐실 읽기 마스크 (8bit: 0xff)
-	ds.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;		// 스텐실 쓰기 마스크 (8bit: 0xff)
-	ds.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;			// [앞면] 스텐실 비교 함수 : "Always" 즉, 항상 성공 (통과, pass)
-	ds.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;			// [앞면] 스텐실 비교 성공시 동작 : 기존값 유지.
-	ds.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;			// [앞면] 스텐실 비교 실패시 동작 : 기존값 유지.	
-	ds.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;	// [앞면] 스텐실/깊이 비교 실패시 동작 : 기존값 유지.
-	ds.BackFace = ds.FrontFace;									// [뒷면] 설정 동일. 필요시 개별 설정이 가능.
-	//...
-	// 첫번째 상태 객체 : Z-Test ON! (기본값)
-	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DT_ON_DW_ON_ST_OFF]);
 
-	// 두번째 상태 객체 : Z-Test OFF 상태.
-	ds.DepthEnable = FALSE;
-	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DT_OFF_DW_ON_ST_OFF]);
-
-	// 세번째 상태 객체 : Z-Test On + Z-Write OFF.
-	// Z-Test (ZEnable, DepthEnable) 이 꺼지면, Z-Write 역시 비활성화 됩니다.
-	ds.DepthEnable = TRUE;
-	ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;		// 깊이값 쓰기 끔.
-	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DT_ON_DW_OFF_ST_OFF]);
-
-	// 네번째 상태 객체 : Z-Test Off + Z-Write OFF.
-	// Z-Test (ZEnable, DepthEnable) 이 꺼지면, Z-Write 역시 비활성화 됩니다.
-	ds.DepthEnable = FALSE;
-	ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;		// 깊이값 쓰기 끔.
-	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DT_OFF_DW_OFF_ST_OFF]);
-
-
-	
-
-
-	//----------------------------------------------------------------------
-	// 스텐실 버퍼 연산 객체들 생성.★
-	//----------------------------------------------------------------------
-	// 스텐실 버퍼 비트 연산 공식.
-	// (Stencil.Ref & Stencil.Mask) Comparison-Func ( StencilBuffer.Value & Stencil.Mask)
-	//
-	// *StencilBufferValue : 현재 검사할 픽셀의 스텐실값.
-	// *ComFunc : 비교 함수. ( > < >= <= ==  Always Never)
-	//----------------------------------------------------------------------
-	// DS 상태객체 #4 :  깊이버퍼 On, 스텐실버퍼 ON (항상, 참조값 쓰기) : "깊이/스텐실 기록" ★
-	ds.DepthEnable	  = TRUE;										//깊이버퍼 ON! (기본값)
-	ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	ds.DepthFunc	  = D3D11_COMPARISON_LESS;
-	ds.StencilEnable = TRUE;										//스텐실 버퍼 ON! ★
-	ds.FrontFace.StencilFunc		= D3D11_COMPARISON_ALWAYS;		//비교함수 : "항상 통과" (성공)
-	ds.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_REPLACE;		//성공시 : 참조값(Stencil Reference Value) 로 교체.
-	//ds.FrontFace.StencilFailOp	  = D3D11_STENCIL_OP_KEEP;		//실패시 : 유지.(기본값, 생략)
-	//ds.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;		//실패시 : 유지.(기본값, 생략)
-	ds.BackFace = ds.FrontFace;										//뒷면 설정 동일.
-	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_ON_STENCIL_ON]);
-	
-
-	// DS 상태객체 #5 : 깊이버퍼 On, 스텐실버퍼 ON (동일비교, 성공시 유지) : "지정 위치에만 그리기" ★
-	//ds.DepthEnable	= TRUE;										//깊이버퍼 ON! (기본값)(생략)
-	ds.StencilEnable = TRUE;										//스텐실 버퍼 ON! 
-	ds.FrontFace.StencilFunc		= D3D11_COMPARISON_EQUAL;		//비교함수 : "동일한가?" 
-	ds.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;		//성공시 : 유지.
-	ds.BackFace = ds.FrontFace;										//뒷면 설정 동일.
-	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_ON_STENCIL_EQUAL_KEEP]);
-
-
-	// DS 상태객체 #6 : 깊이버퍼 On, 스텐실버퍼 ON (다름비교, 성공시 유지) : "지정 위치 이외에 그리기" ★
-	//ds.DepthEnable	= TRUE;										//깊이버퍼 ON! (기본값)(생략)
-	ds.StencilEnable = TRUE;										//스텐실 버퍼 ON!
-	ds.FrontFace.StencilFunc		= D3D11_COMPARISON_NOT_EQUAL;	//비교함수 : "같이 않은가?" 
-	ds.FrontFace.StencilPassOp		= D3D11_STENCIL_OP_KEEP;		//성공시 : 유지.
-	ds.BackFace = ds.FrontFace;										//뒷면 설정 동일.
-	_pDevice->CreateDepthStencilState(&ds, &_pDSState[DS_DEPTH_ON_STENCIL_NOTEQUAL_KEEP]);
-
+	DSStateCreate(0);
+	DSStateCreate(DS_DEPTH_TEST_OFF);
+	DSStateCreate(DS_DEPTH_WRITE_OFF);
+	DSStateCreate(DS_DEPTH_TEST_OFF | DS_DEPTH_WRITE_OFF);
+	DSStateCreate(DS_STENCIL_ON | DS_STENCIL_FRONT_PASS_OP_REPLACE | DS_STENCIL_BACK_PASS_OP_REPLACE);
+	DSStateCreate(DS_STENCIL_ON | DS_STENCIL_FRONT_COMPARISON_EQUAL | DS_STENCIL_BACK_COMPARISON_EQUAL);
+	DSStateCreate(DS_STENCIL_ON | DS_STENCIL_FRONT_COMPARISON_NOT_EQUAL | DS_STENCIL_BACK_COMPARISON_NOT_EQUAL);
 
 	/*// DS 상태객체 #7 : 깊이버퍼 Off, 스텐실버퍼 ON (참조값 쓰기) : "스텐실만 기록" 
 	ds.DepthEnable	  = FALSE;										//깊이버퍼 OFF!
@@ -579,27 +510,279 @@ void FJRenderingEngine::DSStateLoad()
 }
 
 
-
-void FJRenderingEngine::DSStateUpdate()
+void FJRenderingEngine::DSStateCreate(DWORD flag)
 {
-	switch (_dsData)
+	D3D11_DEPTH_STENCIL_DESC ds;
+	ds.DepthEnable = flag & 0x80000000 ? FALSE : TRUE;
+	ds.DepthWriteMask = flag & 0x40000000 ? D3D11_DEPTH_WRITE_MASK_ZERO : D3D11_DEPTH_WRITE_MASK_ALL;
+	switch (flag & 0x38000000)
 	{
-	case DS_TEST_ON | DS_WRITE_ON:
-		_pDXDC->OMSetDepthStencilState(_pDSState[DS_DT_ON_DW_ON_ST_OFF], 0);
+	case DS_DEPTH_COMPARISON_NEVER:
+		ds.DepthFunc = D3D11_COMPARISON_NEVER;
 		break;
-
-	case DS_TEST_OFF | DS_WRITE_ON:
-		_pDXDC->OMSetDepthStencilState(_pDSState[DS_DT_OFF_DW_ON_ST_OFF], 0);
+	case DS_DEPTH_COMPARISON_LESS:
+		ds.DepthFunc = D3D11_COMPARISON_LESS;
 		break;
-
-	case DS_TEST_ON | DS_WRITE_OFF:
-		_pDXDC->OMSetDepthStencilState(_pDSState[DS_DT_ON_DW_OFF_ST_OFF], 0);
+	case DS_DEPTH_COMPARISON_EQUAL:
+		ds.DepthFunc = D3D11_COMPARISON_EQUAL;
 		break;
-
-	case DS_TEST_OFF | DS_WRITE_OFF:
-		_pDXDC->OMSetDepthStencilState(_pDSState[DS_DT_OFF_DW_OFF_ST_OFF], 0);
+	case DS_DEPTH_COMPARISON_LESS_EQUAL:
+		ds.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+		break;
+	case DS_DEPTH_COMPARISON_GREATER:
+		ds.DepthFunc = D3D11_COMPARISON_GREATER;
+		break;
+	case DS_DEPTH_COMPARISON_NOT_EQUAL:
+		ds.DepthFunc = D3D11_COMPARISON_NOT_EQUAL;
+		break;
+	case DS_DEPTH_COMPARISON_GREATER_EQUAL:
+		ds.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL;
+		break;
+	case DS_DEPTH_COMPARISON_ALWAYS:
+		ds.DepthFunc = D3D11_COMPARISON_LESS;
 		break;
 	}
+
+	//----------------------------------------------------------------------
+	// 스텐실 버퍼 연산 객체들 생성.★
+	//----------------------------------------------------------------------
+	// 스텐실 버퍼 비트 연산 공식.
+	// (Stencil.Ref & Stencil.Mask) Comparison-Func ( StencilBuffer.Value & Stencil.Mask)
+	//
+	// *StencilBufferValue : 현재 검사할 픽셀의 스텐실값.
+	// *ComFunc : 비교 함수. ( > < >= <= ==  Always Never)
+	//----------------------------------------------------------------------
+
+	// 스텐실 버퍼 설정
+	ds.StencilEnable = flag & 0x04000000 ? TRUE : FALSE;		// 스텐실 버퍼를 사용 할 것인가.
+	ds.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;		// 스텐실 읽기 마스크 (8bit: 0xff)
+	ds.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;		// 스텐실 쓰기 마스크 (8bit: 0xff)
+	// [앞면] 스텐실 비교 실패시 동작
+	switch (flag & 0x03800000)
+	{
+	case DS_STENCIL_FRONT_FAIL_OP_KEEP:
+		ds.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		break;
+	case DS_STENCIL_FRONT_FAIL_OP_ZERO:
+		ds.FrontFace.StencilFailOp = D3D11_STENCIL_OP_ZERO;
+		break;
+	case DS_STENCIL_FRONT_FAIL_OP_REPLACE:
+		ds.FrontFace.StencilFailOp = D3D11_STENCIL_OP_REPLACE;
+		break;
+	case DS_STENCIL_FRONT_FAIL_OP_INCR_SAT:
+		ds.FrontFace.StencilFailOp = D3D11_STENCIL_OP_INCR_SAT;
+		break;
+	case DS_STENCIL_FRONT_FAIL_OP_DECR_SAT:
+		ds.FrontFace.StencilFailOp = D3D11_STENCIL_OP_DECR_SAT;
+		break;
+	case DS_STENCIL_FRONT_FAIL_OP_INVERT:
+		ds.FrontFace.StencilFailOp = D3D11_STENCIL_OP_INVERT;
+		break;
+	case DS_STENCIL_FRONT_FAIL_OP_INCR:
+		ds.FrontFace.StencilFailOp = D3D11_STENCIL_OP_INCR;
+		break;
+	case DS_STENCIL_FRONT_FAIL_OP_DECR:
+		ds.FrontFace.StencilFailOp = D3D11_STENCIL_OP_DECR;
+		break;
+	}
+	// [앞면] 스텐실/깊이 비교 실패시 동작
+	switch (flag & 0x00700000)
+	{
+	case DS_STENCIL_FRONT_DEPTH_FAIL_OP_KEEP:
+		ds.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		break;
+	case DS_STENCIL_FRONT_DEPTH_FAIL_OP_ZERO:
+		ds.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_ZERO;
+		break;
+	case DS_STENCIL_FRONT_DEPTH_FAIL_OP_REPLACE:
+		ds.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_REPLACE;
+		break;
+	case DS_STENCIL_FRONT_DEPTH_FAIL_OP_INCR_SAT:
+		ds.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR_SAT;
+		break;
+	case DS_STENCIL_FRONT_DEPTH_FAIL_OP_DECR_SAT:
+		ds.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR_SAT;
+		break;
+	case DS_STENCIL_FRONT_DEPTH_FAIL_OP_INVERT:
+		ds.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INVERT;
+		break;
+	case DS_STENCIL_FRONT_DEPTH_FAIL_OP_INCR:
+		ds.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+		break;
+	case DS_STENCIL_FRONT_DEPTH_FAIL_OP_DECR:
+		ds.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+		break;
+	}
+	// [앞면] 스텐실 비교 성공시 동작
+	switch (flag & 0x000E0000)
+	{
+	case DS_STENCIL_FRONT_PASS_OP_KEEP:
+		ds.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		break;
+	case DS_STENCIL_FRONT_PASS_OP_ZERO:
+		ds.FrontFace.StencilPassOp = D3D11_STENCIL_OP_ZERO;
+		break;
+	case DS_STENCIL_FRONT_PASS_OP_REPLACE:
+		ds.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+		break;
+	case DS_STENCIL_FRONT_PASS_OP_INCR_SAT:
+		ds.FrontFace.StencilPassOp = D3D11_STENCIL_OP_INCR_SAT;
+		break;
+	case DS_STENCIL_FRONT_PASS_OP_DECR_SAT:
+		ds.FrontFace.StencilPassOp = D3D11_STENCIL_OP_DECR_SAT;
+		break;
+	case DS_STENCIL_FRONT_PASS_OP_INVERT:
+		ds.FrontFace.StencilPassOp = D3D11_STENCIL_OP_INVERT;
+		break;
+	case DS_STENCIL_FRONT_PASS_OP_INCR:
+		ds.FrontFace.StencilPassOp = D3D11_STENCIL_OP_INCR;
+		break;
+	case DS_STENCIL_FRONT_PASS_OP_DECR:
+		ds.FrontFace.StencilPassOp = D3D11_STENCIL_OP_DECR;
+		break;
+	}
+	// [앞면] 스텐실 비교 함수
+	switch (flag & 0x0001C000)
+	{
+	case DS_STENCIL_FRONT_COMPARISON_NEVER:
+		ds.FrontFace.StencilFunc = D3D11_COMPARISON_NEVER;
+		break;
+	case DS_STENCIL_FRONT_COMPARISON_LESS:
+		ds.FrontFace.StencilFunc = D3D11_COMPARISON_LESS;
+		break;
+	case DS_STENCIL_FRONT_COMPARISON_EQUAL:
+		ds.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
+		break;
+	case DS_STENCIL_FRONT_COMPARISON_LESS_EQUAL:
+		ds.FrontFace.StencilFunc = D3D11_COMPARISON_LESS_EQUAL;
+		break;
+	case DS_STENCIL_FRONT_COMPARISON_GREATER:
+		ds.FrontFace.StencilFunc = D3D11_COMPARISON_GREATER;
+		break;
+	case DS_STENCIL_FRONT_COMPARISON_NOT_EQUAL:
+		ds.FrontFace.StencilFunc = D3D11_COMPARISON_NOT_EQUAL;
+		break;
+	case DS_STENCIL_FRONT_COMPARISON_GREATER_EQUAL:
+		ds.FrontFace.StencilFunc = D3D11_COMPARISON_GREATER_EQUAL;
+		break;
+	case DS_STENCIL_FRONT_COMPARISON_ALWAYS:
+		ds.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		break;
+	}
+	// [뒷면] 스텐실 비교 실패시 동작
+	switch (flag & 0x00003800)
+	{
+	case DS_STENCIL_BACK_FAIL_OP_KEEP:
+		ds.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		break;
+	case DS_STENCIL_BACK_FAIL_OP_ZERO:
+		ds.BackFace.StencilFailOp = D3D11_STENCIL_OP_ZERO;
+		break;
+	case DS_STENCIL_BACK_FAIL_OP_REPLACE:
+		ds.BackFace.StencilFailOp = D3D11_STENCIL_OP_REPLACE;
+		break;
+	case DS_STENCIL_BACK_FAIL_OP_INCR_SAT:
+		ds.BackFace.StencilFailOp = D3D11_STENCIL_OP_INCR_SAT;
+		break;
+	case DS_STENCIL_BACK_FAIL_OP_DECR_SAT:
+		ds.BackFace.StencilFailOp = D3D11_STENCIL_OP_DECR_SAT;
+		break;
+	case DS_STENCIL_BACK_FAIL_OP_INVERT:
+		ds.BackFace.StencilFailOp = D3D11_STENCIL_OP_INVERT;
+		break;
+	case DS_STENCIL_BACK_FAIL_OP_INCR:
+		ds.BackFace.StencilFailOp = D3D11_STENCIL_OP_INCR;
+		break;
+	case DS_STENCIL_BACK_FAIL_OP_DECR:
+		ds.BackFace.StencilFailOp = D3D11_STENCIL_OP_DECR;
+		break;
+	}
+	// [뒷면] 스텐실/깊이 비교 실패시 동작
+	switch (flag & 0x00000700)
+	{
+	case DS_STENCIL_BACK_DEPTH_FAIL_OP_KEEP:
+		ds.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		break;
+	case DS_STENCIL_BACK_DEPTH_FAIL_OP_ZERO:
+		ds.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_ZERO;
+		break;
+	case DS_STENCIL_BACK_DEPTH_FAIL_OP_REPLACE:
+		ds.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_REPLACE;
+		break;
+	case DS_STENCIL_BACK_DEPTH_FAIL_OP_INCR_SAT:
+		ds.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR_SAT;
+		break;
+	case DS_STENCIL_BACK_DEPTH_FAIL_OP_DECR_SAT:
+		ds.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR_SAT;
+		break;
+	case DS_STENCIL_BACK_DEPTH_FAIL_OP_INVERT:
+		ds.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_INVERT;
+		break;
+	case DS_STENCIL_BACK_DEPTH_FAIL_OP_INCR:
+		ds.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+		break;
+	case DS_STENCIL_BACK_DEPTH_FAIL_OP_DECR:
+		ds.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+		break;
+	}
+	// [뒷면] 스텐실 비교 성공시 동작
+	switch (flag & 0x000000E0)
+	{
+	case DS_STENCIL_BACK_PASS_OP_KEEP:
+		ds.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		break;
+	case DS_STENCIL_BACK_PASS_OP_ZERO:
+		ds.BackFace.StencilPassOp = D3D11_STENCIL_OP_ZERO;
+		break;
+	case DS_STENCIL_BACK_PASS_OP_REPLACE:
+		ds.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+		break;
+	case DS_STENCIL_BACK_PASS_OP_INCR_SAT:
+		ds.BackFace.StencilPassOp = D3D11_STENCIL_OP_INCR_SAT;
+		break;
+	case DS_STENCIL_BACK_PASS_OP_DECR_SAT:
+		ds.BackFace.StencilPassOp = D3D11_STENCIL_OP_DECR_SAT;
+		break;
+	case DS_STENCIL_BACK_PASS_OP_INVERT:
+		ds.BackFace.StencilPassOp = D3D11_STENCIL_OP_INVERT;
+		break;
+	case DS_STENCIL_BACK_PASS_OP_INCR:
+		ds.BackFace.StencilPassOp = D3D11_STENCIL_OP_INCR;
+		break;
+	case DS_STENCIL_BACK_PASS_OP_DECR:
+		ds.BackFace.StencilPassOp = D3D11_STENCIL_OP_DECR;
+		break;
+	}
+	// [뒷면] 스텐실 비교 함수
+	switch (flag & 0x0000001C)
+	{
+	case DS_STENCIL_BACK_COMPARISON_NEVER:
+		ds.BackFace.StencilFunc = D3D11_COMPARISON_NEVER;
+		break;
+	case DS_STENCIL_BACK_COMPARISON_LESS:
+		ds.BackFace.StencilFunc = D3D11_COMPARISON_LESS;
+		break;
+	case DS_STENCIL_BACK_COMPARISON_EQUAL:
+		ds.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
+		break;
+	case DS_STENCIL_BACK_COMPARISON_LESS_EQUAL:
+		ds.BackFace.StencilFunc = D3D11_COMPARISON_LESS_EQUAL;
+		break;
+	case DS_STENCIL_BACK_COMPARISON_GREATER:
+		ds.BackFace.StencilFunc = D3D11_COMPARISON_GREATER;
+		break;
+	case DS_STENCIL_BACK_COMPARISON_NOT_EQUAL:
+		ds.BackFace.StencilFunc = D3D11_COMPARISON_NOT_EQUAL;
+		break;
+	case DS_STENCIL_BACK_COMPARISON_GREATER_EQUAL:
+		ds.BackFace.StencilFunc = D3D11_COMPARISON_GREATER_EQUAL;
+		break;
+	case DS_STENCIL_BACK_COMPARISON_ALWAYS:
+		ds.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		break;
+	}
+
+	_pDevice->CreateDepthStencilState(&ds, &_DSStateMap[flag]);
 }
 
 
@@ -611,8 +794,10 @@ void FJRenderingEngine::DSStateUpdate()
 //
 void FJRenderingEngine::DSStateRelease()
 {
-	for (int i = 0; i < DS_MAX_; i++)
-		SAFE_RELEASE(_pDSState[i]);
+	FOR_STL(_DSStateMap)
+	{
+		SAFE_RELEASE((*iter).second);
+	}
 }
 
 
@@ -852,6 +1037,17 @@ void FJRenderingEngine::Flip()
 }
 
 
+FJRenderingEngine* FJRenderingEngine::GetInstance()
+{
+	if (_pInstance == nullptr)
+	{
+		_pInstance = new FJRenderingEngine();
+	}
+
+	return _pInstance;
+}
+
+
 
 
 
@@ -899,24 +1095,15 @@ void FJRenderingEngine::SetRasterMode(byte i_rm)
 	_rsData = i_rm;
 }
 
-void FJRenderingEngine::SetDepthTest(bool i_bSet)
+void FJRenderingEngine::SetDSState(DWORD flag, UINT stencilRef)
 {
-	_dsData = i_bSet ? (0xfe & _rsData) | DS_TEST_ON : (0xfe & _rsData) | DS_TEST_OFF;
-}
+	FJRenderingEngine* pRenderer = GetInstance();
+	if (pRenderer->_DSStateMap.find(flag) == pRenderer->_DSStateMap.end())
+	{
+		pRenderer->DSStateCreate(flag);
+	}
 
-bool FJRenderingEngine::GetDepthTest()
-{
-	return (_rsData & 0x01) == DS_TEST_ON ? true : false;
-}
-
-void FJRenderingEngine::SetDepthWrite(bool i_bSet)
-{
-	_dsData = i_bSet ? (0xfd & _rsData) | DS_WRITE_ON : (0xfd & _rsData) | DS_WRITE_OFF;
-}
-
-bool FJRenderingEngine::GetDepthWrite()
-{
-	return (_rsData & 0x02) == DS_WRITE_ON ? true : false;
+	pRenderer->_pDXDC->OMSetDepthStencilState(pRenderer->_DSStateMap[flag], stencilRef);
 }
 
 void FJRenderingEngine::SetClearColor(COLOR& i_col)
