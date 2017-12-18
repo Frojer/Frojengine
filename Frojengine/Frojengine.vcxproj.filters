@@ -127,9 +127,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Template.cpp" />
-    <ClCompile Include="Model.cpp">
-      <Filter>Frojengine\Object</Filter>
-    </ClCompile>
     <ClCompile Include="Windmill.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -149,6 +146,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="TripleWindmill2.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="MirrorScript.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -235,9 +235,6 @@
     <ClInclude Include="Object.h">
       <Filter>Frojengine\Object\Header File</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Frojengine\Object</Filter>
-    </ClInclude>
     <ClInclude Include="Windmill.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -260,6 +257,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="TripleWindmill2.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="MirrorScript.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

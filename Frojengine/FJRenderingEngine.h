@@ -4,20 +4,25 @@
 
 class FJFontEngine;
 
-enum CULLMODE
-{
-	CULL_NONE = 0x00,
-	CULL_BACK = 0x02,
-	CULL_FRONT = 0x04
-};
-
+//              Fill Cull Clockwise DepthClip Scissor Multisample AntialiasedLine
+// Bit(1byte) : 0    00   0         0         0       0           0
 enum
 {
-	RM_SOLID = 0x00,		// 00000000
-	RM_WIRE = 0x01,			// 00000001
-	RM_CULLNONE = 0x00,		// 00000000
-	RM_CULLBACK = 0x02,		// 00000010
-	RM_CULLFRONT = 0x04,	// 00000100
+	RS_SOLID = 0x00,
+	RS_WIREFRAME = 0x80,
+	RS_CULL_NONE = 0x00,
+	RS_CULL_FRONT = 0x40,
+	RS_CULL_BACK = 0x20,
+	RS_CLOCKWISE = 0x00,
+	RS_COUNTER_CLOCKWISE = 0x10,
+	RS_DEPTH_CLIP_ON = 0x00,
+	RS_DEPTH_CLIP_OFF = 0x08,
+	RS_SCISSOR_ON = 0x04,
+	RS_SCISSOR_OFF = 0x00,
+	RS_MULTISAMPLE_ON = 0x02,
+	RS_MULTISAMPLE_OFF = 0x00,
+	RS_ANTIALIASEDLINE_ON = 0x01,
+	RS_ANTIALIASEDLINE_Off = 0x00
 };
 
 //              DT DW DC  SE SFFO SFDFO SFPO SFC SBFO SBDFO SBPO SBC TEMP
@@ -126,42 +131,10 @@ private:
 	// 무슨색으로 백버퍼를 지울지
 	static COLOR _clearCol;
 
-	enum {
-		RS_SOLID,				// 기본 렌더링 : 솔리드 Soild
-		RS_WIRE,				// 와이어프레임 렌더링.
-		RS_SOLID_CULL_BACK,
-		RS_WIRE_CULL_BACK,
-		RS_SOLID_CULL_FRONT,
-		RS_WIRE_CULL_FRONT,
-
-		RS_MAX_
-	};
 	//상태 객체 배열 : "기능별" 그룹으로 관리합니다.
-	ID3D11RasterizerState*	_pRState[RS_MAX_];
-	//             CullMode   Wire
-	// Bit : 00000 00         0
-	static byte _rsData;
+	unordered_map<DWORD, ID3D11RasterizerState*> _RSStateMap;
 
-
-
-	// 깊이/스텐실 버퍼 상태객체.
-	/*
-	enum {
-		DS_DT_ON_DW_ON_ST_OFF,			// 깊이버퍼 ON! (기본값)
-		DS_DT_OFF_DW_ON_ST_OFF,			// 깊이버퍼 OFF!
-		DS_DT_ON_DW_OFF_ST_OFF,			// 깊이버퍼 쓰기 끄기.
-		DS_DT_OFF_DW_OFF_ST_OFF,		// 깊이테스트 끄기.
-		DS_DT_ON_DW_ON_ST_ON,			// 깊이버퍼 ON! (기본값)
-		DS_DT_OFF_DW_ON_ST_ON,			// 깊이버퍼 OFF!
-		DS_DT_ON_DW_OFF_ST_ON,			// 깊이버퍼 쓰기 끄기.
-		DS_DT_OFF_DW_OFF_ST_ON,			// 깊이테스트 끄기.
-
-		DS_MAX_,
-	};
-
-	ID3D11DepthStencilState* _pDSState[DS_MAX_];
-	*/
-	
+	// 깊이/스텐실 버퍼 상태객체.	
 	unordered_map<DWORD, ID3D11DepthStencilState*> _DSStateMap;
 
 
@@ -197,13 +170,13 @@ private:
 
 	// 레스터 상태객체
 	void RasterStateLoad();
-	void RasterStateUpdate();
 	void RasterStateRelease();
+	void RasterStateCreate(byte flag);
 
 	// 깊이/스텐실 버퍼 상태객체
 	void DSStateLoad();
-	void DSStateRelease();
 	void DSStateCreate(DWORD state);
+	void DSStateRelease();
 
 	// 블랜드 상태객체
 	void BlendStateCreate();
@@ -219,13 +192,7 @@ public:
 
 	static FJRenderingEngine* GetInstance();
 
-	static void		SetWireFrame(bool i_bSet);
-	static bool		GetWireFrame();
-	static void		SetSolidFrame(bool i_bSet);
-	static bool		GetSolidFrame();
-	static void		SetCullMode(CULLMODE mode);
-	static CULLMODE	GetCullMode();
-	static void		SetRasterMode(byte i_rm);
+	static void		SetRSState(byte flag);
 	static void		SetDSState(DWORD flag, UINT stencilRef);
 	static void		SetClearColor(COLOR& i_col);
 	static COLOR	GetClearColor();

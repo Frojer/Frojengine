@@ -39,3 +39,15 @@ VECTOR3 operator/ (const VECTOR3& lhs, const float& rhs)
 	vec.z = lhs.z / rhs;
 	return vec;
 }
+
+
+void QuaternionToPitchYawRoll(VECTOR3* pEular, const VECTOR* pQ)
+{
+	VECTOR4 q, sq;
+	XMStoreFloat4(&q, *pQ);
+	XMStoreFloat4(&sq, XMVectorMultiply(*pQ, *pQ));
+
+	pEular->x = XMConvertToDegrees(asinf(2.0f * (q.w * q.x - q.y * q.z)));
+	pEular->y = XMConvertToDegrees(atan2f(2.0f * (q.x * q.z + q.w * q.y), (-sq.x - sq.y + sq.z + sq.w)));
+	pEular->z = XMConvertToDegrees(atan2f(2.0f * (q.x * q.y + q.w * q.z), (-sq.x + sq.y - sq.z + sq.w)));
+}

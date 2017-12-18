@@ -1,17 +1,12 @@
 #pragma once
 
 #include "Frojengine.h"
-#include "System.h"
 
-class TripleWindmill2 : public Behaviour
+class MirrorScript : public Behaviour
 {
 public:
-	System* system;
+	Transform* pModelTr;
 
-	CObject* body;
-	CObject* wing[3];
-
-	bool isMirror;
 public:
 	virtual void Initialize() override;
 	virtual void Update() override;

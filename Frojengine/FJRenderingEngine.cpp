@@ -2,7 +2,6 @@
 
 FJRenderingEngine* FJRenderingEngine::_pInstance = nullptr;
 COLOR FJRenderingEngine::_clearCol = COLOR(0.0f, 0.0f, 0.8f, 1.0f);
-byte FJRenderingEngine::_rsData = 0;
 LPDEVICE Device::_pDevice;
 LPDXDC Device::_pDXDC;
 
@@ -378,80 +377,55 @@ void FJRenderingEngine::GetFeatureLevel()
 
 void FJRenderingEngine::RasterStateLoad()
 {
-	// 렌더링 상태 객체
-	D3D11_RASTERIZER_DESC rd;
-	rd.FillMode = D3D11_FILL_SOLID;		// 삼각형 색상 채우기.(기본값)
-	rd.CullMode = D3D11_CULL_NONE;		// 백페이스 컬링 (기본값)		
-	rd.FrontCounterClockwise = false;   // 이하 기본값...
-	rd.DepthBias = 0;
-	rd.DepthBiasClamp = 0;
-	rd.SlopeScaledDepthBias = 0;
-	rd.DepthClipEnable = true;
-	rd.ScissorEnable = false;
-	rd.MultisampleEnable = false;
-	rd.AntialiasedLineEnable = false;
-
-	// 레스터라이져 객체 생성.
-	_pDevice->CreateRasterizerState(&rd, &_pRState[RS_SOLID]);
-
-	rd.CullMode = D3D11_CULL_BACK;
-	_pDevice->CreateRasterizerState(&rd, &_pRState[RS_SOLID_CULL_BACK]);
-
-	rd.CullMode = D3D11_CULL_FRONT;
-	_pDevice->CreateRasterizerState(&rd, &_pRState[RS_SOLID_CULL_FRONT]);
-
-	// 와이어 프레임 그리기. 
-	rd.FillMode = D3D11_FILL_WIREFRAME;
-	rd.CullMode = D3D11_CULL_NONE;
-	_pDevice->CreateRasterizerState(&rd, &_pRState[RS_WIRE]);
-
-	rd.CullMode = D3D11_CULL_BACK;
-	_pDevice->CreateRasterizerState(&rd, &_pRState[RS_WIRE_CULL_BACK]);
-
-	rd.CullMode = D3D11_CULL_FRONT;
-	_pDevice->CreateRasterizerState(&rd, &_pRState[RS_WIRE_CULL_FRONT]);
+	RasterStateCreate(RS_SOLID);
+	RasterStateCreate(RS_CULL_FRONT);
+	RasterStateCreate(RS_CULL_BACK);
+	RasterStateCreate(RS_WIREFRAME);
+	RasterStateCreate(RS_WIREFRAME | RS_CULL_FRONT);
+	RasterStateCreate(RS_WIREFRAME | RS_CULL_BACK);
 }
 
 
-
-void FJRenderingEngine::RasterStateUpdate()
+void FJRenderingEngine::RasterStateCreate(byte flag)
 {
-	switch (_rsData)
+	// 렌더링 상태 객체
+	D3D11_RASTERIZER_DESC rd;
+	rd.FillMode = flag & 0x80 ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;		// 삼각형 색상 채우기
+																				// 백페이스 컬링
+	switch (flag & 0x60)
 	{
-	case RM_SOLID | RM_CULLNONE:
-		_pDXDC->RSSetState(_pRState[RS_SOLID]);
+	case RS_CULL_NONE:
+		rd.CullMode = D3D11_CULL_NONE;
 		break;
-
-	case RM_WIRE | RM_CULLNONE:
-		_pDXDC->RSSetState(_pRState[RS_WIRE]);
+	case RS_CULL_FRONT:
+		rd.CullMode = D3D11_CULL_FRONT;
 		break;
-
-	case RM_SOLID | RM_CULLBACK:
-		_pDXDC->RSSetState(_pRState[RS_SOLID_CULL_BACK]);
-		break;
-
-	case RM_WIRE | RM_CULLBACK:
-		_pDXDC->RSSetState(_pRState[RS_WIRE_CULL_BACK]);
-		break;
-
-	case RM_SOLID | RM_CULLFRONT:
-		_pDXDC->RSSetState(_pRState[RS_SOLID_CULL_FRONT]);
-		break;
-
-	case RM_WIRE | RM_CULLFRONT:
-		_pDXDC->RSSetState(_pRState[RS_WIRE_CULL_BACK]);
+	case RS_CULL_BACK:
+		rd.CullMode = D3D11_CULL_BACK;
 		break;
 	}
+	rd.FrontCounterClockwise = flag & 0x10 ? true : false;
+	rd.DepthBias = 0;
+	rd.DepthBiasClamp = 0;
+	rd.SlopeScaledDepthBias = 0;
+	rd.DepthClipEnable = flag & 0x08 ? false : true;
+	rd.ScissorEnable = flag & 0x04 ? true : false;
+	rd.MultisampleEnable = flag & 0x02 ? true : false;
+	rd.AntialiasedLineEnable = flag & 0x01 ? true : false;
+
+	_pDevice->CreateRasterizerState(&rd, &_RSStateMap[flag]);
 }
 
 
 
 void FJRenderingEngine::RasterStateRelease()
 {
-	for (int i = 0; i < RS_MAX_; i++)
+	FOR_STL(_RSStateMap)
 	{
-		SAFE_RELEASE(_pRState[i]);
+		SAFE_RELEASE((*iter).second);
 	}
+
+	_RSStateMap.clear();
 }
 
 
@@ -798,6 +772,8 @@ void FJRenderingEngine::DSStateRelease()
 	{
 		SAFE_RELEASE((*iter).second);
 	}
+
+	_DSStateMap.clear();
 }
 
 
@@ -1060,39 +1036,16 @@ FJRenderingEngine* FJRenderingEngine::GetInstance()
 //  Get / Set 함수들
 //
 //////////////////////////////////////////////////////////////
-void FJRenderingEngine::SetWireFrame(bool i_bSet)
-{
-	_rsData = i_bSet ? (0xfe & _rsData) | RM_WIRE : (0xfe & _rsData) | RM_SOLID;
-}
 
-bool FJRenderingEngine::GetWireFrame()
+void FJRenderingEngine::SetRSState(byte flag)
 {
-	return (_rsData & 0x01) == RM_WIRE ? true : false;
-}
+	FJRenderingEngine* pRenderer = GetInstance();
+	if (pRenderer->_RSStateMap.find(flag) == pRenderer->_RSStateMap.end())
+	{
+		pRenderer->RasterStateCreate(flag);
+	}
 
-void FJRenderingEngine::SetSolidFrame(bool i_bSet)
-{
-	SetWireFrame(!i_bSet);
-}
-
-bool FJRenderingEngine::GetSolidFrame()
-{
-	return !GetWireFrame();
-}
-
-void FJRenderingEngine::SetCullMode(CULLMODE mode)
-{
-	_rsData = (0xF9 & _rsData) | mode;
-}
-
-CULLMODE FJRenderingEngine::GetCullMode()
-{
-	return (CULLMODE)(_rsData & 0x06);
-}
-
-void FJRenderingEngine::SetRasterMode(byte i_rm)
-{
-	_rsData = i_rm;
+	pRenderer->_pDXDC->RSSetState(pRenderer->_RSStateMap[flag]);
 }
 
 void FJRenderingEngine::SetDSState(DWORD flag, UINT stencilRef)

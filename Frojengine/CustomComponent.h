@@ -7,3 +7,4 @@
 #include "Windmill.h"
 #include "TripleWindmill.h"
 #include "TripleWindmill2.h"
+#include "MirrorScript.h"

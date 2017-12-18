@@ -398,11 +398,11 @@ void FJSystemEngine::Run()
 		// 장면 그리기 시작.. 
 		//-------------------------------
 
+		SceneManager::pCurrentScene->Update();
+
 		//렌더타겟(백버퍼) 지우기.. 
 		_pRenderer->ClearBackBuffer();
-		_pRenderer->RasterStateUpdate();
 
-		SceneManager::pCurrentScene->Update();
 		SceneManager::pCurrentScene->Render();
 
 		//-------------------------------

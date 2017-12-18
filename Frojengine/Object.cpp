@@ -243,6 +243,11 @@ CObject* CObject::CopyObject(const CObject* origin, VECTOR3 pos)
 }
 
 
+//////////////////////////////////////////////////////////////
+//
+//  현재 새로운 컴포넌트는 이곳에 수동적으로 추가해줘야합니다
+//
+//////////////////////////////////////////////////////////////
 CObject* CObject::CopyObject(const CObject* origin)
 {
 	CObject* obj = new CObject();
@@ -319,6 +324,12 @@ CObject* CObject::CopyObject(const CObject* origin)
 		{
 			cp = obj->AddComponent<TripleWindmill2>();
 			memcpy_s((char*)cp + sizeof(Component), COPY_SIZE(TripleWindmill2), (char*)(*iter) + sizeof(Component), COPY_SIZE(TripleWindmill2));
+		}
+
+		else if (ti == typeid(MirrorScript))
+		{
+			cp = obj->AddComponent<MirrorScript>();
+			memcpy_s((char*)cp + sizeof(Component), COPY_SIZE(MirrorScript), (char*)(*iter) + sizeof(Component), COPY_SIZE(MirrorScript));
 		}
 	}
 

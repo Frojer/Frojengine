@@ -33,13 +33,17 @@ void Hero::Update()
 		if (IsKeyDown('Q')) pObj->m_pTransform->m_vPos.y += 15.0f * FJSystemEngine::GetInstance()->m_fDeltaTime;
 		if (IsKeyDown('E')) pObj->m_pTransform->m_vPos.y -= 15.0f * FJSystemEngine::GetInstance()->m_fDeltaTime;
 
-		//// 회전
-		//if (IsKeyDown('I')) pObj->m_pTransform->m_vRot.x += XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
-		//if (IsKeyDown('K')) pObj->m_pTransform->m_vRot.x -= XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
-		//if (IsKeyDown('J')) pObj->m_pTransform->m_vRot.z += XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
-		//if (IsKeyDown('L')) pObj->m_pTransform->m_vRot.z -= XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
-		//if (IsKeyDown('U')) pObj->m_pTransform->m_vRot.y += XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
-		//if (IsKeyDown('O')) pObj->m_pTransform->m_vRot.y -= XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+		if (IsKeyDown('Z')) pObj->m_pTransform->m_vRot.y = 0;
+		if (IsKeyDown('X')) pObj->m_pTransform->m_vRot.y = XM_PI / 2;
+		if (IsKeyDown('C')) pObj->m_pTransform->m_vRot.x = 0;
+		if (IsKeyDown('V')) pObj->m_pTransform->m_vRot.x = XM_PI / 2;
+		// 회전
+		if (IsKeyDown('I')) pObj->m_pTransform->m_vRot.x += XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+		if (IsKeyDown('K')) pObj->m_pTransform->m_vRot.x -= XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+		if (IsKeyDown('J')) pObj->m_pTransform->m_vRot.z += XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+		if (IsKeyDown('L')) pObj->m_pTransform->m_vRot.z -= XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+		if (IsKeyDown('U')) pObj->m_pTransform->m_vRot.y += XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+		if (IsKeyDown('O')) pObj->m_pTransform->m_vRot.y -= XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
 	}
 
 	else

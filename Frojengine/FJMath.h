@@ -6,3 +6,4 @@ VECTOR3 operator+ (const VECTOR3& lhs, const VECTOR3& rhs);
 VECTOR3 operator- (const VECTOR3& lhs, const VECTOR3& rhs);
 VECTOR3 operator* (const VECTOR3& lhs, const float& rhs);
 VECTOR3 operator/ (const VECTOR3& lhs, const float& rhs);
+void QuaternionToPitchYawRoll(VECTOR3* pEular, const VECTOR* pQ);

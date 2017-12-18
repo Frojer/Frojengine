@@ -6,6 +6,7 @@
 #include "CameraControl.h"
 #include "TripleWindmill.h"
 #include "TripleWindmill2.h"
+#include "MirrorScript.h"
 
 MainScene::MainScene()
 {
@@ -42,15 +43,14 @@ bool MainScene::Load()
 	CObject* pSystem = new CObject();
 	pSystem->m_name = L"System";
 	System* system = pSystem->AddComponent<System>();
-
-
+	CObject* temp;
+	
 #pragma region 磐饭牢 积己
 	CObject* pTerrain = FileLoader::ObjectFileLoad(L"./Data/Terrain/terrain.x");
 	pTerrain->m_name = L"Terrain";
 	pTerrain->m_pTransform->m_vPos = VECTOR3(0, -0.0005f, 0);
 	pTerrain->m_pTransform->m_vScale = VECTOR3(128.0f, 0, 128.0f);
 
-	CObject* temp;
 	temp = pTerrain->GetChildren().back()->GetChildren().back();
 	temp->m_pRenderer->m_pMaterial->SetShader(CShader::Find(L"Winter"));
 	temp->m_pRenderer->m_pMaterial->m_pTexture[1] = CTexture2D::Find(L"mask3.png");
@@ -62,7 +62,7 @@ bool MainScene::Load()
 #pragma endregion
 
 
-
+	
 #pragma region 唱公 积己
 	CObject* pTree = FileLoader::ObjectFileLoad(L"./Data/Tree/tree.x");
 	temp = pTree->GetChildren().back()->GetChildren().back();
@@ -86,8 +86,12 @@ bool MainScene::Load()
 		pos.y = 0.0f;
 		pos.z = (float)(rand() % 128 - 64);
 
-		CObject::CopyObject(pTree, pos);
+		CObject* tree = CObject::CopyObject(pTree, pos);
+
+		CObject::CopyObject(tree)->AddComponent<MirrorScript>()->pModelTr = tree->m_pTransform;
 	}
+	
+	CObject::CopyObject(pTree)->AddComponent<MirrorScript>()->pModelTr = pTree->m_pTransform;
 #pragma endregion
 
 
@@ -98,12 +102,34 @@ bool MainScene::Load()
 	pWindmill->m_pTransform->SetPositionLocal(VECTOR3(5.0f, -0.0002f, -10.0f));
 
 	CObject* pWindmillBody = FileLoader::ObjectFileLoad(L"./Data/Windmill/windmill_body.x");
+	pWindmillBody->m_name = L"Windmill Body";
 	CObject* pWindmillWing = FileLoader::ObjectFileLoad(L"./Data/Windmill/windmill_wing.x");
+	pWindmillWing->m_name = L"Windmill Wing";
 	pWindmillBody->SetParent(pWindmill);
 	pWindmillWing->SetParent(pWindmill);
 	wind->body = pWindmillBody;
 	wind->wing = pWindmillWing;
 	wind->system = system;
+	wind->isMirror = false;
+
+	temp = CObject::CopyObject(pWindmill);
+	temp->AddComponent<MirrorScript>()->pModelTr = pWindmill->m_pTransform;
+	wind = (Windmill*)temp->GetComponent(typeid(Windmill));
+	wind->isMirror = true;
+
+	auto list = temp->GetChildren();
+	FOR_STL(list)
+	{
+		if ((*iter)->m_name == L"Windmill Body")
+		{
+			wind->body = (*iter);
+		}
+
+		else if ((*iter)->m_name == L"Windmill Wing")
+		{
+			wind->wing = (*iter);
+		}
+	}
 #pragma endregion
 
 
@@ -122,6 +148,26 @@ bool MainScene::Load()
 	pWindmillWing = CObject::CopyObject(pWindmillWing);
 	tripWind->wing[2] = pWindmillWing;
 	tripWind->system = system;
+	tripWind->isMirror = false;
+	
+	temp = CObject::CopyObject(pTripleWindmill);
+	temp->AddComponent<MirrorScript>()->pModelTr = pTripleWindmill->m_pTransform;
+	tripWind = (TripleWindmill*)temp->GetComponent(typeid(TripleWindmill));
+	pWindmillWing = CObject::CopyObject(pWindmillWing);
+	tripWind->wing[0] = pWindmillWing;
+	pWindmillWing = CObject::CopyObject(pWindmillWing);
+	tripWind->wing[1] = pWindmillWing;
+	pWindmillWing = CObject::CopyObject(pWindmillWing);
+	tripWind->wing[2] = pWindmillWing;
+	tripWind->isMirror = true;
+	list = temp->GetChildren();
+	FOR_STL(list)
+	{
+		if ((*iter)->m_name == L"Windmill Body")
+		{
+			tripWind->body = (*iter);
+		}
+	}
 #pragma endregion
 
 
@@ -140,6 +186,27 @@ bool MainScene::Load()
 	pWindmillWing = CObject::CopyObject(pWindmillWing);
 	tripWind2->wing[2] = pWindmillWing;
 	tripWind2->system = system;
+	tripWind2->isMirror = false;
+
+
+	temp = CObject::CopyObject(pTripleWindmill2);
+	temp->AddComponent<MirrorScript>()->pModelTr = pTripleWindmill2->m_pTransform;
+	tripWind2 = (TripleWindmill2*)temp->GetComponent(typeid(TripleWindmill2));
+	pWindmillWing = CObject::CopyObject(pWindmillWing);
+	tripWind2->wing[0] = pWindmillWing;
+	pWindmillWing = CObject::CopyObject(pWindmillWing);
+	tripWind2->wing[1] = pWindmillWing;
+	pWindmillWing = CObject::CopyObject(pWindmillWing);
+	tripWind2->wing[2] = pWindmillWing;
+	tripWind2->isMirror = true;
+	list = temp->GetChildren();
+	FOR_STL(list)
+	{
+		if ((*iter)->m_name == L"Windmill Body")
+		{
+			tripWind->body = (*iter);
+		}
+	}
 #pragma endregion
 
 
@@ -148,8 +215,12 @@ bool MainScene::Load()
 	CObject* pDwarf = FileLoader::ObjectFileLoad(L"./Data/Dwarf/Dwarf.x");
 	pDwarf->m_name = L"Dwarf";
 	pDwarf->m_pTransform->m_vScale = VECTOR3(3, 3, 3);
+
+	CObject* pMirrorDwarf = CObject::CopyObject(pDwarf);
+	pMirrorDwarf->AddComponent<MirrorScript>()->pModelTr = pDwarf->m_pTransform;
+
 	Hero* hero = pDwarf->AddComponent<Hero>();
-	hero->state = 0;
+	hero->state = 1;
 	hero->pSystem = system;
 	cc->_pHeroTr = pDwarf->m_pTransform;
 #pragma endregion
@@ -172,6 +243,7 @@ bool MainScene::Load()
 	temp->m_pRenderer->m_pMaterial->m_pTexture[2] = CTexture2D::Find(L"Mask2.bmp");
 	temp->m_pRenderer->m_pMaterial->m_pTexture[3] = CTexture2D::Find(L"snow_mask2.png");
 	system->pBoxMaterial = temp->m_pRenderer->m_pMaterial;
+	CObject::CopyObject(pBox)->AddComponent<MirrorScript>()->pModelTr = pBox->m_pTransform;
 #pragma endregion
 
 
@@ -210,8 +282,6 @@ bool MainScene::Load()
 	pointLit->m_pRenderer->ChangeMaterial(pMtrl);
 	pointLit->m_pRenderer->ChangeMesh(CMesh::Find(L"Box001"));
 #pragma endregion
-
-	((Hero*)CObject::CopyObject(pDwarf)->GetComponent(typeid(Hero)))->state = 1;
 	
 
 	
@@ -223,6 +293,7 @@ bool MainScene::Load()
 	pPlane->AddComponent<Plane>();
 	((Plane*)pPlane->GetComponent(typeid(Plane)))->pSystem = system;
 	pPlaneModel->SetParent(pPlane);
+	CObject::CopyObject(pPlaneModel)->AddComponent<MirrorScript>()->pModelTr = pPlaneModel->m_pTransform;
 #pragma endregion
 
 

@@ -12,8 +12,8 @@ void System::Initialize()
 void System::Update()
 {
 	///*
-#define GRID_SIZE 50
-#define GRID_WIDTH 1
+#define GRID_SIZE 50.0f
+#define GRID_WIDTH 1.0f
 	for (int i = 0; i <= GRID_SIZE; i++)
 	{
 		// x축 그리드
@@ -30,39 +30,30 @@ void System::Update()
 	}
 	//*/
 
-	if (IsKeyUp(VK_SPACE))	FJRenderingEngine::SetWireFrame(!FJRenderingEngine::GetWireFrame());
-	if (IsKeyUp(VK_F4))		FJRenderingEngine::GetCullMode() == CULLMODE::CULL_NONE ? FJRenderingEngine::SetCullMode(CULLMODE::CULL_FRONT) : FJRenderingEngine::SetCullMode(CULLMODE::CULL_NONE);
 	if (IsKeyUp(VK_F6))		if (++timeCount == 4) timeCount = 0;
 	if (IsKeyUp(VK_F7))		if (++seasonCount == 3) seasonCount = 0;
 
 
-	// 배경색 설정.
-	if (FJRenderingEngine::GetWireFrame())
+	
+
+	if (timeCount == 0 && seasonCount == 2)
 	{
-		clearColor = DARKGRAY_COLOR;
+		clearColor = WINTER_COLOR;
+		// FOGCOLOR
+		pBoxMaterial->SetVector(4, WINTER_COLOR);
+		pTerrainMtrl->SetVector(4, WINTER_COLOR);
+		pTreeMtrl->SetVector(4, WINTER_COLOR);
+		pWindmillMtrl->SetVector(4, WINTER_COLOR);
 	}
 
 	else
 	{
-		if (timeCount == 0 && seasonCount == 2)
-		{
-			clearColor = WINTER_COLOR;
-			// FOGCOLOR
-			pBoxMaterial->SetVector(4, WINTER_COLOR);
-			pTerrainMtrl->SetVector(4, WINTER_COLOR);
-			pTreeMtrl->SetVector(4, WINTER_COLOR);
-			pWindmillMtrl->SetVector(4, WINTER_COLOR);
-		}
-
-		else
-		{
-			clearColor = clearColArr[timeCount];
-			// FOGCOLOR
-			pBoxMaterial->SetVector(4, clearColArr[timeCount]);
-			pTerrainMtrl->SetVector(4, clearColArr[timeCount]);
-			pTreeMtrl->SetVector(4, clearColArr[timeCount]);
-			pWindmillMtrl->SetVector(4, clearColArr[timeCount]);
-		}
+		clearColor = clearColArr[timeCount];
+		// FOGCOLOR
+		pBoxMaterial->SetVector(4, clearColArr[timeCount]);
+		pTerrainMtrl->SetVector(4, clearColArr[timeCount]);
+		pTreeMtrl->SetVector(4, clearColArr[timeCount]);
+		pWindmillMtrl->SetVector(4, clearColArr[timeCount]);
 	}
 
 	FJRenderingEngine::SetClearColor(clearColor);

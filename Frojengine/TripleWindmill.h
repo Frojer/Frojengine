@@ -10,6 +10,8 @@ public:
 
 	CObject* body;
 	CObject* wing[3];
+
+	bool isMirror;
 public:
 	virtual void Initialize() override;
 	virtual void Update() override;
