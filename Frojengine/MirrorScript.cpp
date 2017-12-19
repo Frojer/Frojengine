@@ -6,7 +6,7 @@ void MirrorScript::Initialize()
 
 }
 
-void SettingRenderer(list<CObject*> children)
+void MirrorScript::SettingRenderer(list<CObject*> children)
 {
 	FOR_STL(children)
 	{
@@ -14,7 +14,8 @@ void SettingRenderer(list<CObject*> children)
 		{
 			(*iter)->m_pRenderer->SetCounterClockwise(true);
 			(*iter)->m_pRenderer->SetStencilEnable(true);
-			(*iter)->m_pRenderer->m_stencilRef = 1;
+			if (pSystem->seasonCount == 2)	(*iter)->m_pRenderer->m_stencilRef = 2;
+			else							(*iter)->m_pRenderer->m_stencilRef = 1;
 			(*iter)->m_pRenderer->SetStencilFuncFront(COMPARISON_EQUAL);
 			(*iter)->m_pRenderer->SetStencilFuncBack(COMPARISON_EQUAL);
 		}
@@ -44,6 +45,16 @@ void MirrorScript::Update()
 	GetMyObject()->m_pTransform->SetRotationDegree(v);
 	XMStoreFloat3(&v, scale);
 	GetMyObject()->m_pTransform->m_vScale = v;
+
+	if (GetMyObject()->m_pRenderer != nullptr)
+	{
+		GetMyObject()->m_pRenderer->SetCounterClockwise(true);
+		GetMyObject()->m_pRenderer->SetStencilEnable(true);
+		if (pSystem->seasonCount == 2)	GetMyObject()->m_pRenderer->m_stencilRef = 2;
+		else							GetMyObject()->m_pRenderer->m_stencilRef = 1;
+		GetMyObject()->m_pRenderer->SetStencilFuncFront(COMPARISON_EQUAL);
+		GetMyObject()->m_pRenderer->SetStencilFuncBack(COMPARISON_EQUAL);
+	}
 
 	SettingRenderer(GetMyObject()->GetChildren());
 }

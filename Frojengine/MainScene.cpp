@@ -21,7 +21,7 @@ MainScene::~MainScene()
 
 bool MainScene::Load()
 {
-#define TREE_MAX_  100
+#define TREE_MAX_  50
 #define AUTUMN_COLOR VECTOR4(1.0f, 0.5f, 0.0f, 1.0f)
 
 	// 카메라 생성
@@ -49,7 +49,7 @@ bool MainScene::Load()
 	CObject* pTerrain = FileLoader::ObjectFileLoad(L"./Data/Terrain/terrain.x");
 	pTerrain->m_name = L"Terrain";
 	pTerrain->m_pTransform->m_vPos = VECTOR3(0, -0.0005f, 0);
-	pTerrain->m_pTransform->m_vScale = VECTOR3(128.0f, 0, 128.0f);
+	pTerrain->m_pTransform->m_vScale = VECTOR3(128.0f, 1.0f, 128.0f);
 
 	temp = pTerrain->GetChildren().back()->GetChildren().back();
 	temp->m_pRenderer->m_pMaterial->SetShader(CShader::Find(L"Winter"));
@@ -58,10 +58,28 @@ bool MainScene::Load()
 	temp->m_pRenderer->m_pMaterial->SetScalar(2, FOG_MIN);
 	temp->m_pRenderer->m_pMaterial->SetScalar(3, FOG_MAX);
 	temp->m_pRenderer->m_pMaterial->SetVector(3, AUTUMN_COLOR);
+	temp->m_pRenderer->SetDepthWrite(false);
 	system->pTerrainMtrl = temp->m_pRenderer->m_pMaterial;
 #pragma endregion
 
 
+	CObject* pLake = new CObject();
+	pLake->m_name = L"Lake";
+	pLake->AddComponent<Renderer>();
+	pLake->m_pRenderer->ChangeMesh(pTerrain->GetChildren().back()->GetChildren().back()->m_pRenderer->m_pMesh);
+	pLake->m_pRenderer->ChangeMaterial(new CMaterial(CShader::Find(L"StencilWrite")));
+	pLake->m_pRenderer->m_pMaterial->m_pTexture[0] = CTexture2D::Find(L"Lake_m.dds");
+	pLake->m_pRenderer->SetStencilEnable(true);
+	pLake->m_pRenderer->SetStencilFuncFront(COMPARISON_ALWAYS);
+	pLake->m_pRenderer->SetStencilPassOpFront(STENCIL_OP_REPLACE);
+	pLake->m_pRenderer->SetStencilFuncBack(COMPARISON_ALWAYS);
+	pLake->m_pRenderer->SetStencilPassOpBack(STENCIL_OP_REPLACE);
+	pLake->m_pRenderer->m_stencilRef = 1;
+	pLake->m_pRenderer->SetDepthWrite(false);
+	pLake->m_pTransform->SetPositionWorld(VECTOR3(5.0f, 0.001f, -15.0f));
+	pLake->m_pTransform->m_vScale = VECTOR3(16.0f, 1.0f, 16.0f);
+
+	MirrorScript* m;
 	
 #pragma region 나무 생성
 	CObject* pTree = FileLoader::ObjectFileLoad(L"./Data/Tree/tree.x");
@@ -88,12 +106,18 @@ bool MainScene::Load()
 
 		CObject* tree = CObject::CopyObject(pTree, pos);
 
-		CObject::CopyObject(tree)->AddComponent<MirrorScript>()->pModelTr = tree->m_pTransform;
+		temp = CObject::CopyObject(tree);
+		m = temp->AddComponent<MirrorScript>();
+		m->pModelTr = tree->m_pTransform;
+		m->pSystem = system;
 	}
 	
-	CObject::CopyObject(pTree)->AddComponent<MirrorScript>()->pModelTr = pTree->m_pTransform;
+	temp = CObject::CopyObject(pTree);
+	m = temp->AddComponent<MirrorScript>();
+	m->pModelTr = pTree->m_pTransform;
+	m->pSystem = system;
 #pragma endregion
-
+	
 
 
 #pragma region 풍차 생성
@@ -113,7 +137,9 @@ bool MainScene::Load()
 	wind->isMirror = false;
 
 	temp = CObject::CopyObject(pWindmill);
-	temp->AddComponent<MirrorScript>()->pModelTr = pWindmill->m_pTransform;
+	m = temp->AddComponent<MirrorScript>();
+	m->pModelTr = pWindmill->m_pTransform;
+	m->pSystem = system;
 	wind = (Windmill*)temp->GetComponent(typeid(Windmill));
 	wind->isMirror = true;
 
@@ -151,7 +177,9 @@ bool MainScene::Load()
 	tripWind->isMirror = false;
 	
 	temp = CObject::CopyObject(pTripleWindmill);
-	temp->AddComponent<MirrorScript>()->pModelTr = pTripleWindmill->m_pTransform;
+	m = temp->AddComponent<MirrorScript>();
+	m->pModelTr = pTripleWindmill->m_pTransform;
+	m->pSystem = system;
 	tripWind = (TripleWindmill*)temp->GetComponent(typeid(TripleWindmill));
 	pWindmillWing = CObject::CopyObject(pWindmillWing);
 	tripWind->wing[0] = pWindmillWing;
@@ -190,7 +218,9 @@ bool MainScene::Load()
 
 
 	temp = CObject::CopyObject(pTripleWindmill2);
-	temp->AddComponent<MirrorScript>()->pModelTr = pTripleWindmill2->m_pTransform;
+	m = temp->AddComponent<MirrorScript>();
+	m->pModelTr = pTripleWindmill2->m_pTransform;
+	m->pSystem = system;
 	tripWind2 = (TripleWindmill2*)temp->GetComponent(typeid(TripleWindmill2));
 	pWindmillWing = CObject::CopyObject(pWindmillWing);
 	tripWind2->wing[0] = pWindmillWing;
@@ -216,13 +246,15 @@ bool MainScene::Load()
 	pDwarf->m_name = L"Dwarf";
 	pDwarf->m_pTransform->m_vScale = VECTOR3(3, 3, 3);
 
-	CObject* pMirrorDwarf = CObject::CopyObject(pDwarf);
-	pMirrorDwarf->AddComponent<MirrorScript>()->pModelTr = pDwarf->m_pTransform;
-
 	Hero* hero = pDwarf->AddComponent<Hero>();
 	hero->state = 1;
 	hero->pSystem = system;
 	cc->_pHeroTr = pDwarf->m_pTransform;
+
+	CObject* pMirrorDwarf = CObject::CopyObject(pDwarf);
+	m = pMirrorDwarf->AddComponent<MirrorScript>();
+	m->pModelTr = pDwarf->m_pTransform;
+	m->pSystem = system;
 #pragma endregion
 
 
@@ -243,7 +275,11 @@ bool MainScene::Load()
 	temp->m_pRenderer->m_pMaterial->m_pTexture[2] = CTexture2D::Find(L"Mask2.bmp");
 	temp->m_pRenderer->m_pMaterial->m_pTexture[3] = CTexture2D::Find(L"snow_mask2.png");
 	system->pBoxMaterial = temp->m_pRenderer->m_pMaterial;
-	CObject::CopyObject(pBox)->AddComponent<MirrorScript>()->pModelTr = pBox->m_pTransform;
+
+	temp = CObject::CopyObject(pBox);
+	m = temp->AddComponent<MirrorScript>();
+	m->pModelTr = pBox->m_pTransform;
+	m->pSystem = system;
 #pragma endregion
 
 
@@ -281,6 +317,11 @@ bool MainScene::Load()
 	pMtrl->m_pTexture[0] = CTexture2D::Find(L"woodbox.bmp");
 	pointLit->m_pRenderer->ChangeMaterial(pMtrl);
 	pointLit->m_pRenderer->ChangeMesh(CMesh::Find(L"Box001"));
+
+	temp = CObject::CopyObject(pointLit);
+	m = temp->AddComponent<MirrorScript>();
+	m->pModelTr = pointLit->m_pTransform;
+	m->pSystem = system;
 #pragma endregion
 	
 
@@ -293,8 +334,25 @@ bool MainScene::Load()
 	pPlane->AddComponent<Plane>();
 	((Plane*)pPlane->GetComponent(typeid(Plane)))->pSystem = system;
 	pPlaneModel->SetParent(pPlane);
-	CObject::CopyObject(pPlaneModel)->AddComponent<MirrorScript>()->pModelTr = pPlaneModel->m_pTransform;
+	temp = CObject::CopyObject(pPlaneModel);
+	m = temp->AddComponent<MirrorScript>();
+	m->pModelTr = pPlaneModel->m_pTransform;
+	m->pSystem = system;
 #pragma endregion
+
+
+	CObject* pLakeCover = CObject::CopyObject(pLake);
+	pLakeCover->m_pRenderer->ChangeMaterial(new CMaterial(CShader::Find(L"Lake")));
+	pLakeCover->m_pRenderer->m_pMaterial->m_pTexture[0] = CTexture2D::Find(L"Water.jpg");
+	pLakeCover->m_pRenderer->m_pMaterial->m_pTexture[1] = CTexture2D::Find(L"Lake_w.jpg");
+	pLakeCover->m_pRenderer->m_pMaterial->m_pTexture[2] = CTexture2D::Find(L"Lake_m.dds");
+	pLakeCover->m_pRenderer->m_pMaterial->SetVector(0, VECTOR4(1.0f, 1.0f, 1.0f, 0.8f));
+	pLakeCover->m_pRenderer->m_pMaterial->SetVector(1, VECTOR4(1.0f, 1.0f, 1.0f, 1.0f));
+	pLakeCover->m_pRenderer->m_pMaterial->SetVector(2, VECTOR4(0.8f, 0.8f, 0.8f, 0.8f));
+	pLakeCover->m_pRenderer->m_pMaterial->SetScalar(0, 30.0f);
+	pLakeCover->m_pRenderer->m_pMaterial->SetScalar(2, FOG_MIN);
+	pLakeCover->m_pRenderer->m_pMaterial->SetScalar(3, FOG_MAX);
+	system->pLakeMtrl = pLakeCover->m_pRenderer->m_pMaterial;
 
 
 	// Clear할 색 설정

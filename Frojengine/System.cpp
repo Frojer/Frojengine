@@ -1,5 +1,16 @@
 #include "System.h"
 
+System::System()
+	: pBoxMaterial(nullptr), pTerrainMtrl(nullptr), pTreeMtrl(nullptr), pWindmillMtrl(nullptr), pLakeMtrl(nullptr), pDirectionalLight(nullptr)
+{
+
+}
+
+System::~System()
+{
+
+}
+
 void System::Initialize()
 {
 	clearColor = COLOR(0.0f, 0.0f, 0.0f, 0.0f);
@@ -40,20 +51,22 @@ void System::Update()
 	{
 		clearColor = WINTER_COLOR;
 		// FOGCOLOR
-		pBoxMaterial->SetVector(4, WINTER_COLOR);
-		pTerrainMtrl->SetVector(4, WINTER_COLOR);
-		pTreeMtrl->SetVector(4, WINTER_COLOR);
-		pWindmillMtrl->SetVector(4, WINTER_COLOR);
+		if (pBoxMaterial != nullptr)	pBoxMaterial->SetVector(4, WINTER_COLOR);
+		if (pTerrainMtrl != nullptr)	pTerrainMtrl->SetVector(4, WINTER_COLOR);
+		if (pTreeMtrl != nullptr)		pTreeMtrl->SetVector(4, WINTER_COLOR);
+		if (pWindmillMtrl != nullptr)	pWindmillMtrl->SetVector(4, WINTER_COLOR);
+		if (pLakeMtrl != nullptr)		pLakeMtrl->SetVector(3, WINTER_COLOR);
 	}
 
 	else
 	{
 		clearColor = clearColArr[timeCount];
 		// FOGCOLOR
-		pBoxMaterial->SetVector(4, clearColArr[timeCount]);
-		pTerrainMtrl->SetVector(4, clearColArr[timeCount]);
-		pTreeMtrl->SetVector(4, clearColArr[timeCount]);
-		pWindmillMtrl->SetVector(4, clearColArr[timeCount]);
+		if (pBoxMaterial != nullptr)	pBoxMaterial->SetVector(4, clearColArr[timeCount]);
+		if (pTerrainMtrl != nullptr)	pTerrainMtrl->SetVector(4, clearColArr[timeCount]);
+		if (pTreeMtrl != nullptr)		pTreeMtrl->SetVector(4, clearColArr[timeCount]);
+		if (pWindmillMtrl != nullptr)	pWindmillMtrl->SetVector(4, clearColArr[timeCount]);
+		if (pLakeMtrl != nullptr)		pLakeMtrl->SetVector(3, clearColArr[timeCount]);
 	}
 
 	FJRenderingEngine::SetClearColor(clearColor);
@@ -63,6 +76,7 @@ void System::Update()
 
 	if (seasonCount == 2)
 	{
+		if (pLakeMtrl != nullptr)		pLakeMtrl->SetVector(0, VECTOR4(1.0f, 1.0f, 1.0f, 1.0f));
 		if (cold > 0.0f)
 		{
 			cold -= 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
@@ -76,6 +90,7 @@ void System::Update()
 
 	else
 	{
+		if (pLakeMtrl != nullptr)		pLakeMtrl->SetVector(0, VECTOR4(1.0f, 1.0f, 1.0f, 0.8f));
 		if (cold < 1.0f)
 		{
 			cold += 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime;
@@ -89,10 +104,11 @@ void System::Update()
 
 
 
-	pBoxMaterial->SetScalar(1, seasonCount);
-	pTerrainMtrl->SetScalar(1, seasonCount);
-	pTreeMtrl->SetScalar(1, seasonCount);
-	pWindmillMtrl->SetScalar(1, seasonCount);
+	if (pBoxMaterial != nullptr)	pBoxMaterial->SetScalar(1, seasonCount);
+	if (pTerrainMtrl != nullptr)	pTerrainMtrl->SetScalar(1, seasonCount);
+	if (pTreeMtrl != nullptr)		pTreeMtrl->SetScalar(1, seasonCount);
+	if (pWindmillMtrl != nullptr)	pWindmillMtrl->SetScalar(1, seasonCount);
+	if (pLakeMtrl != nullptr)		pLakeMtrl->SetScalar(1, seasonCount);
 
 	pDirectionalLight->m_diffuse = dirLightColArr[timeCount];
 	

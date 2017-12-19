@@ -35,9 +35,13 @@ public:
 	CMaterial* pTerrainMtrl;
 	CMaterial* pTreeMtrl;
 	CMaterial* pWindmillMtrl;
+	CMaterial* pLakeMtrl;
 	Light* pDirectionalLight;
 
 public:
+	System();
+	virtual ~System();
+
 	virtual void Initialize() override;
 	virtual void Update() override;
 };

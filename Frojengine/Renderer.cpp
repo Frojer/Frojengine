@@ -1,7 +1,7 @@
 #include "Renderer.h"
 
 Renderer::Renderer()
-	: _RSState(0), _DSState(0), m_stencilRef(0), m_pMesh(nullptr), m_pMaterial(nullptr)
+	: _RSState(0), _DSState(0), _BlendState(BS_ADD), m_stencilRef(0), m_pMesh(nullptr), m_pMaterial(nullptr)
 {
 	m_name = L"Renderer";
 	_type = COMPONENT_TYPE_RENDER;
@@ -30,6 +30,7 @@ void Renderer::Render()
 
 		FJRenderingEngine::SetRSState(_RSState);
 		FJRenderingEngine::SetDSState(_DSState, m_stencilRef);
+		FJRenderingEngine::SetBlendState(_BlendState);
 
 		//±×¸®±â! Render a triangle ¡Ú
 		_pDXDC->DrawIndexed(m_pMesh->m_indics.size() * 3, 0, 0);
@@ -89,7 +90,7 @@ void Renderer::SetClockwise(bool i_bSet)
 
 bool Renderer::GetClockwise()
 {
-	return _RSState & 0x10 == RS_CLOCKWISE;
+	return (_RSState & 0x10) == RS_CLOCKWISE;
 }
 
 void Renderer::SetCounterClockwise(bool i_bSet)
@@ -406,4 +407,9 @@ void Renderer::SetStencilFuncBack(COMPARISON_FUNC func)
 		_DSState |= DS_STENCIL_BACK_COMPARISON_ALWAYS;
 		break;
 	}
+}
+
+void Renderer::SetBlendState(BLEND_STATE bs)
+{
+	_BlendState = bs;
 }

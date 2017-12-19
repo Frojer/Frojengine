@@ -289,6 +289,11 @@ void FJSystemEngine::LoadData()
 	// 지형
 	CTexture2D::CreateTexture2D(L"./Data/Terrain/mask3.png");
 
+	// 호수
+	CTexture2D::CreateTexture2D(L"./Data/Lake/Lake_m.dds");
+	CTexture2D::CreateTexture2D(L"./Data/Lake/Lake_w.jpg");
+	CTexture2D::CreateTexture2D(L"./Data/Lake/Water.jpg");
+
 	// 나무
 	CTexture2D::CreateTexture2D(L"./Data/Tree/tree_mask3.png");
 
@@ -357,6 +362,22 @@ void FJSystemEngine::LoadData()
 	pShader->m_name = L"Winter";
 	pShader->_countTexture = 2;
 	pShader->_countVector = 5;
+	pShader->_countScalar = 4;
+	pShader->_useLight = true;
+	CreateShaderBuffer(pShader);
+
+
+	pShader = CShader::CreateShader(L"./fx/StencilWrite.fx");
+	pShader->m_name = L"StencilWrite";
+	pShader->_countTexture = 1;
+	pShader->_useLight = false;
+	CreateShaderBuffer(pShader);
+
+
+	pShader = CShader::CreateShader(L"./fx/Lake.fx");
+	pShader->m_name = L"Lake";
+	pShader->_countTexture = 3;
+	pShader->_countVector = 4;
 	pShader->_countScalar = 4;
 	pShader->_useLight = true;
 	CreateShaderBuffer(pShader);

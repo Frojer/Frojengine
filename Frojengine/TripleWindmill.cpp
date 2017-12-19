@@ -19,7 +19,7 @@ void TripleWindmill::Initialize()
 
 	body->m_pTransform->m_vScale = VECTOR3(1.0f, 2.0f, 1.0f);
 
-	wing[0]->m_pTransform->m_vPos = VECTOR3(0.0f, 2.0f, -1.0f);
+	wing[0]->m_pTransform->m_vPos = VECTOR3(0.0f, 3.0f, -1.0f);
 	wing[0]->m_pTransform->m_vScale = VECTOR3(1.5f, 1.5f, 1.5f);
 	wing[0]->SetParent(GetMyObject());
 	wing[1]->m_pTransform->m_vPos = VECTOR3(0.0f, 0.0f, -0.5f);

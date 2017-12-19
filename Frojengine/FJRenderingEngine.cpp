@@ -923,8 +923,6 @@ void FJRenderingEngine::BlendStateCreate()
 }
 
 
-
-
 ////////////////////////////////////////////////////////////////////////////// 
 //
 // ºí·»µù »óÅÂ °´Ã¼ Á¦°Å : ¾îÇÃ¸®ÄÉÀÌ¼Ç Á¾·á½Ã È£Ãâ.
@@ -997,7 +995,7 @@ void FJRenderingEngine::ClearBackBuffer()
 {
 	// ·»´õÅ¸°Ù Áö¿ì±â
 	_pDXDC->ClearRenderTargetView(_pRTView, (float*)&_clearCol);
-	_pDXDC->ClearDepthStencilView(_pDSView, D3D11_CLEAR_DEPTH, 1.0f, 0);	//±íÀÌ/½ºÅÙ½Ç Áö¿ì±â.
+	_pDXDC->ClearDepthStencilView(_pDSView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);	//±íÀÌ/½ºÅÙ½Ç Áö¿ì±â.
 }
 
 
@@ -1057,6 +1055,13 @@ void FJRenderingEngine::SetDSState(DWORD flag, UINT stencilRef)
 	}
 
 	pRenderer->_pDXDC->OMSetDepthStencilState(pRenderer->_DSStateMap[flag], stencilRef);
+}
+
+void FJRenderingEngine::SetBlendState(BLEND_STATE bs)
+{
+	FJRenderingEngine* pRenderer = GetInstance();
+
+	pRenderer->_pDXDC->OMSetBlendState(pRenderer->_pBState[bs], 0, 0xFFFFFFFF);
 }
 
 void FJRenderingEngine::SetClearColor(COLOR& i_col)

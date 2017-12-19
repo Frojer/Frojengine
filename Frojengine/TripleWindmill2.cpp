@@ -20,7 +20,7 @@ void TripleWindmill2::Initialize()
 
 	if (isMirror)
 	{
-		wing[0]->m_pTransform->m_vPos = VECTOR3(0.0f, 2.0f, -1.0f);
+		wing[0]->m_pTransform->m_vPos = VECTOR3(0.0f, 3.0f, -1.0f);
 		wing[0]->m_pTransform->m_vScale = VECTOR3(1.5f, 1.5f, 1.5f);
 		wing[0]->SetParent(GetMyObject());
 		wing[1]->m_pTransform->m_vPos = VECTOR3(-1.0f, 4.0f, 0.0f);
@@ -30,13 +30,13 @@ void TripleWindmill2::Initialize()
 		wing[2]->m_pTransform->m_vScale = VECTOR3(0.8f, 0.8f, 0.8f);
 		wing[2]->SetParent(GetMyObject());
 
-		wing[1]->m_pTransform->m_vRot.y = -XM_PI * 0.5f;
-		wing[2]->m_pTransform->m_vRot.y = XM_PI * 0.75f;
+		wing[1]->m_pTransform->m_vRot.y = XM_PI * 0.5f;
+		wing[2]->m_pTransform->m_vRot.y = -XM_PI * 0.75f;
 	}
 
 	else
 	{
-		wing[0]->m_pTransform->m_vPos = VECTOR3(0.0f, 2.0f, -1.0f);
+		wing[0]->m_pTransform->m_vPos = VECTOR3(0.0f, 3.0f, -1.0f);
 		wing[0]->m_pTransform->m_vScale = VECTOR3(1.5f, 1.5f, 1.5f);
 		wing[0]->SetParent(GetMyObject());
 		wing[1]->m_pTransform->m_vPos = VECTOR3(1.0f, 4.0f, 0.0f);

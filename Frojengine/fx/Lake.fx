@@ -31,7 +31,6 @@ cbuffer ConstBuffer : register(b2)
     float4 mtrlDiffuse;
     float4 mtrlAmbient;
     float4 mtrlSpecular;
-    float4 autumnColor;
     float4 fogColor;
     float mtrlPower;
     int seasonIndex;
@@ -47,7 +46,8 @@ cbuffer ConstBuffer : register(b2)
 
 //레지스터 직접 지정. (기본값은 t0)
 Texture2D texDiffuse : register(t0);
-Texture2D texWinterMask : register(t1);
+Texture2D texWinter : register(t1);
+Texture2D texMask : register(t2);
 
 //텍스처 셈플러. (엔진지정)
 SamplerState smpLinear;
@@ -83,18 +83,18 @@ float4 LightCalc(float4 nrm, float4 pos)
         {
             switch (light[i].lightType)
             {
-			    // Direction Light
+			// Direction Light
                 case 0:
                     L = float4(light[i].direction, 0);
 
-			        //뷰공간으로 정보를 변환.
+    			//뷰공간으로 정보를 변환.
                     L = mul(L, mView);
 
                     diff += max(dot(N, L), 0) * light[i].diffuse * mtrlDiffuse;
                     diff += light[i].ambient * mtrlAmbient;
                     break;
 			
-			    // Point Light
+			// Point Light
                 case 1:
                     lightPos = mul(float4(light[i].position, 1), mView);
                     dir = normalize(lightPos - pos);
@@ -171,11 +171,14 @@ float4 FogCalc(float depth)
     float fogWidth = fogDepthMax - fogDepthMin;
     float fog = (fogWidth - (depth - fogDepthMin)) / fogWidth;
 
-    if (fog < 0)        return 0;
-    else if (fog > 1)   return 1;
+    if (fog < 0)
+        return 0;
+    else if (fog > 1)
+        return 1;
 	
     return fog;
 }
+
 
 
 
@@ -245,32 +248,29 @@ v2p VS_Main(
 float4 PS_Main(v2p i) : SV_TARGET //[출력] 색상.(필수), "렌더타겟" 으로 출력합니다.
 {
     float4 tex = texDiffuse.Sample(smpLinear, i.uv);
-    float4 winterMask = texWinterMask.Sample(smpLinear, i.uv);
+    float4 winter = texWinter.Sample(smpLinear, i.uv);
+    float4 mask = texMask.Sample(smpLinear, i.uv);
     float4 diff;
+
+    clip(mask.r < 0.3f ? -1 : 1);
     
     switch (seasonIndex)
     {
         case 0:
-            diff = tex;
-            break;
-	
         case 1:
-            diff = tex * autumnColor;
-            diff *= 1.5f;
+            diff = tex;
             break;
 
         case 2:
-            diff = ((tex * (1 - winterMask)) + winterMask);
+            diff = winter;
             break;
     }
-
+    
 
     diff *= i.col * LightCalc(i.nrm3d, i.pos3d);
     diff += SpecLight(i.pos3d, i.nrm3d);
     
-    diff.a = tex.a;
-
-    clip(diff.a < 0.3f ? -1 : 1);
+    diff.a = mask.r * i.col.a;
 
     float f = FogCalc(distance(0, i.pos3d));
 

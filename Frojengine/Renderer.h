@@ -2,6 +2,8 @@
 
 #include "Frojengine.h"
 
+enum BLEND_STATE;
+
 enum CULL_MODE
 {
 	CULL_NONE = 0x00,
@@ -38,6 +40,7 @@ class Renderer : public Component, private Device
 private:
 	byte _RSState;
 	DWORD _DSState;
+	BLEND_STATE _BlendState;
 
 public:
 	UINT m_stencilRef;
@@ -80,4 +83,6 @@ public:
 	void SetStencilDepthFailOpBack(STENCIL_OP op);
 	void SetStencilPassOpBack(STENCIL_OP op);
 	void SetStencilFuncBack(COMPARISON_FUNC func);
+
+	void SetBlendState(BLEND_STATE bs);
 };
