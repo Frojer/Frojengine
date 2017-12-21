@@ -54,26 +54,29 @@ void CScene::Initialize()
 
 void CScene::Update()
 {
-	auto iter = _listObjBk.begin();
-	while (iter != _listObjBk.end())
+	FOR_STL(_listObjBk)
 	{
-		(*(iter++))->Update();
+		if (!(*(iter))->GetEnable())
+			continue;
+
+		(*(iter))->Update();
 	}
 
 	_listObjBk = _listObj;
 
-	iter = _listObjBk.begin();
-	while (iter != _listObjBk.end())
+	FOR_STL(_listObjBk)
 	{
-		(*(iter++))->AfterUpdate();
+		if (!(*(iter))->GetEnable())
+			continue;
+
+		(*(iter))->AfterUpdate();
 	}
 
 	_listObjBk = _listObj;
 
-	iter = _listObj.begin();
-	while (iter != _listObj.end())
+	FOR_STL(_listObj)
 	{
-		ClearWasteBin(iter++);
+		ClearWasteBin(iter);
 	}
 }
 
@@ -105,6 +108,9 @@ void CScene::Render()
 
 			FOR_STL(_listObj)
 			{
+				if (!(*(iter))->GetEnable())
+					continue;
+
 				(*(iter))->Render();
 			}
 		}

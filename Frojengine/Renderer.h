@@ -35,7 +35,7 @@ enum COMPARISON_FUNC
 	COMPARISON_ALWAYS
 };
 
-class Renderer : public Component, private Device
+class Renderer : public Behaviour, private Device
 {
 private:
 	byte _RSState;

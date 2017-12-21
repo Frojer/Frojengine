@@ -10,6 +10,8 @@ class CObject : public IObject
 {
 private:
 	bool _bDead;
+	bool _bEnable;
+
 	static list<CObject*> _dataList;
 
 protected:
@@ -90,6 +92,9 @@ public:
 
 	Component* GetComponent(const type_info& type);
 	list<Component*> GetComponents();
+
+	void SetEnable(bool enable);
+	bool GetEnable();
 
 	static CObject* Find(unsigned int id);
 	static CObject* FindModel(wstring name);

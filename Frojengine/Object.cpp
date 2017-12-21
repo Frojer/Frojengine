@@ -6,13 +6,13 @@
 list<CObject*> CObject::_dataList;
 
 CObject::CObject(bool isData)
-	: IObject(isData), _bDead(false), _pParent(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
+	: IObject(isData), _bDead(false), _bEnable(true), _pParent(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
 {
 	AddComponent<Transform>();
 }
 
 CObject::CObject()
-	: _bDead(false), _pParent(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
+	: _bDead(false), _bEnable(true), _pParent(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
 {
 	AddComponent<Transform>();
 
@@ -20,7 +20,7 @@ CObject::CObject()
 }
 
 CObject::CObject(VECTOR3& pos, VECTOR3& rot, VECTOR3& scale)
-	: _bDead(false), _pParent(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
+	: _bDead(false), _bEnable(true), _pParent(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
 {
 	AddComponent<Transform>();
 
@@ -184,6 +184,18 @@ Component* CObject::GetComponent(const type_info& type)
 list<Component*> CObject::GetComponents()
 {
 	return _components;
+}
+
+
+void CObject::SetEnable(bool enable)
+{
+	_bEnable = enable;
+}
+
+
+bool CObject::GetEnable()
+{
+	return _bEnable;
 }
 
 
