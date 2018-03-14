@@ -1,6 +1,7 @@
 #include "FJSystemEngine.h"
 
 #include "MainScene.h"
+#include "AnimScene.h"
 
 SystemSetting g_setting;
 
@@ -390,7 +391,7 @@ void FJSystemEngine::LoadData()
 	//==========================================
 	// Scene 생성 후 SceneManager 에게 넣어준다
 	//==========================================
-	pScene = new MainScene();
+	pScene = new AnimScene();
 
 	pSM->AddScene(pScene);
 
@@ -419,11 +420,10 @@ void FJSystemEngine::Run()
 		// 장면 그리기 시작.. 
 		//-------------------------------
 
-		SceneManager::pCurrentScene->Update();
-
 		//렌더타겟(백버퍼) 지우기.. 
 		_pRenderer->ClearBackBuffer();
 
+		SceneManager::pCurrentScene->Update();
 		SceneManager::pCurrentScene->Render();
 
 		//-------------------------------

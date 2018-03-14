@@ -56,9 +56,6 @@ void CScene::Update()
 {
 	FOR_STL(_listObjBk)
 	{
-		if (!(*(iter))->GetEnable())
-			continue;
-
 		(*(iter))->Update();
 	}
 
@@ -66,9 +63,6 @@ void CScene::Update()
 
 	FOR_STL(_listObjBk)
 	{
-		if (!(*(iter))->GetEnable())
-			continue;
-
 		(*(iter))->AfterUpdate();
 	}
 
@@ -108,9 +102,6 @@ void CScene::Render()
 
 			FOR_STL(_listObj)
 			{
-				if (!(*(iter))->GetEnable())
-					continue;
-
 				(*(iter))->Render();
 			}
 		}

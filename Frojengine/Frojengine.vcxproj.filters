@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Frojengine">
       <UniqueIdentifier>{c7ac5f48-e74c-48f3-99bc-62168699d0bb}</UniqueIdentifier>
     </Filter>
@@ -55,6 +47,26 @@
     <Filter Include="Frojengine\Component\Source File">
       <UniqueIdentifier>{af83611a-2b64-4815-b6b4-2d17246e7bdd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tri-World">
+      <UniqueIdentifier>{7bd6848a-ac77-438b-8b57-c0840ed6db35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tri-World\소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Tri-World\헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Anim-World">
+      <UniqueIdentifier>{25c52733-bdbc-44c1-b05f-e6a1bb07182f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Anim-World\소스 파일">
+      <UniqueIdentifier>{0fe019a3-f597-4ac1-8f82-45923f574107}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Anim-World\헤더 파일">
+      <UniqueIdentifier>{cb159a97-b5fb-44da-ad97-4baf864ed078}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FJSystemEngine.cpp">
@@ -79,10 +91,10 @@
       <Filter>Frojengine\Object\Source File</Filter>
     </ClCompile>
     <ClCompile Include="MainScene.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Tri-World\소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Hero.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Tri-World\소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Frojengine\Resource Manager\Source File</Filter>
@@ -124,14 +136,14 @@
       <Filter>Frojengine\Component\Source File</Filter>
     </ClCompile>
     <ClCompile Include="System.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Tri-World\소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Template.cpp" />
     <ClCompile Include="Windmill.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Tri-World\소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Plane.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Tri-World\소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>Frojengine\Component\Source File</Filter>
@@ -140,16 +152,22 @@
       <Filter>Frojengine\System\Source File</Filter>
     </ClCompile>
     <ClCompile Include="CameraControl.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Tri-World\소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="TripleWindmill.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Tri-World\소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="TripleWindmill2.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Tri-World\소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="MirrorScript.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Tri-World\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimScene.cpp">
+      <Filter>Anim-World\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="AWSystem.cpp">
+      <Filter>Anim-World\소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -178,10 +196,10 @@
       <Filter>Frojengine\Object\Header File</Filter>
     </ClInclude>
     <ClInclude Include="MainScene.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Tri-World\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Hero.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Tri-World\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="IObject.h">
       <Filter>Frojengine\Object\Header File</Filter>
@@ -229,17 +247,17 @@
       <Filter>Frojengine\Component\Header File</Filter>
     </ClInclude>
     <ClInclude Include="System.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Tri-World\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Template.h" />
     <ClInclude Include="Object.h">
       <Filter>Frojengine\Object\Header File</Filter>
     </ClInclude>
     <ClInclude Include="Windmill.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Tri-World\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Plane.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Tri-World\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>Frojengine\Component\Header File</Filter>
@@ -248,19 +266,25 @@
       <Filter>Frojengine\System\Header File</Filter>
     </ClInclude>
     <ClInclude Include="CameraControl.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Tri-World\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CustomComponent.h">
       <Filter>Frojengine\Object</Filter>
     </ClInclude>
     <ClInclude Include="TripleWindmill.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Tri-World\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="TripleWindmill2.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Tri-World\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="MirrorScript.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Tri-World\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimScene.h">
+      <Filter>Anim-World\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="AWSystem.h">
+      <Filter>Anim-World\헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

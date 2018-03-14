@@ -70,6 +70,9 @@ void CObject::Initialize()
 
 void CObject::Update()
 {
+	if (!GetEnable())
+		return;
+
 	FOR_STL(_components)
 	{
 		if (CheckComponentType((*iter)->_type, COMPONENT_TYPE_UPDATE))
@@ -88,6 +91,9 @@ void CObject::Update()
 
 void CObject::AfterUpdate()
 {
+	if (!GetEnable())
+		return;
+
 	FOR_STL(_components)
 	{
 		if (CheckComponentType((*iter)->_type, COMPONENT_TYPE_AFTERUPDATE))
@@ -105,6 +111,9 @@ void CObject::AfterUpdate()
 
 void CObject::Render()
 {
+	if (!GetEnable())
+		return;
+
 	FOR_STL(_components)
 	{
 		if (CheckComponentType((*iter)->_type, COMPONENT_TYPE_RENDER))

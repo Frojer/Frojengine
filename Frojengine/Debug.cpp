@@ -83,6 +83,10 @@ void Debug::DrawLine(VECTOR start, VECTOR end, COLOR col)
 	_pLineMtrl->UpdateConstantBuffer(XMMatrixIdentity());
 	_pLineMtrl->Render();
 
+	FJRenderingEngine::SetRSState(0);
+	FJRenderingEngine::SetDSState(0, 0);
+	FJRenderingEngine::SetBlendState(BS_ADD);
+
 	_pDXDC->Draw(2, 0);
 #endif
 }
