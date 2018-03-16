@@ -4,7 +4,7 @@
 
 bool AnimScene::Load()
 {
-	CObject* pCam = new CObject;
+	CObject* pCam = new CObject(VECTOR3(0.0f, 10.0f, -5.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f));
 	pCam->m_name = L"Camera";
 	Camera* c = pCam->AddComponent<Camera>();
 	CameraControl* cc = pCam->AddComponent<CameraControl>();

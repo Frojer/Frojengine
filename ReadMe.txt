@@ -7,7 +7,7 @@
 2.  컴포넌트 추가시 "CustomComponent.h"에 자신이 추가한 컴포넌트의 헤더를 넣고 "Object.cpp"의 CObject::CopyObject(const CObject* origin) (line : 251) 함수 안에 자신의 컴포넌트를
     else if (ti == typeid(YourComponent))
     {
-        cp = obj->AddComponent<Renderer>();
+        cp = obj->AddComponent<YourComponent>();
         memcpy_s((char*)cp + sizeof(Component), COPY_SIZE(YourComponent), (char*)(*iter) + sizeof(Component), COPY_SIZE(YourComponent));
     }
     형식으로 추가해야함

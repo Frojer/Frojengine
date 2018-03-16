@@ -35,4 +35,6 @@ void AWSystem::Update()
 		Debug::DrawLine(VECTOR3(-(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH), -(GRID_SIZE * GRID_WIDTH / 2), 0), VECTOR3(-(GRID_SIZE * GRID_WIDTH / 2) + (i * GRID_WIDTH), (GRID_SIZE * GRID_WIDTH / 2), 0), COLOR(0.3f, 0.3f, 0.3f, 1));
 	}
 	//*/
+
+	if (IsKeyUp(VK_F8))		SceneManager::GetInstance()->LoadScene((UINT)1);
 }

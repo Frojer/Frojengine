@@ -205,7 +205,7 @@ bool FJRenderingEngine::CreateRenderTarget()
 	// 벡버퍼 획득.
 	ID3D11Texture2D *pBackBuffer;
 	
-	hr = _pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);		// 백버퍼 얻기, 2D 텍스쳐 행태, 화면출력용
+	hr = _pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);		// 백버퍼 얻기, 2D 텍스쳐 형태, 화면출력용
 	if (FAILED(hr))
 		return false;
 

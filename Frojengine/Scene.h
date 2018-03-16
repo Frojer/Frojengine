@@ -38,6 +38,7 @@ public:
 	
 	void Initialize();
 
+	void StateUpdate();
 	void Update();
 	void Render();
 

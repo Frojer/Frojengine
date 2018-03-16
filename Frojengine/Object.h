@@ -9,8 +9,9 @@ class Renderer;
 class CObject : public IObject
 {
 private:
-	bool _bDead;
-	bool _bEnable;
+	// Dead Enable EnableCheck
+	// 0    0      0           00000
+	unsigned char _state;
 
 	static list<CObject*> _dataList;
 
@@ -28,6 +29,8 @@ private:
 	CObject& operator= (const CObject& obj) = delete;
 
 	static CObject* FindChildList(unsigned int id, list<CObject*> childList);
+
+	void StateUpdate();
 
 protected:
 	void Update();

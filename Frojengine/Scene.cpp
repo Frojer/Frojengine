@@ -19,7 +19,7 @@ CScene::~CScene()
 
 void CScene::ClearWasteBin(list<CObject*>::iterator i_iter)
 {
-	if ((*i_iter)->_bDead)
+	if (((*i_iter)->_state & 0x80) == 0x80)
 	{
 		delete (*i_iter);
 		(*i_iter) = nullptr;
@@ -52,8 +52,29 @@ void CScene::Initialize()
 
 
 
+void CScene::StateUpdate()
+{
+	auto iter = _listObj.begin();
+	while (iter != _listObj.end())
+	{
+		(*(iter++))->StateUpdate();
+	}
+}
+
+
+
 void CScene::Update()
 {
+	// Initialize
+	_listObjBk = _listObj;
+
+	FOR_STL(_listObjBk)
+	{
+		(*(iter))->Initialize();
+	}
+
+	_listObjBk = _listObj;
+	
 	FOR_STL(_listObjBk)
 	{
 		(*(iter))->Update();
@@ -118,6 +139,9 @@ void CScene::Release()
 		(*iter) = nullptr;
 		_listObj.erase(iter++);
 	}
+
+	_listObjBk.clear();
+	_vecCam.clear();
 }
 
 

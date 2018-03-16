@@ -6,13 +6,13 @@
 list<CObject*> CObject::_dataList;
 
 CObject::CObject(bool isData)
-	: IObject(isData), _bDead(false), _bEnable(true), _pParent(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
+	: IObject(isData), _state(0x60), _pParent(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
 {
 	AddComponent<Transform>();
 }
 
 CObject::CObject()
-	: _bDead(false), _bEnable(true), _pParent(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
+	: _state(0x60), _pParent(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
 {
 	AddComponent<Transform>();
 
@@ -20,7 +20,7 @@ CObject::CObject()
 }
 
 CObject::CObject(VECTOR3& pos, VECTOR3& rot, VECTOR3& scale)
-	: _bDead(false), _bEnable(true), _pParent(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
+	: _state(0x60), _pParent(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
 {
 	AddComponent<Transform>();
 
@@ -50,13 +50,30 @@ CObject::~CObject()
 }
 
 
+void CObject::StateUpdate()
+{
+	// Enable State Check
+	_state &= 0xBF;
+	_state |= ((_state & 0x20) == 0x20) ? 0x40 : 0x00;
+
+	FOR_STL(_childList)
+	{
+		(*iter)->Initialize();
+	}
+}
+
+
 void CObject::Initialize()
 {
+	if (!GetEnable())
+		return;
+	
 	FOR_STL(_components)
 	{
-		if (CheckComponentType((*iter)->_type, COMPONENT_TYPE_UPDATE))
+		if (!IsInitialize((*iter)->_check))
 		{
 			(*iter)->Initialize();
+			(*iter)->_check |= 0x80;
 		}
 	}
 
@@ -131,7 +148,7 @@ void CObject::Render()
 
 void CObject::Destroy()
 {
-	_bDead = true;
+	_state |= 0x80;
 }
 
 
@@ -198,13 +215,14 @@ list<Component*> CObject::GetComponents()
 
 void CObject::SetEnable(bool enable)
 {
-	_bEnable = enable;
+	_state &= 0xDF;	
+	_state |= (enable ? 0x20 : 0x00);
 }
 
 
 bool CObject::GetEnable()
 {
-	return _bEnable;
+	return ((_state & 0x40) == 0x40);
 }
 
 
@@ -351,6 +369,12 @@ CObject* CObject::CopyObject(const CObject* origin)
 		{
 			cp = obj->AddComponent<MirrorScript>();
 			memcpy_s((char*)cp + sizeof(Component), COPY_SIZE(MirrorScript), (char*)(*iter) + sizeof(Component), COPY_SIZE(MirrorScript));
+		}
+
+		else if (ti == typeid(AWSystem))
+		{
+			cp = obj->AddComponent<AWSystem>();
+			memcpy_s((char*)cp + sizeof(Component), COPY_SIZE(AWSystem), (char*)(*iter) + sizeof(Component), COPY_SIZE(AWSystem));
 		}
 	}
 

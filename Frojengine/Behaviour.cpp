@@ -2,7 +2,7 @@
 
 Behaviour::Behaviour()
 {
-	_type = COMPONENT_TYPE_INITIALIZE | COMPONENT_TYPE_UPDATE;
+	_type = COMPONENT_TYPE_UPDATE;
 	_bEnable = 0x11;
 }
 

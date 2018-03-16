@@ -260,6 +260,7 @@ void FJSystemEngine::CreateShaderBuffer(CShader* i_pShader)
 	totalSize = (i_pShader->_countMatrix * 4) + i_pShader->_countVector + ((i_pShader->_countScalar / 4) + (i_pShader->_countScalar % 4 == 0 ? 0 : 1));
 	if (totalSize != 0)
 	{
+		// 그래픽 메모리를 사용할것이기 때문에 16바이트 정렬된 메모리로 할당 받는다 ( aligned_malloc(), aligned_free() )
 		pData = (VECTOR*)_aligned_malloc(sizeof(VECTOR) * totalSize, 16);
 		//pData = new VECTOR[totalSize];
 		ZeroMemory(pData, sizeof(VECTOR) * totalSize);
@@ -392,7 +393,9 @@ void FJSystemEngine::LoadData()
 	// Scene 생성 후 SceneManager 에게 넣어준다
 	//==========================================
 	pScene = new AnimScene();
+	pSM->AddScene(pScene);
 
+	pScene = new MainScene();
 	pSM->AddScene(pScene);
 
 	//===========================================
@@ -422,6 +425,8 @@ void FJSystemEngine::Run()
 
 		//렌더타겟(백버퍼) 지우기.. 
 		_pRenderer->ClearBackBuffer();
+
+		SceneManager::pCurrentScene->StateUpdate();
 
 		SceneManager::pCurrentScene->Update();
 		SceneManager::pCurrentScene->Render();

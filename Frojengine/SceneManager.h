@@ -19,17 +19,21 @@ public:
 private:
 	SceneManager();
 
+	void AddScene(CScene* i_pScene);
+
+	void ChangeScene();
+	bool ChangeAsyncScene(LPCWSTR i_sceneName);
+	bool ChangeAsyncScene(int i_sceneNumber);
+
 public:
 	~SceneManager();
 
 	static SceneManager* GetInstance();
 
-	void AddScene(CScene* i_pScene);
-
 	bool LoadScene(LPCWSTR i_sceneName);
 	bool LoadScene(UINT i_sceneNumber);
 
-	void ChangeScene();
-	bool ChangeAsyncScene(LPCWSTR i_sceneName);
-	bool ChangeAsyncScene(int i_sceneNumber);
+	// void FJSystemEngine::LoadData()
+	// void FJSystemEngine::Run()
+	friend class FJSystemEngine;
 };

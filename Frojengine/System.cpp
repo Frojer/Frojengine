@@ -44,6 +44,7 @@ void System::Update()
 	if (IsKeyUp(VK_F6))		if (++timeCount == 4) timeCount = 0;
 	if (IsKeyUp(VK_F7))		if (++seasonCount == 3) seasonCount = 0;
 
+	if (IsKeyUp(VK_F8))		SceneManager::GetInstance()->LoadScene((UINT)0);
 
 	
 
