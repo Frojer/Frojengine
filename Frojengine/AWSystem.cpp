@@ -1,4 +1,5 @@
 #include "AWSystem.h"
+#include "FJMath.h"
 
 AWSystem::AWSystem()
 {
@@ -37,4 +38,20 @@ void AWSystem::Update()
 	//*/
 
 	if (IsKeyUp(VK_F8))		SceneManager::GetInstance()->LoadScene((UINT)1);
+
+	// 이동
+	if (IsKeyDown('W'))		pBoxTr->Translate(VECTOR3(0.0f, 10.0f, 0.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
+	if (IsKeyDown('S'))		pBoxTr->Translate(VECTOR3(0.0f, -10.0f, 0.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
+	if (IsKeyDown('A'))		pBoxTr->Translate(VECTOR3(-10.0f, 0.0f, 0.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
+	if (IsKeyDown('D'))		pBoxTr->Translate(VECTOR3(10.0f, 0.0f, 0.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
+	if (IsKeyDown('Q'))		pBoxTr->Translate(VECTOR3(0.0f, 0.0f, 10.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
+	if (IsKeyDown('E'))		pBoxTr->Translate(VECTOR3(0.0f, 0.0f, -10.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
+
+	// 회전
+	if (IsKeyDown('I')) pBoxTr->Rotate(VECTOR3(45.0f, 0.0f, 0.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
+	if (IsKeyDown('K')) pBoxTr->Rotate(VECTOR3(-45.0f, 0.0f, 0.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
+	if (IsKeyDown('J')) pBoxTr->Rotate(VECTOR3(0.0f, -45.0f, 0.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
+	if (IsKeyDown('L')) pBoxTr->Rotate(VECTOR3(0.0f, 45.0f, 0.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
+	if (IsKeyDown('U')) pBoxTr->Rotate(VECTOR3(0.0f, 0.0f, -45.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
+	if (IsKeyDown('O')) pBoxTr->Rotate(VECTOR3(0.0f, 0.0f, 45.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
 }

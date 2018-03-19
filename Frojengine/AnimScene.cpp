@@ -4,7 +4,7 @@
 
 bool AnimScene::Load()
 {
-	CObject* temp;
+	CObject *temp, *temp2;
 
 	CObject* pCam = new CObject(VECTOR3(0.0f, 0.0f, -25.0f), VECTOR3(0.0f, 0.0f, 0.0f), VECTOR3(1.0f, 1.0f, 1.0f));
 	pCam->m_name = L"Camera";
@@ -14,7 +14,7 @@ bool AnimScene::Load()
 
 	CObject* system = new CObject;
 	system->m_name = L"System";
-	system->AddComponent<AWSystem>();
+	AWSystem* AW = system->AddComponent<AWSystem>();
 
 	CObject* pLight = new CObject();
 	pLight->m_name = L"Light";
@@ -27,11 +27,27 @@ bool AnimScene::Load()
 #pragma region 상자 생성
 	CObject* pBox = FileLoader::ObjectFileLoad(L"./Data/Box/Box.x");
 	pBox->m_name = L"Box";
-	pBox->m_pTransform->m_vPos = VECTOR3(0.0f, 0.0f, 0.0f);
-	pBox->m_pTransform->m_vScale = VECTOR3(0.2f, 0.2f, 0.2f);
+	AW->pBoxTr = pBox->m_pTransform;
 
 	temp = CObject::CopyObject(pBox);
-	temp->m_pTransform->SetPositionLocal(VECTOR3(0.0f, 10.0f, 0.0f));
+	temp->SetParent(pBox);
+
+	temp2 = CObject::CopyObject(temp);
+	temp2->SetParent(temp);
+
+	pBox->m_pTransform->SetPositionLocal(VECTOR3(5.0f, 0.0f, 0.0f));
+	pBox->m_pTransform->SetRotationDegree(VECTOR3(0.0f, 0.0f, 90.0f));
+	pBox->m_pTransform->m_vScale = VECTOR3(0.02f, 0.02f, 0.02f);
+
+	temp->m_pTransform->SetPositionLocal(VECTOR3(0.0f, 5.0f, 0.0f));
+	temp->m_pTransform->SetRotationDegree(VECTOR3(0.0f, 0.0f, 0.0f));
+	temp->m_pTransform->m_vScale = VECTOR3(1.0f, 1.0f, 1.0f);
+
+	temp2->m_pTransform->SetPositionWorld(VECTOR3(2.5f, 2.5f, 0.0f));
+	temp2->m_pTransform->SetRotationDegree(VECTOR3(0.0f, 0.0f, 0.0f));
+	temp2->m_pTransform->m_vScale = VECTOR3(1.0f, 1.0f, 1.0f);
+
+	VECTOR3 world = temp2->m_pTransform->GetPositionWorld();
 #pragma endregion
 
 	FJRenderingEngine::SetClearColor(COLOR(0, 0.125f, 0.3f, 1));

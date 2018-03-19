@@ -5,6 +5,9 @@
 class AWSystem : public Behaviour
 {
 public:
+	Transform* pBoxTr;
+
+public:
 	AWSystem();
 	virtual ~AWSystem();
 

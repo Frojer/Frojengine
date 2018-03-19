@@ -48,7 +48,7 @@ bool MainScene::Load()
 #pragma region 터레인 생성
 	CObject* pTerrain = FileLoader::ObjectFileLoad(L"./Data/Terrain/terrain.x");
 	pTerrain->m_name = L"Terrain";
-	pTerrain->m_pTransform->m_vPos = VECTOR3(0, -0.0005f, 0);
+	pTerrain->m_pTransform->SetPositionLocal(VECTOR3(0, -0.0005f, 0));
 	pTerrain->m_pTransform->m_vScale = VECTOR3(128.0f, 1.0f, 128.0f);
 
 	temp = pTerrain->GetChildren().back()->GetChildren().back();
@@ -262,7 +262,7 @@ bool MainScene::Load()
 #pragma region 상자 생성
 	CObject* pBox = FileLoader::ObjectFileLoad(L"./Data/Box/Box.x");
 	pBox->m_name = L"Box";
-	pBox->m_pTransform->m_vPos = VECTOR3(-3.0f, 1.0f, -25.0f);
+	pBox->m_pTransform->SetPositionLocal(VECTOR3(-3.0f, 1.0f, -25.0f));
 	pBox->m_pTransform->m_vScale = VECTOR3(0.2f, 0.2f, 0.2f);
 
 	temp = pBox->GetChildren().back();
@@ -304,7 +304,7 @@ bool MainScene::Load()
 	pointLit->m_name = L"Point Light";
 	pointLit->AddComponent<Renderer>();
 	pointLit->SetParent(pDwarf);
-	pointLit->m_pTransform->m_vPos = VECTOR3(3.5f, 3.0f, 0.0f);
+	pointLit->m_pTransform->SetPositionLocal(VECTOR3(3.5f, 3.0f, 0.0f));
 	pointLit->m_pTransform->m_vScale = VECTOR3(0.02f, 0.02f, 0.02f);
 
 	Light* plight = (Light*)pointLit->AddComponent<Light>();

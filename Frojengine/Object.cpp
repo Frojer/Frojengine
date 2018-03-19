@@ -24,8 +24,8 @@ CObject::CObject(VECTOR3& pos, VECTOR3& rot, VECTOR3& scale)
 {
 	AddComponent<Transform>();
 
-	m_pTransform->m_vPos = pos;
-	m_pTransform->m_vRot = rot;
+	m_pTransform->SetPositionLocal(pos);
+	m_pTransform->SetRotationRadian(rot);
 	m_pTransform->m_vScale = scale;
 	SceneManager::pCurrentScene->_listObj.push_back(this);
 }

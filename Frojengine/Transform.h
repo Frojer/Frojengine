@@ -2,11 +2,14 @@
 
 #include "Frojengine.h"
 
+enum Space { World, Local };
+
 class Transform final : public Component
 {
-public:
+private:
 	VECTOR3 m_vPos;
 	VECTOR3 m_vRot;
+public:
 	VECTOR3 m_vScale;
 
 public:
@@ -16,16 +19,18 @@ public:
 	MATRIXA GetRotPosMatrix();
 	MATRIXA GetScaleMatrix();
 
-	virtual void AfterUpdate() override;
-
 public:
 	Transform();
 	virtual ~Transform();
 
-	void SetPositionWorld(VECTOR3& pos);
-	void SetPositionLocal(VECTOR3& pos);
-	void SetRotationDegree(VECTOR3& degree);
-	void SetRotationRadian(VECTOR3& radian);
+	void Translate(const VECTOR3& translation, Space space = Space::Local);
+	void Rotate(const VECTOR3& eulerAngles, Space space = Space::Local);
+
+	// Get(), Set()
+	void SetPositionWorld(const VECTOR3& pos);
+	void SetPositionLocal(const VECTOR3& pos);
+	void SetRotationDegree(const VECTOR3& degree);
+	void SetRotationRadian(const VECTOR3& radian);
 	VECTOR3 GetPositionWorld();
 	VECTOR3 GetPositionLocal();
 	VECTOR3 GetRotationDegree();

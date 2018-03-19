@@ -1,5 +1,6 @@
 #include "TripleWindmill.h"
 #include "System.h"
+#include "FJMath.h"
 
 void TripleWindmill::Initialize()
 {
@@ -19,13 +20,13 @@ void TripleWindmill::Initialize()
 
 	body->m_pTransform->m_vScale = VECTOR3(1.0f, 2.0f, 1.0f);
 
-	wing[0]->m_pTransform->m_vPos = VECTOR3(0.0f, 3.0f, -1.0f);
+	wing[0]->m_pTransform->SetPositionLocal(VECTOR3(0.0f, 3.0f, -1.0f));
 	wing[0]->m_pTransform->m_vScale = VECTOR3(1.5f, 1.5f, 1.5f);
 	wing[0]->SetParent(GetMyObject());
-	wing[1]->m_pTransform->m_vPos = VECTOR3(0.0f, 0.0f, -0.5f);
+	wing[1]->m_pTransform->SetPositionLocal(VECTOR3(0.0f, 0.0f, -0.5f));
 	wing[1]->m_pTransform->m_vScale = VECTOR3(0.75f, 0.75f, 0.75f);
 	wing[1]->SetParent(wing[0]);
-	wing[2]->m_pTransform->m_vPos = VECTOR3(0.0f, 0.0f, -0.5f);
+	wing[2]->m_pTransform->SetPositionLocal(VECTOR3(0.0f, 0.0f, -0.5f));
 	wing[2]->m_pTransform->m_vScale = VECTOR3(0.75f, 0.75f, 0.75f);
 	wing[2]->SetParent(wing[1]);
 }
@@ -35,16 +36,16 @@ void TripleWindmill::Update()
 {
 	if (isMirror)
 	{
-		wing[0]->m_pTransform->m_vRot.z -= -XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold;
-		wing[1]->m_pTransform->m_vRot.z -= XM_PI * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold;
-		wing[2]->m_pTransform->m_vRot.z -= -XM_PI * 2.0f * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold;
+		wing[0]->m_pTransform->Rotate(VECTOR3(0.0f, 0.0f, 45.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold);
+		wing[1]->m_pTransform->Rotate(VECTOR3(0.0f, 0.0f, -180.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold);
+		wing[2]->m_pTransform->Rotate(VECTOR3(0.0f, 0.0f, 360.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold);
 	}
 
 	else
 	{
-		wing[0]->m_pTransform->m_vRot.z += -XM_PI * 0.25f * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold;
-		wing[1]->m_pTransform->m_vRot.z += XM_PI * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold;
-		wing[2]->m_pTransform->m_vRot.z += -XM_PI * 2.0f * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold;
+		wing[0]->m_pTransform->Rotate(VECTOR3(0.0f, 0.0f, -45.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold);
+		wing[1]->m_pTransform->Rotate(VECTOR3(0.0f, 0.0f, 180.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold);
+		wing[2]->m_pTransform->Rotate(VECTOR3(0.0f, 0.0f, -360.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold);
 	}
 
 	Debug::DrawNormal(wing[0]->GetChildren().front()->GetChildren().front(), COLOR(0.0f, 1.0f, 0.0f, 1.0f));

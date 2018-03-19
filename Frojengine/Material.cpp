@@ -49,7 +49,7 @@ void CMaterial::UpdateLightData()
 		_LightData[i].ambient = XMLoadFloat4(&(*iter)->m_ambient);
 		_LightData[i].specular = XMLoadFloat4(&(*iter)->m_specular);
 		_LightData[i].position = XMLoadFloat3(&(*iter)->GetMyObject()->m_pTransform->GetPositionWorld());
-		vec = (*iter)->GetMyObject()->m_pTransform->m_vRot;
+		vec = (*iter)->GetMyObject()->m_pTransform->GetRotationRadian();
 		_LightData[i].direction = -XMVector3Transform(XMLoadFloat3(&VECTOR3(0.0f, 0.0f, 1.0f)), XMMatrixRotationRollPitchYaw(vec.x, vec.y, vec.z));
 		_LightData[i].range = (*iter)->m_range;
 		_LightData[i].lightType = (*iter)->m_lightType;

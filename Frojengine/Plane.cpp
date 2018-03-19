@@ -1,10 +1,11 @@
 #include "Plane.h"
+#include "FJMath.h"
 
 void Plane::Initialize()
 {
 	plane = GetMyObject()->GetChildren().back();
-	plane->m_pTransform->m_vRot = VECTOR3(0.0f, -XM_PI / 2.0f, XM_PI / 8);
-	plane->m_pTransform->m_vPos = VECTOR3(0.0f, 10.0f, 10.0f);
+	plane->m_pTransform->SetPositionLocal(VECTOR3(0.0f, 10.0f, 10.0f));
+	plane->m_pTransform->SetRotationRadian(VECTOR3(0.0f, -XM_PI / 2.0f, XM_PI / 8));
 	
 	list<CObject*> list = plane->GetChildren();
 
@@ -37,8 +38,8 @@ void Plane::Initialize()
 
 void Plane::Update()
 {
-	GetMyObject()->m_pTransform->m_vRot.y += XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
-	proParent->m_pTransform->m_vRot.z += XM_PI * 15.0f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+	GetMyObject()->m_pTransform->Rotate(VECTOR3(0.0f, 90.0f, 0.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
+	proParent->m_pTransform->Rotate(VECTOR3(0.0f, 0.0f, 2700.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
 	
 	
 	//if (IsKeyDown('W')) propeller->m_pTransform->m_vRot.x += XM_PI * 0.1f * FJSystemEngine::GetInstance()->m_fDeltaTime;

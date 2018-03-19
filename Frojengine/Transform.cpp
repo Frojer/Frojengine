@@ -4,7 +4,6 @@
 Transform::Transform()
 {
 	m_name = L"Transform";
-	_type = COMPONENT_TYPE_AFTERUPDATE;
 
 	ZeroMemory(&m_vPos, sizeof(VECTOR3));
 	ZeroMemory(&m_vRot, sizeof(VECTOR3));
@@ -19,6 +18,7 @@ Transform::~Transform()
 }
 
 
+#pragma region Get() Matrix
 MATRIXA Transform::GetWorldMatrix()
 {
 	MATRIXA mPos, mRot, mScale;
@@ -99,34 +99,45 @@ MATRIXA Transform::GetScaleMatrix()
 
 	return mScale;
 }
+#pragma endregion
 
-
-void Transform::AfterUpdate()
+void Transform::Translate(const VECTOR3& translate, Space space)
 {
-
+	if (space)
+		m_vPos += translate;
+	else
+		m_vPos = GetPositionWorld() + translate;
 }
 
+void Transform::Rotate(const VECTOR3& eulerAngles, Space space)
+{
+	if (space)
+		m_vRot += eulerAngles / 180.0f * XM_PI;
+	else
+		m_vRot += eulerAngles / 180.0f * XM_PI;
+}
 
-void Transform::SetPositionWorld(VECTOR3& pos)
+#pragma region Get(),Set()
+void Transform::SetPositionWorld(const VECTOR3& pos)
 {
 	m_vPos = VECTOR3(0.0f, 0.0f, 0.0f);
 	m_vPos = pos - GetPositionWorld();
 }
 
 
-void Transform::SetPositionLocal(VECTOR3& pos)
+void Transform::SetPositionLocal(const VECTOR3& pos)
 {
 	m_vPos = pos;
 }
 
 
-void Transform::SetRotationDegree(VECTOR3& angle)
+void Transform::SetRotationDegree(const VECTOR3& angle)
 {
-	m_vRot = angle / 180.0f * XM_PI;
+	m_vRot = angle * (XM_PI / 180.0f);
 }
 
 
-void Transform::SetRotationRadian(VECTOR3& radian)
+void Transform::SetRotationRadian(const VECTOR3& radian)
 {
 	m_vRot = radian;
 }
@@ -151,15 +162,15 @@ VECTOR3 Transform::GetPositionLocal()
 }
 
 
-VECTOR3 Transform::GetRotationDegree()
+VECTOR3 Transform::GetRotationRadian()
 {
 	return m_vRot;
 }
 
 
-VECTOR3 Transform::GetRotationRadian()
+VECTOR3 Transform::GetRotationDegree()
 {
-	return m_vRot / (180.0f * XM_PI);
+	return m_vRot * (XM_PI / 180.0f);
 }
 
 
@@ -194,3 +205,4 @@ VECTOR3 Transform::GetRightVector()
 
 	return right;
 }
+#pragma endregion

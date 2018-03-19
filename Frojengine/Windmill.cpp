@@ -1,5 +1,6 @@
 #include "Windmill.h"
 #include "System.h"
+#include "FJMath.h"
 
 void Windmill::Initialize()
 {
@@ -23,10 +24,10 @@ void Windmill::Initialize()
 void Windmill::Update()
 {
 	if (isMirror)
-		wing->m_pTransform->m_vRot.z -= XMConvertToRadians(180) * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold;	//180º/sec 씩 회전.(DirectXMath 사용)
+		wing->m_pTransform->Rotate(VECTOR3(0.0f, 0.0f, -180.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold);
 
 	else
-		wing->m_pTransform->m_vRot.z += XMConvertToRadians(180) * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold;	//180º/sec 씩 회전.(DirectXMath 사용)
+		wing->m_pTransform->Rotate(VECTOR3(0.0f, 0.0f, 180.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime * system->cold);
 
 	Debug::DrawNormal(wing->GetChildren().back()->GetChildren().back(), COLOR(0.0f, 1.0f, 0.0f, 1.0f));
 	Debug::DrawNormal(body->GetChildren().back()->GetChildren().back(), COLOR(0.0f, 1.0f, 0.0f, 1.0f));

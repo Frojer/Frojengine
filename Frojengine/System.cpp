@@ -1,4 +1,5 @@
 #include "System.h"
+#include "FJMath.h"
 
 System::System()
 	: pBoxMaterial(nullptr), pTerrainMtrl(nullptr), pTreeMtrl(nullptr), pWindmillMtrl(nullptr), pLakeMtrl(nullptr), pDirectionalLight(nullptr)
@@ -114,8 +115,8 @@ void System::Update()
 	pDirectionalLight->m_diffuse = dirLightColArr[timeCount];
 	
 	// È¸Àü
-	if (IsKeyDown('T')) pDirectionalLight->GetMyObject()->m_pTransform->m_vRot.x += XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
-	if (IsKeyDown('G')) pDirectionalLight->GetMyObject()->m_pTransform->m_vRot.x -= XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
-	if (IsKeyDown('F')) pDirectionalLight->GetMyObject()->m_pTransform->m_vRot.y += XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
-	if (IsKeyDown('H')) pDirectionalLight->GetMyObject()->m_pTransform->m_vRot.y -= XM_PI * 0.5f * FJSystemEngine::GetInstance()->m_fDeltaTime;
+	if (IsKeyDown('T')) pDirectionalLight->GetMyObject()->m_pTransform->Rotate(VECTOR3(90.0f, 0.0f, 0.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
+	if (IsKeyDown('G')) pDirectionalLight->GetMyObject()->m_pTransform->Rotate(VECTOR3(-90.0f, 0.0f, 0.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
+	if (IsKeyDown('F')) pDirectionalLight->GetMyObject()->m_pTransform->Rotate(VECTOR3(0.0f, 90.0f, 0.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
+	if (IsKeyDown('H')) pDirectionalLight->GetMyObject()->m_pTransform->Rotate(VECTOR3(0.0f, -90.0f, 0.0f) * FJSystemEngine::GetInstance()->m_fDeltaTime);
 }
