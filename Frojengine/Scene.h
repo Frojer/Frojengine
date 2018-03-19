@@ -35,10 +35,10 @@ public:
 	virtual ~CScene();
 
 	virtual bool Load() = 0;
-	
-	void Initialize();
 
 	void StateUpdate();
+	
+	void Initialize();
 	void Update();
 	void Render();
 
