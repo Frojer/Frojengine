@@ -47,7 +47,7 @@ MATRIXA Transform::GetPositionMatrix()
 	CObject* pObj = GetMyObject();
 
 	MATRIXA mPos;
-	mPos = DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&m_vPos));
+	mPos = DirectX::XMMatrixTranslationFromVector(XMLoadFloat3(&m_vPos));
 
 	if (pObj->GetParent() != nullptr)
 		mPos *= pObj->GetParent()->m_pTransform->GetPositionMatrix();
@@ -61,7 +61,7 @@ MATRIXA Transform::GetRotationMatrix()
 	CObject* pObj = GetMyObject();
 
 	MATRIXA mRot;
-	mRot = DirectX::XMMatrixScalingFromVector(XMLoadFloat3(&m_vRot));
+	mRot = DirectX::XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_vRot));
 
 	if (pObj->GetParent() != nullptr)
 		mRot *= pObj->GetParent()->m_pTransform->GetRotationMatrix();
@@ -106,7 +106,7 @@ void Transform::Translate(const VECTOR3& translate, Space space)
 	if (space)
 		m_vPos += translate;
 	else
-		m_vPos = GetPositionWorld() + translate;
+		SetPositionWorld(GetPositionWorld() + translate);
 }
 
 void Transform::Rotate(const VECTOR3& eulerAngles, Space space)
@@ -120,8 +120,9 @@ void Transform::Rotate(const VECTOR3& eulerAngles, Space space)
 #pragma region Get(),Set()
 void Transform::SetPositionWorld(const VECTOR3& pos)
 {
-	m_vPos = VECTOR3(0.0f, 0.0f, 0.0f);
-	m_vPos = pos - GetPositionWorld();
+	VECTOR v = XMLoadFloat3(&(pos - GetMyObject()->GetParent()->m_pTransform->GetPositionWorld()));
+	
+	XMStoreFloat3(&m_vPos, XMVector3Transform(v, XMMatrixInverse(nullptr, GetRotationMatrix())));
 }
 
 
@@ -148,7 +149,7 @@ VECTOR3 Transform::GetPositionWorld()
 	VECTOR v = XMVectorZero();
 	VECTOR3 pos;
 
-	v = XMVector3TransformCoord(v, GetWorldMatrix());
+	v = XMVector3TransformCoord(v, GetRotPosMatrix());
 
 	XMStoreFloat3(&pos, v);
 

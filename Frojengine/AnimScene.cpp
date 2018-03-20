@@ -27,7 +27,6 @@ bool AnimScene::Load()
 #pragma region 상자 생성
 	CObject* pBox = FileLoader::ObjectFileLoad(L"./Data/Box/Box.x");
 	pBox->m_name = L"Box";
-	AW->pBoxTr = pBox->m_pTransform;
 
 	temp = CObject::CopyObject(pBox);
 	temp->SetParent(pBox);
@@ -45,7 +44,9 @@ bool AnimScene::Load()
 
 	temp2->m_pTransform->SetPositionWorld(VECTOR3(2.5f, 2.5f, 0.0f));
 	temp2->m_pTransform->SetRotationDegree(VECTOR3(0.0f, 0.0f, 0.0f));
-	temp2->m_pTransform->m_vScale = VECTOR3(1.0f, 1.0f, 1.0f);
+	temp2->m_pTransform->m_vScale = VECTOR3(2.0f, 2.0f, 2.0f);
+
+	AW->pBoxTr = temp2->m_pTransform;
 
 	VECTOR3 world = temp2->m_pTransform->GetPositionWorld();
 #pragma endregion
