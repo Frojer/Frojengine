@@ -267,7 +267,7 @@ private:
 
 	// 깊이/스텐실 버퍼 상태객체
 	void DSStateLoad();
-	void DSStateCreate(DWORD state);
+	void DSStateCreate(DWORD flag);
 	void DSStateRelease();
 
 	// 블랜드 상태객체

@@ -120,7 +120,11 @@ void Transform::Rotate(const VECTOR3& eulerAngles, Space space)
 #pragma region Get(),Set()
 void Transform::SetPositionWorld(const VECTOR3& pos)
 {
-	VECTOR v = XMLoadFloat3(&(pos - GetMyObject()->GetParent()->m_pTransform->GetPositionWorld()));
+	VECTOR v;
+	if (GetMyObject()->GetParent() == nullptr)
+		v = XMLoadFloat3(&pos);
+	else
+		v = XMLoadFloat3(&(pos - GetMyObject()->GetParent()->m_pTransform->GetPositionWorld()));
 	
 	XMStoreFloat3(&m_vPos, XMVector3Transform(v, XMMatrixInverse(nullptr, GetRotationMatrix())));
 }

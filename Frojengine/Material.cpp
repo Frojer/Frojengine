@@ -176,10 +176,7 @@ void CMaterial::SetScalar(UINT id, const float scalar)
 {
 	*((float*)&_vecScalar[id / 4] + (id % 4)) = scalar;
 
-	for (UINT i = 0; i < _vecScalarA.size(); i++)
-	{
-		_vecScalarA[i] = XMLoadFloat4(&_vecScalar[i]);
-	}
+	_vecScalarA[id / 4] = XMLoadFloat4(&_vecScalar[id / 4]);
 }
 
 
@@ -188,10 +185,7 @@ void CMaterial::SetScalar(UINT id, const int scalar)
 {
 	*((int*)&_vecScalar[id / 4] + (id % 4)) = scalar;
 
-	for (UINT i = 0; i < _vecScalarA.size(); i++)
-	{
-		_vecScalarA[i] = XMLoadFloat4(&_vecScalar[i]);
-	}
+	_vecScalarA[id / 4] = XMLoadFloat4(&_vecScalar[id / 4]);
 }
 
 
@@ -200,10 +194,7 @@ void CMaterial::SetScalar(UINT id, const UINT scalar)
 {
 	*((UINT*)&_vecScalar[id / 4] + (id % 4)) = scalar;
 
-	for (UINT i = 0; i < _vecScalarA.size(); i++)
-	{
-		_vecScalarA[i] = XMLoadFloat4(&_vecScalar[i]);
-	}
+	_vecScalarA[id / 4] = XMLoadFloat4(&_vecScalar[id / 4]);
 }
 
 
@@ -212,10 +203,7 @@ void CMaterial::SetScalar(UINT id, const bool scalar)
 {
 	*((bool*)&_vecScalar[id / 4] + (id % 4)) = scalar;
 
-	for (UINT i = 0; i < _vecScalarA.size(); i++)
-	{
-		_vecScalarA[i] = XMLoadFloat4(&_vecScalar[i]);
-	}
+	_vecScalarA[id / 4] = XMLoadFloat4(&_vecScalar[id / 4]);
 }
 
 
